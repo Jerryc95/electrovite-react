@@ -26,8 +26,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "$main": ["./src/main"],
-      "$main/*": ["./src/main/*"],
+      "$main": ["src/electron"],
+      "$main/*": ["src/electron/*"],
       "$renderer": ["./src/renderer"],
       "$renderer/*": ["./src/renderer/*"],
       "$assets": ["./assets"],

@@ -1,13 +1,12 @@
 {
-  "name": "electrovite-react",
-  "productName": "ElectroVite",
+  "name": "flowplanr",
+  "productName": "Flowplanr",
   "version": "1.2.0",
-  "description": "A prebuilt project for creating desktop apps with Electron, React, TypeScript & super fast hot-reload of Vite.",
+  "description": "A project and task management software",
   "main": ".vite/build/main.js",
   "license": "MIT",
   "author": {
-    "name": "guasam",
-    "url": "https://github.com/guasam"
+    "name": "Jerry Cox"
   },
   "keywords": [
     "electrovite",

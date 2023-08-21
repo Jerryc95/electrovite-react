@@ -6,7 +6,7 @@ const App = () => {
       <div className='icon'>
         <img src={image} />
       </div>
-      <h1>ElectroVite</h1>
+      <h1>Flowplanr</h1>
       <p className='teaser'>
         A preconfigured project for creating robust desktop apps with ReactJS.
       </p>
