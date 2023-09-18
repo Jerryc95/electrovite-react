@@ -1,0 +1,28 @@
+.avatar-display {
+    border: 3px solid #ccc;
+    border-radius: 50px;
+
+}
+.avatar-edit {
+    border: 3px solid #fff;
+    border-radius: 50px;
+
+    &:hover{
+        filter: brightness(0.8);
+        border: 3px solid #f72585;
+    }
+}
+
+.selected-avatar {
+    display: flex;
+    justify-content: center;
+}
+
+.avatar-selection-list {
+    display: flex;
+
+    li {
+        padding: 10px;
+    }
+}
+

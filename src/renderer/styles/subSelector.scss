@@ -1,0 +1,161 @@
+.sub-selector-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.subscription-columns {
+    display: flex;
+    flex-direction: row;
+
+    li {
+        margin: 0 25px;
+    }
+}
+
+//Toggle button
+.toggle-slider {
+  position: relative;
+  display: inline-block;
+  width: 250px;
+  height: 50px;
+
+  input {
+    display: none;
+    &:checked + .slider {
+      background: linear-gradient(to right, #f72585, #480ca8);
+    }
+  }
+
+  .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, #f72585, #480ca8);
+    border-radius: 34px;
+    transition: background-color 0.3s ease-in-out;
+
+    &:before {
+      content: '';
+      position: absolute;
+      width: 125px;
+      height: 51px;
+      border-radius: 34px;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      left: 126px;
+      top: -1px;
+      transition: transform 0.3s ease-in-out;
+    }
+  }
+
+  &.monthly .slider:before {
+    transform: translateX(-128px);
+  }
+
+  .label-monthly,
+  .label-yearly {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #fff;
+  }
+
+  .label-monthly {
+    // color: #fff;
+    left: 18px;
+    font-weight: 700;
+    font-size: 1.3rem;
+    &.active {
+      font-size: 1.35rem;
+      color: #f72585;
+    }
+  }
+
+  .label-yearly {
+    // color: #fff;
+    right: 25px;
+    font-weight: 700;
+    font-size: 1.3rem;
+    &.active {
+      font-size: 1.35rem;
+      color: #480ca8;
+    }
+  }
+}
+
+//Subscription container
+
+.subscription-detail-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 250px;
+  min-height: 530px;
+  margin: 25px 5px;
+  padding: 20px;
+  align-items: center;
+  border-radius: 15px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 30px rgba(107, 107, 107, 0.1);
+
+  .subscription-detail-name {
+    font-size: 1.8rem;
+  }
+  .subscription-detail-price {
+    font-size: 3rem;
+    font-weight: 600;
+  }
+
+  .subscription-detail-billing {
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-align: center;
+    color: #303030;
+    margin-bottom: 20px;
+  }
+
+  .subscription-detail-description {
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-align: center;
+    color: #303030;
+  }
+
+  .subscription-detail-button {
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin: 15px;
+    font-size: 1rem;
+    width: 90%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .subscription-detail-features {
+    text-align: center;
+    color: #303030;
+    font-size: 0.86rem;
+    font-weight: 700;
+
+    li {
+        margin: 10px;
+    }
+  }
+}
+
+.subscription-back-button {
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin: 15px;
+  font-size: 1rem;
+  width: 150px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
