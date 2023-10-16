@@ -84,6 +84,7 @@ function createMainWindow() {
   // Show window when its ready to
   mainWindow.on('ready-to-show', () => {
     if (mainWindow) mainWindow.show();
+    // mainWindow?.webContents.openDevTools()
   });
 
   // Close all windows when main window is closed

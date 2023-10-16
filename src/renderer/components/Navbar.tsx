@@ -11,19 +11,22 @@ import {
   faFile,
   faGear,
   faRightFromBracket,
+  faCoins,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../services/store';
-import Home from '$renderer/components/dashboard/Home';
+import Home from '$renderer/pages/Home';
 import Projects from '$renderer/pages/Projects';
 import Contacts from '../pages/Contacts';
 import Documents from './dashboard/Documents';
+import Bookkeeping from '$renderer/pages/Bookkeeping';
 import Settings from './dashboard/Settings';
 import Avatar from './Avatar';
 import exampleAvatar from '../../../assets/Avatars/exampleAvatar.png';
 
 import '../styles/navbar.scss';
 import { useSignOutAccountMutation } from '../../services/authAPI';
+
 
 interface NavbarProps {
   setComponent: React.Dispatch<React.SetStateAction<JSX.Element>>;
@@ -95,7 +98,9 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
           className={`${activeMenuItem == 'home' ? 'active-menu-item' : ''}`}
         >
           <FontAwesomeIcon icon={faHome} className='navbar-li-icon' />
-          <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>Home</span>
+          <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
+            Dashboard
+          </span>
         </li>
         <li
           onClick={() => toggleComponent(<Projects />, 'projects')}
@@ -128,6 +133,17 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
           <FontAwesomeIcon icon={faFile} className='navbar-li-icon' />
           <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
             Documents
+          </span>
+        </li>
+        <li
+          onClick={() => toggleComponent(<Bookkeeping />, 'bookkeeping')}
+          className={`${
+            activeMenuItem == 'bookkeeping' ? 'active-menu-item' : ''
+          }`}
+        >
+          <FontAwesomeIcon icon={faCoins} className='navbar-li-icon' />
+          <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
+            Bookkeeping
           </span>
         </li>
       </ul>

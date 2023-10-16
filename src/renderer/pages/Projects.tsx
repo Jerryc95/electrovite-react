@@ -3,18 +3,11 @@ import { useSelector } from 'react-redux';
 
 import ProjectCard from '../components/dashboard/projects/ProjectCard';
 import NewProject from '$renderer/components/dashboard/projects/NewProject';
+import ProjectDetail from '$renderer/components/dashboard/projects/ProjectDetail';
 import { Project } from '../../models/project';
 import { RootState } from '../../services/store';
 import '../styles/projects.scss';
-import ProjectDetail from '$renderer/components/dashboard/projects/ProjectDetail';
-
-const projectFilters = [
-  { name: 'All', cName: 'filter-capsule all' },
-  { name: 'Not Started', cName: 'filter-capsule not-started' },
-  { name: 'In Progress', cName: 'filter-capsule in-progress' },
-  { name: 'Live', cName: 'filter-capsule live' },
-  { name: 'Completed', cName: 'filter-capsule completed' },
-];
+import '../styles/detailPage.scss';
 
 const Projects: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState('All');
@@ -29,18 +22,24 @@ const Projects: React.FC = () => {
     setShowingProject(!showingProject);
   };
 
+  const projectFilters = [
+    { name: 'All', cName: 'filter-capsule all' },
+    { name: 'Not Started', cName: 'filter-capsule not-started' },
+    { name: 'In Progress', cName: 'filter-capsule in-progress' },
+    { name: 'Live', cName: 'filter-capsule live' },
+    { name: 'Completed', cName: 'filter-capsule completed' },
+  ];
+
   useEffect(() => {
     if (accountState) {
       const url = `http://localhost:3000/projects?id=${accountState.account?.id}`;
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
-          //set projects here
           setProjects(data);
-          console.log(data);
         });
     }
-  }, [accountState]);
+  }, []);
 
   return (
     <div className='projects-container'>
@@ -78,10 +77,11 @@ const Projects: React.FC = () => {
             <div className='projects-grid'>
               {projects.map((project) => (
                 <div
+                  key={project.id}
                   className='project-grid-item '
                   onClick={() => toggleProject(project)}
                 >
-                  <ProjectCard project={project} />
+                  <ProjectCard project={project} key={project.id} />
                 </div>
               ))}
             </div>
@@ -102,7 +102,6 @@ const Projects: React.FC = () => {
         <NewProject
           setAddingProject={setAddingProject}
           addingProject={addingProject}
-          projects={projects}
           setProjects={setProjects}
           id={accountState.account?.id}
         />

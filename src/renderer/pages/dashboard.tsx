@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import Home from '$renderer/components/dashboard/Home';
+import Home from '$renderer/pages/Home';
 import Navbar from '$renderer/components/Navbar';
 
 import "../styles/dashboard.scss"

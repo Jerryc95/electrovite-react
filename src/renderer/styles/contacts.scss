@@ -1,0 +1,601 @@
+.contacts-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 80%;
+  height: 100vh;
+  flex-grow: 1;
+  transition: margin-left 0.3s ease-in-out;
+  transition: min-width 0.3s ease-in-out;
+  margin-left: 225px;
+  margin-top: 35px;
+  margin-right: 35px;
+  overflow-y: auto;
+
+  .contacts-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+    button {
+      align-items: center;
+      background-color: #560bad;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 10px 15px;
+      font-size: 0.75rem;
+      width: 125px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0px 0px 5px rgba(86, 11, 173, 0.6);
+
+      &:hover {
+        background-color: #35046d;
+        box-shadow: 0px 0px 5px rgba(53, 4, 109, 0.6);
+      }
+    }
+  }
+
+  .contacts-top-container {
+    display: flex;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e2e2e2;
+    p {
+      color: #ccc;
+      font-size: 0.85rem;
+    }
+
+    .contacts-upcoming-events {
+      display: flex;
+     flex-direction: column;
+      padding-right: 20px;
+      padding-left: 20px;
+      width: 25%;
+
+      .contacts-upcoming-event {
+        display: flex;
+
+        .contact-event-container {
+          min-width: 185px;
+          height: 125px;
+          margin-top: 10px;
+          margin-right: 20px;
+          padding: 10px;
+          border-radius: 15px;
+          background-color: #fefefe;
+          box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.1);
+
+          .contact-event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .contact-event-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .contact-event-date {
+              color: #000;
+              font-size: 0.85rem;
+            }
+
+            .contact-event-time {
+              color: #000;
+              font-size: 0.75rem;
+              font-weight: bold;
+            }
+          }
+
+          .contact-event-type {
+            font-weight: bold;
+          }
+          .Meeting {
+            color: #4895ef;
+          }
+
+          .Call {
+            color: #b5179e;
+          }
+
+          .Email {
+            color: #35046d;
+          }
+
+          .Follow-up {
+            color: #4cc9f0;
+          }
+          .Other {
+            color: #560bad;
+          }
+        }
+      }
+    }
+
+    .contacts-pinned {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .contacts-bottom-container {
+    display: flex;
+    flex-direction: column;
+
+    .contacts-sorting-options {
+      display: flex;
+      padding-bottom: 15px;
+
+      .sort-capsule {
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 6px 8px;
+        width: 100px;
+        margin-top: 20px;
+        margin-left: 8px;
+        margin-right: 8px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+
+        &:hover {
+          scale: (1.1);
+        }
+      }
+
+      .firstName {
+        background-color: #c9dcf1;
+      }
+      .firstName.selected {
+        color: white;
+        background-color: #4895ef;
+      }
+      .lastName {
+        background-color: #f6d6e4;
+      }
+      .lastName.selected {
+        color: white;
+        background-color: #f72585;
+      }
+      .created {
+        background-color: #cbd1ee;
+      }
+      .created.selected {
+        color: white;
+        background-color: #4361ee;
+      }
+      .nextContactDate {
+        background-color: #d9f0f8;
+      }
+      .nextContactDate.selected {
+        color: white;
+        background-color: #4cc9f0;
+      }
+      .lastContactDate {
+        background-color: #c9bbe0;
+      }
+      .lastContactDate.selected {
+        color: white;
+        background-color: #480ca8;
+      }
+    }
+  }
+}
+
+.collapsed-nav ~ .contacts-container {
+  min-width: 75%;
+  margin-left: 90px;
+  margin-right: 20px;
+
+  .contact-detail-bottom-container {
+    .contact-detail-acitivties {
+      width: 25%;
+    }
+  }
+
+  .contact-detail-container {
+    // min-width: 100%;
+    width: 93%;
+    margin-left: 80px;
+    padding-left: 10px;
+  }
+}
+
+.contact-row-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 95%;
+  height: 40px;
+  margin: 10px;
+  border-radius: 10px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 20px rgba(107, 107, 107, 0.1);
+
+  &:hover {
+    border: 1.75px solid #480ca8;
+    cursor: pointer;
+  }
+
+  p {
+    font-size: 0.75rem;
+  }
+  .contact-name {
+    margin-left: 10px;
+    width: 175px;
+  }
+
+  .contact-email {
+    width: 200px;
+  }
+  .contact-number {
+    width: 105px;
+  }
+  .contact-last-contact {
+    width: 115px;
+  }
+  .contact-next-contact {
+    width: 130px;
+  }
+}
+
+.contact-row-label-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 95%;
+  height: 30px;
+  margin: 10px;
+
+  p {
+    font-size: 0.75rem;
+    color: #ccc;
+  }
+
+  .label-name {
+    margin-left: 10px;
+    width: 175px;
+  }
+
+  .label-email {
+    width: 200px;
+  }
+  .label-number {
+    width: 105px;
+  }
+  .label-last-contact {
+    width: 115px;
+  }
+  .label-next-contact {
+    width: 130px;
+  }
+}
+
+.new-contact-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .new-contact-form {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    width: 75%;
+    height: 55%;
+    border-radius: 25px;
+    justify-content: flex-start;
+    padding-top: 20px;
+
+    .new-contact-create-button {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+
+      button {
+        margin-right: 15px;
+        margin-top: 25px;
+        align-items: center;
+        background-color: #4361ee;
+        color: #fff;
+        border: none;
+        border-radius: 15px;
+        padding: 10px 15px;
+        font-size: 1rem;
+        width: 155px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: 0px 0px 5px rgba(67, 97, 238, 0.6);
+
+        &:hover {
+          background-color: #1c38b7;
+          box-shadow: 0px 0px 5px rgba(28, 56, 183, 0.6);
+        }
+      }
+    }
+  }
+
+  .new-contact-heading {
+    display: flex;
+    justify-content: space-between;
+    h2 {
+      margin-left: 55px;
+      margin-top: 15px;
+    }
+
+    button {
+      margin-right: 55px;
+      margin-top: 15px;
+      align-items: center;
+      background-color: #b5179e;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 10px 15px;
+      font-size: 0.75rem;
+      width: 95px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0px 0px 5px rgba(181, 23, 158, 0.6);
+
+      &:hover {
+        background-color: #750564;
+        box-shadow: 0px 0px 5px rgba(117, 5, 100, 0.6);
+      }
+    }
+  }
+
+  .new-contact-details {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    padding-top: 30px;
+
+    .new-contact-label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .new-contact-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      margin-bottom: 15px;
+      outline-color: #4cc9f0;
+      font-weight: normal;
+    }
+  }
+  p {
+    color: #ccc;
+    margin: 0;
+    font-size: 0.7rem;
+    text-align: center;
+  }
+}
+
+.contact-detail-container {
+  background-color: #fff;
+  min-width: 83%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 400;
+  align-items: center;
+  padding-top: 30px;
+  margin-left: 225px;
+  padding-right: 50px;
+  transition: margin-left 0.3s ease-in-out;
+  transition: min-width 0.3s ease-in-out;
+  overflow-y: auto;
+
+  .contact-detail-header {
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      margin-right: 20px;
+      margin-left: 15px;
+      align-items: center;
+      background-color: #b5179e;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 10px 15px;
+      font-size: 0.75rem;
+      width: 115px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0px 0px 5px rgba(181, 23, 158, 0.6);
+
+      &:hover {
+        background-color: #750564;
+        box-shadow: 0px 0px 5px rgba(117, 5, 100, 0.6);
+      }
+    }
+
+    .contact-detail-header-leading {
+      display: flex;
+
+      .contact-detail-back {
+        display: flex;
+        align-items: center;
+        color: #a5a5a5;
+        cursor: pointer;
+
+        &:hover {
+          color: #b5179e;
+        }
+      }
+
+      p {
+        font-size: 0.75rem;
+        padding-left: 7px;
+        padding-right: 15px;
+      }
+    }
+    .contact-detail-header-trailing {
+      justify-items: center;
+    }
+  }
+
+  .contact-detail-top-container {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e2e2e2;
+    display: flex;
+    flex-direction: column;
+
+    .contact-detail-details {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .contact-detail-bottom-container {
+    display: flex;
+    margin-top: 25px;
+
+    .contact-detail-main {
+      width: 75%;
+      height: 100vh;
+    }
+
+    .contact-detail-activities {
+      width: 25%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      align-content: center;
+      border-left: 1px solid #e2e2e2;
+      p {
+        font-size: 0.85rem;
+        color: #ccc;
+      }
+
+      .contact-detail-activity-column {
+        margin-top: 20px;
+      }
+    }
+    .contact-page-options {
+      display: flex;
+      padding-bottom: 15px;
+
+      .sort-capsule {
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 6px 8px;
+        width: 100px;
+        margin-left: 8px;
+        margin-right: 8px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+
+        &:hover {
+          scale: (1.1);
+        }
+      }
+
+      .Projects {
+        background-color: #f6d6e4;
+      }
+      .Projects.selected {
+        color: white;
+        background-color: #f72585;
+      }
+      .Documents {
+        background-color: #d9f0f8;
+      }
+      .Documents.selected {
+        color: white;
+        background-color: #4cc9f0;
+      }
+      .Bookkeeping {
+        background-color: #c9bbe0;
+      }
+      .Bookkeeping.selected {
+        color: white;
+        background-color: #480ca8;
+      }
+      .Notes {
+        background-color: #c9dcf1;
+      }
+      .Notes.selected {
+        color: white;
+        background-color: #4895ef;
+      }
+    }
+
+    .contact-event-container {
+      width: 200px;
+      height: 125px;
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 15px;
+      background-color: #fefefe;
+      box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.1);
+
+      .contact-event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .contact-event-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .contact-event-date {
+          color: #000;
+          font-size: 0.85rem;
+        }
+
+        .contact-event-time {
+          color: #000;
+          font-size: 0.75rem;
+          font-weight: bold;
+        }
+      }
+
+      .contact-event-type {
+        font-weight: bold;
+      }
+      .Meeting {
+        color: #4895ef;
+      }
+
+      .Call {
+        color: #b5179e;
+      }
+
+      .Email {
+        color: #35046d;
+      }
+
+      .Follow-up {
+        color: #4cc9f0;
+      }
+      .Other {
+        color: #560bad;
+      }
+    }
+  }
+}

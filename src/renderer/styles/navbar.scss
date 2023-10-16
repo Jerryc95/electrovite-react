@@ -6,14 +6,14 @@
   width: 200px;
   border-right: 1px solid #e2e2e2;
   color: #000;
-  background-color: #fff;
+  background-color: #fefefe;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   padding: 20px;
   transition: width 0.3s;
-  z-index: 500;
+  z-index: 100;
 
   &.collapsed-nav {
     width: 65px;

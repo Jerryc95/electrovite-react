@@ -37,7 +37,7 @@
   }
   .projects-overview {
     display: flex;
-    flex-direction: column;
+    // flex-direction: column;
     align-items: center;
     justify-content: center;
     padding-bottom: 15px;
@@ -71,6 +71,10 @@
           border-radius: 20px;
           cursor: pointer;
           transition: background-color 0.3s ease-in-out;
+
+          &:hover {
+            scale: (1.1);
+          }
         }
 
         .all {
@@ -216,6 +220,7 @@
   border-radius: 20px;
   box-shadow: 0px 0px 30px rgba(107, 107, 107, 0.1);
   padding: 15px;
+  cursor: pointer;
 
   h3 {
     font-size: 0.85rem;
@@ -229,15 +234,27 @@
 
 .not-started-border {
   border: 1.75px solid #f72585;
+  &:hover {
+    border: 2.75px solid #f72585;
+  }
 }
 .in-progress-border {
   border: 1.75px solid #4361ee;
+  &:hover {
+    border: 2.75px solid #4361ee;
+  }
 }
 .live-border {
   border: 1.75px solid #4cc9f0;
+  &:hover {
+    border: 2.75px solid #4cc9f0;
+  }
 }
 .completed-border {
   border: 1.75px solid #480ca8;
+  &:hover {
+    border: 2.75px solid #480ca8;
+  }
 }
 
 //adding new project
@@ -375,6 +392,17 @@
         margin-right: 15px;
 
         .new-project-date-input {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 10px;
+          font-size: 1rem;
+          margin-bottom: 15px;
+          outline-color: #4cc9f0;
+          font-weight: normal;
+        }
+
+        .new-project-dropdown {
           width: 100%;
           padding: 10px;
           border: 1px solid #ccc;

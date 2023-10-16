@@ -1,0 +1,601 @@
+.bookkeeping-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 80%;
+  height: 100vh;
+  flex-grow: 1;
+  transition: margin-left 0.3s ease-in-out;
+  transition: min-width 0.3s ease-in-out;
+  margin-left: 225px;
+  margin-top: 35px;
+  margin-right: 35px;
+  overflow-y: auto;
+
+  .sort-options {
+    // width: 90px;
+    padding: 8px;
+    margin-right: 8px;
+    // border: 1px solid #ccc;
+    text-align: right;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    margin-bottom: 15px;
+    outline-color: #4cc9f0;
+    font-weight: normal;
+  }
+  .no-entries-info {
+    text-align: center;
+    color: #ccc;
+    font-size: 0.85rem;
+  }
+
+  .bookkeeping-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+    button {
+      align-items: center;
+      background-color: #4cc9f0;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 10px 15px;
+      font-size: 0.75rem;
+      width: 125px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0px 0px 5px rgba(76, 201, 240, 0.6);
+
+      &:hover {
+        background-color: #178eb3;
+        box-shadow: 0px 0px 5px rgba(23, 142, 179, 0.6);
+      }
+    }
+  }
+
+  .bookkeeping-top-container {
+    padding-bottom: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-bottom: 1px solid #e2e2e2;
+    display: flex;
+    flex-direction: column;
+
+    .Revenue {
+      &:hover {
+        border: 1.75px solid #560bad;
+        scale: 1.05;
+      }
+    }
+    .Profit {
+      &:hover {
+        border: 1.75px solid #4895ef;
+        scale: 1.05;
+      }
+    }
+    .Expense {
+      &:hover {
+        border: 1.75px solid #f72585;
+        scale: 1.05;
+      }
+    }
+    .Outstanding {
+      &:hover {
+        border: 1.75px solid #4361ee;
+        scale: 1.05;
+      }
+    }
+  }
+
+  .bookkeeping-bottom-container {
+    display: flex;
+    margin-top: 25px;
+
+    .bookkeeping-main {
+      width: 75%;
+      height: 100vh;
+
+      .bookkeeping-main-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 15px;
+
+        .bookkeeping-filters {
+          display: flex;
+          padding-bottom: 15px;
+
+          .sort-capsule {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 6px 8px;
+            width: 100px;
+            height: 28px;
+            margin-left: 8px;
+            margin-right: 8px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+
+            &:hover {
+              scale: (1.1);
+            }
+          }
+
+          .Expenses {
+            background-color: #f6d6e4;
+          }
+          .Expenses.selected {
+            color: white;
+            background-color: #f72585;
+          }
+          .All {
+            background-color: #d9f0f8;
+          }
+          .All.selected {
+            color: white;
+            background-color: #4cc9f0;
+          }
+          .Income {
+            background-color: #c9bbe0;
+          }
+          .Income.selected {
+            color: white;
+            background-color: #480ca8;
+          }
+        }
+      }
+
+      .bookkeeping-entries {
+      }
+    }
+
+    .bookkeeping-right-column {
+      width: 25%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      align-content: center;
+      border-left: 1px solid #e2e2e2;
+
+      h3 {
+        // width: 50%;
+        text-align: center;
+      }
+
+      h4 {
+        text-align: center;
+      }
+
+      .add-expense {
+        align-items: center;
+        background-color: #b5179e;
+        color: #fff;
+        border: none;
+        border-radius: 15px;
+        padding: 10px 15px;
+        font-size: 0.75rem;
+        width: 125px;
+        margin-top: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: 0px 0px 5px rgba(181, 23, 158, 0.6);
+
+        &:hover {
+          background-color: #750564;
+          box-shadow: 0px 0px 5px rgba(117, 5, 100, 0.6);
+        }
+      }
+    }
+  }
+}
+
+.collapsed-nav ~ .bookkeeping-container {
+  min-width: 75%;
+  margin-left: 90px;
+  margin-right: 20px;
+
+  .detail-container {
+    width: 93%;
+    margin-left: 80px;
+    padding-left: 10px;
+  }
+
+  .bookkeeping-bottom-container {
+    .bookkeeping-main {
+      width: 93%;
+      margin-left: 8px;
+      padding-left: 10px;
+    }
+
+    .bookkeeping-right-column {
+      width: 25%;
+    }
+  }
+}
+
+.bookkeeping-highlights {
+  display: flex;
+  justify-content: space-between;
+}
+
+.BKHighlight-container {
+  width: 225px;
+  height: 150px;
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.1);
+
+  .BKHighlight-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+}
+
+.re-container {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  height: 110px;
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.1);
+
+  .re-row-right {
+    display: flex;
+    justify-content: flex-end;
+
+    .pd6 {
+      padding: 6px;
+    }
+
+    .pause-button {
+      color: #ccc;
+      &:hover {
+        color:#4cc9f0
+      }
+    }
+    .delete-button {
+      color: #ccc;
+      &:hover {
+        color:#f72585
+      }
+    }
+  }
+
+  .mt-20 {
+    margin-top: 20px;
+  }
+
+  .re-row {
+    display: flex;
+    justify-content: space-between;
+    p {
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+
+    button {
+      align-items: center;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 7px 12px;
+      font-size: 0.70rem;
+      width: 75px;
+      margin-top: 15px;
+      margin: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+  }
+
+  .Daily {
+    color: #4cc9f0;
+  }
+
+  .Weekly {
+    color: #3f37c9;
+  }
+
+  .Monthly {
+    color: #b5179e;
+  }
+
+  .Quarterly {
+    color: #4361ee;
+  }
+
+  .Semiannually {
+    color: #f72585;
+  }
+
+  .Annually {
+    color: #560bad;
+  }
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.paused {
+  color: #ccc;
+
+  .Daily {
+    color: #c2e4ee;
+  }
+
+  .Weekly {
+    color: #9b99be;
+  }
+
+  .Monthly {
+    color: #a887a3;
+  }
+
+  .Quarterly {
+    color: #99a4d3;
+  }
+
+  .Semiannually {
+    color: #d3a3b9;
+  }
+
+  .Annually {
+    color: #9a86b0;
+  }
+}
+
+.new-bookkeeping-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .new-bookkeeping-form {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    width: 75%;
+    height: 65%;
+    border-radius: 25px;
+    // justify-content: flex-start;
+    padding-top: 20px;
+
+    .new-bookkeeping-heading {
+      display: flex;
+      justify-content: space-between;
+      h2 {
+        margin-left: 55px;
+        margin-top: 10px;
+      }
+
+      button {
+        margin-right: 55px;
+        margin-top: 10px;
+        align-items: center;
+        background-color: #b5179e;
+        color: #fff;
+        border: none;
+        border-radius: 15px;
+        padding: 10px 15px;
+        font-size: 0.75rem;
+        width: 95px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: 0px 0px 5px rgba(181, 23, 158, 0.6);
+
+        &:hover {
+          background-color: #750564;
+          box-shadow: 0px 0px 5px rgba(117, 5, 100, 0.6);
+        }
+      }
+    }
+    .new-bookkeeping-details-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      justify-items: center;
+      align-items: center;
+      align-content: center;
+
+      .new-bookkeeping-details {
+        display: flex;
+        width: 80%;
+        justify-content: space-between;
+
+        .new-bookkeeping-detail-column {
+          display: flex;
+          flex-direction: column;
+          margin-top: 15px;
+          margin-left: 15px;
+
+          .new-bookkeeping-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+
+            span {
+              display: flex;
+              justify-content: flex-end;
+              color: #ccc;
+              font-size: 0.75rem;
+              font-weight: normal;
+              margin-bottom: 15px;
+            }
+          }
+
+          .new-bookkeeping-name-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            outline-color: #4cc9f0;
+            font-weight: normal;
+          }
+
+          .new-bookkeeping-amount-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            outline-color: #4cc9f0;
+            font-weight: normal;
+          }
+
+          .new-bookkeeping-description-input {
+            width: 100%;
+            height: 142px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline-color: #4cc9f0;
+            resize: none;
+            font-weight: normal;
+          }
+        }
+
+        .left-column {
+          width: 65%;
+          margin-right: 45px;
+        }
+        .right-column {
+          width: 35%;
+          margin-right: 15px;
+        }
+      }
+
+      .new-bookkeeping-create-button {
+        display: flex;
+        justify-content: center;
+
+        button {
+          margin-right: 15px;
+          align-items: center;
+          background-color: #4361ee;
+          color: #fff;
+          border: none;
+          border-radius: 15px;
+          padding: 10px 15px;
+          font-size: 1rem;
+          width: 155px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+          box-shadow: 0px 0px 5px rgba(67, 97, 238, 0.6);
+
+          &:hover {
+            background-color: #1c38b7;
+            box-shadow: 0px 0px 5px rgba(28, 56, 183, 0.6);
+          }
+        }
+      }
+    }
+  }
+}
+
+.bookkeeping-entry-row-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 95%;
+  height: 50px;
+  margin: 12px;
+  border-radius: 10px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 20px rgba(107, 107, 107, 0.1);
+
+  &:hover {
+    border: 1.75px solid #480ca8;
+    cursor: pointer;
+  }
+
+  p {
+    font-size: 0.75rem;
+  }
+
+  .Income {
+    color: #480ca8;
+  }
+  .Expense {
+    color: #f72585;
+  }
+  .bookkeeping-entry-name {
+    margin-left: 10px;
+    width: 175px;
+  }
+
+  .bookkeeping-entry-total {
+    width: 60px;
+  }
+
+  .bookkeeping-entry-type {
+    width: 75px;
+  }
+  .bookkeeping-entry-category {
+    width: 125px;
+  }
+  .bookkeeping-entry-contact {
+    width: 120px;
+  }
+  .bookkeeping-entry-date {
+    width: 75px;
+  }
+}
+
+.bookkeeping-row-label-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 95%;
+  height: 30px;
+  margin: 10px;
+
+  p {
+    font-size: 0.75rem;
+    color: #ccc;
+  }
+
+  .bookkeeping-label-name {
+    margin-left: 10px;
+    width: 175px;
+  }
+
+  .bookkeeping-label-total {
+    width: 60px;
+  }
+
+  .bookkeeping-label-type {
+    width: 75px;
+  }
+  .bookkeeping-label-category {
+    width: 125px;
+  }
+  .bookkeeping-label-contact {
+    width: 120px;
+  }
+  .bookkeeping-label-date {
+    width: 75px;
+  }
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-import { projectStatus } from '../../../../enums/projectStatus';
+import { projectStatus } from '../../../../statuses/projectStatus';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { Project } from 'src/models/project';
@@ -9,7 +9,6 @@ import { Project } from 'src/models/project';
 interface NewProjectProps {
   setAddingProject: React.Dispatch<React.SetStateAction<boolean>>;
   addingProject: boolean;
-  projects: Project[];
   setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
   id: number | undefined;
 }
@@ -17,7 +16,6 @@ interface NewProjectProps {
 const NewProject: React.FC<NewProjectProps> = ({
   setAddingProject,
   addingProject,
-  projects,
   setProjects,
   id,
 }) => {

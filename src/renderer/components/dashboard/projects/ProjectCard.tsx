@@ -9,10 +9,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   let statusClass = '';
 
   switch (project.status) {
-    case 'NotStarted':
+    case 'Not Started':
       statusClass = 'not-started-border';
       break;
-    case 'InProgress':
+    case 'In Progress':
       statusClass = 'in-progress-border';
       break;
     case 'Live':

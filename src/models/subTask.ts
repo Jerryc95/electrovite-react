@@ -1,4 +1,4 @@
-import { completionStatus } from 'src/enums/completionStatus';
+import { completionStatus } from 'src/statuses/projectStatus';
 
 export type SubTask = {
   subTaskID: string;

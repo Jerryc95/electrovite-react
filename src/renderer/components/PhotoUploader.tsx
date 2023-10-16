@@ -17,8 +17,6 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({selectedPhoto, setSelected
 
   };
 
-
-
   return (
     <div>
       <input type='file' accept='.png, .jpeg, .jpg' onChange={handlePhotoChange} />

@@ -1,14 +1,12 @@
-import { completionStatus } from '../enums/completionStatus';
-
 export type Project = {
-  projectID: string;
-  userID: string;
+  id: number;
+  account_id: number;
   name: string;
   description: string;
   notes: string;
   creationDate: Date;
-  stateDate: Date;
+  startDate: Date;
   dueDate: Date;
-  completionStatus: completionStatus;
+  status: string;
   completed: boolean;
 };
