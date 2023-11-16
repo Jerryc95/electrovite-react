@@ -1,14 +1,14 @@
-import { completionStatus } from 'src/statuses/projectStatus';
-
-export type SubTask = {
-  subTaskID: string;
-  taskID: string;
+export type Subtask = {
+  subtask_id: string;
+  task_id: string;
   name: string;
   description: string;
   notes: string;
-  creationDate: Date;
-  stateDate: Date;
-  dueDate: Date;
-  completionStatus: completionStatus;
-  completed: boolean;
+  creation_date: Date;
+  start_date: Date;
+  due_date: Date;
+  subtask_status: string;
+  completed: Date;
+  priority: string;
+  column_index: number;
 };

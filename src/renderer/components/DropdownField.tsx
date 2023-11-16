@@ -3,13 +3,23 @@ import { useEditField } from '../../hooks/useEditField';
 import { contactStatus } from 'src/statuses/contactStatus';
 import { contractStatus } from 'src/statuses/contractStatus';
 import { proposalStatus } from 'src/statuses/proposalStatus';
+import { projectStatus } from 'src/statuses/projectStatus';
+import { taskStatus } from 'src/statuses/taskStatus';
+import { priorityStatus } from 'src/statuses/priorityStatus';
 
 interface DropdownFieldProps {
   label: string;
   field: string;
   value: string;
   id: number;
-  options: typeof contactStatus | typeof contractStatus | typeof proposalStatus | string;
+  options:
+    | typeof contactStatus
+    | typeof contractStatus
+    | typeof proposalStatus
+    | typeof projectStatus
+    | typeof taskStatus
+    | typeof priorityStatus
+    | string;
   baseURL: string;
 }
 
@@ -29,6 +39,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
     handleInputChange,
   } = useEditField(value);
 
+
   return (
     <div className='edit-field-section'>
       <p className='edit-field-label'>{label}</p>
@@ -40,11 +51,13 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             onChange={handleInputChange}
           >
             {Object.values(options).map((option, index) => (
-                <option key={index} value={option}>{option}</option>
+              <option key={index} value={option}>
+                {option}
+              </option>
             ))}
           </select>
           <button
-          className='edit-field-button'
+            className='edit-field-button'
             onClick={() => {
               handleSaveClick(id, field, baseURL);
             }}
@@ -52,7 +65,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
             Save
           </button>
           <button
-          className='edit-field-cancel-button'
+            className='edit-field-cancel-button'
             onClick={handleEditClick}
           >
             Cancel

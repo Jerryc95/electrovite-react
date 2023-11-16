@@ -6,6 +6,7 @@ export const useEditField = (initialValue: string | null) => {
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
+    setEditedValue(initialValue);
   };
 
   const handleSaveClick = async (
@@ -25,7 +26,6 @@ export const useEditField = (initialValue: string | null) => {
         },
         body: JSON.stringify(data),
       });
-      console.log(response);
       if (!response.ok) {
         throw new Error('Failed to update value');
       }
@@ -43,6 +43,7 @@ export const useEditField = (initialValue: string | null) => {
   ) => {
     setEditedValue(e.target.value);
   };
+
 
   return {
     isEditing,

@@ -6,7 +6,8 @@
   width: 200px;
   border-right: 1px solid #e2e2e2;
   color: #000;
-  background-color: #fefefe;
+  // background-color: #fefefe;
+  // background-color: rgb(248, 248, 248);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -14,6 +15,7 @@
   padding: 20px;
   transition: width 0.3s;
   z-index: 100;
+  // overflow: hidden;
 
   &.collapsed-nav {
     width: 65px;

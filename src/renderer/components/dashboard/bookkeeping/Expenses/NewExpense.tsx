@@ -78,7 +78,6 @@ const NewExpense: React.FC<NewExpenseProps> = ({
       };
       setRecurringExpenses((expense) => [...expense, newBKExpense]);
       setAddingExpense(false);
-      console.log(newBKExpense);
     } catch (error) {
       console.log(error);
     }

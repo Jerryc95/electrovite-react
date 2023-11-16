@@ -270,6 +270,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
               </h3>
             </div>
             <ProgressBar
+            height={30}
               total={parseFloat(entry.total_amount)}
               current={parseFloat(paidAmount)}
             />

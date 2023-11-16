@@ -156,7 +156,6 @@ const BKHighlight: React.FC<BKHighlightProps> = ({ highlight, entries }) => {
   return (
     <div
       className={`BKHighlight-container ${highlight}`}
-      onClick={() => console.log(total)}
     >
       <div className='BKHighlight-header'>
         <h3>{highlight}</h3>

@@ -6,12 +6,23 @@ import NewProject from '$renderer/components/dashboard/projects/NewProject';
 import ProjectDetail from '$renderer/components/dashboard/projects/ProjectDetail';
 import { Project } from '../../models/project';
 import { RootState } from '../../services/store';
+import { RecurringTask } from 'src/models/recurringTask';
 import '../styles/projects.scss';
 import '../styles/detailPage.scss';
+import NewRecurringTask from '$renderer/components/dashboard/projects/recurringTasks/NewRecurringTask';
+import RecurringTaskView from '$renderer/components/dashboard/projects/recurringTasks/RecurringTask';
+import RecurringTaskTracker from '$renderer/components/dashboard/projects/recurringTasks/RecurringTaskTracker';
+
+interface IProjectData {
+  projects: Project[];
+  recurringTasks: RecurringTask[];
+}
 
 const Projects: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [addingProject, setAddingProject] = useState(false);
+  const [addingRecurringTask, setAddingRecurringTask] = useState(false);
+  const [recurringTasks, setRecurringTasks] = useState<RecurringTask[]>([]);
   const [showingProject, setShowingProject] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project>(projects[0]);
@@ -30,16 +41,65 @@ const Projects: React.FC = () => {
     { name: 'Completed', cName: 'filter-capsule completed' },
   ];
 
+  const filteredProjects = projects.filter((project) => {
+    switch(selectedFilter) {
+      case "All": {
+        return project;
+      }
+      case "Not Started": {
+        if(project.status === "Not Started") {
+          return project;
+        }
+        break;
+      }
+      case "In Progress": {
+        if(project.status === "In Progress") {
+          return project;
+        }
+        break;
+      }
+      case "Live": {
+        if(project.status === "Live") {
+          return project;
+        }
+        break;
+      }
+      case "Completed": {
+        if(project.status === "Completed") {
+          return project;
+        }
+        break;
+      }
+    }
+  });
+
   useEffect(() => {
     if (accountState) {
       const url = `http://localhost:3000/projects?id=${accountState.account?.id}`;
       fetch(url)
         .then((response) => response.json())
-        .then((data) => {
-          setProjects(data);
+        .then(async (data: IProjectData) => {
+          await Promise.all([
+            setProjects(
+              data.projects.sort((a, b) => {
+                if (a.id < b.id) {
+                  return -1;
+                }
+                return 0;
+              }),
+            ),
+            setRecurringTasks(
+              data.recurringTasks.sort((a, b) => {
+                if (a.rt_id < b.rt_id) {
+                  return -1;
+                }
+                return 0;
+              }),
+            ),
+          ]);
         });
     }
-  }, []);
+  }, [recurringTasks]);
 
   return (
     <div className='projects-container'>
@@ -51,7 +111,18 @@ const Projects: React.FC = () => {
       </div>
       <h3>Overview</h3>
       <div className='projects-overview'>
-        <p>Details across projects will appear here once projects are added</p>
+        {projects.length === 0 || recurringTasks.length === 0 ? (
+          <p>
+            Details across projects will appear here once projects are added
+          </p>
+        ) : (
+          <div>
+            <RecurringTaskTracker
+              label='Daily Tasks Complete'
+              recurringTasks={recurringTasks}
+            />
+          </div>
+        )}
       </div>
       <div className='projects-bottom-container'>
         <div className='projects-view'>
@@ -60,7 +131,7 @@ const Projects: React.FC = () => {
               <div
                 key={filter.name}
                 onClick={() => setSelectedFilter(filter.name)}
-                className={`filter-capsule ${filter.cName} ${
+                className={` ${filter.cName} ${
                   selectedFilter === filter.name ? 'selected' : ''
                 }`}
               >
@@ -75,7 +146,7 @@ const Projects: React.FC = () => {
             </div>
           ) : (
             <div className='projects-grid'>
-              {projects.map((project) => (
+              {filteredProjects.map((project) => (
                 <div
                   key={project.id}
                   className='project-grid-item '
@@ -89,13 +160,20 @@ const Projects: React.FC = () => {
         </div>
 
         <div className='projects-task-view'>
-          <h3>Tasks</h3>
-          <div className='task-list'></div>
-          <p>
-            Add daily or weekly repetitive tasks that are part of your everyday
-            workflow.
-          </p>
-          <button>Add Task</button>
+          <h3>Recurring Tasks</h3>
+          {recurringTasks.length === 0 ? (
+            <p className='info-text'>
+              Add recurring tasks that are part of your normal workflow.
+            </p>
+          ) : (
+            <div className='task-list'>
+              {recurringTasks.map((task) => (
+                <RecurringTaskView key={task.rt_id} recurringTask={task} />
+              ))}
+            </div>
+          )}
+
+          <button onClick={() => setAddingRecurringTask(true)}>Add Task</button>
         </div>
       </div>
       {addingProject && (
@@ -111,8 +189,19 @@ const Projects: React.FC = () => {
         <ProjectDetail
           project={selectedProject}
           setShowingProject={setShowingProject}
+          accountID={accountState.account?.id}
+          setProjects={setProjects}
+          projects={projects}
         />
       )}
+      {addingRecurringTask && (
+        <NewRecurringTask
+          setAddingTask={setAddingRecurringTask}
+          accountID={accountState.account?.id}
+          setRecurringTasks={setRecurringTasks}
+        />
+      )}
+      {}
     </div>
   );
 };

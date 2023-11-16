@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
+// import dotenv from 'dotenv'
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -11,6 +12,7 @@ import store from '../services/store';
 import '$styles/app.scss';
 
 const persistedStore = persistStore(store);
+// dotenv.config();
 
 // Render application
 createRoot(document.getElementById('app') as HTMLElement).render(
@@ -22,5 +24,5 @@ createRoot(document.getElementById('app') as HTMLElement).render(
         </HashRouter>
       </PersistGate>
     </Provider>
-  </StrictMode>,
+  </StrictMode>
 );

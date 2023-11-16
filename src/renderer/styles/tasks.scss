@@ -1,0 +1,146 @@
+.task-detail-container {
+  // background-color: #fefefe;
+  background-color: rgb(251, 251, 251);
+  min-width: 85%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 400;
+  align-items: center;
+  padding-top: 30px;
+  margin-left: 225px;
+  // padding-right: 35px;
+  transition: margin-left 0.3s ease-in-out;
+  transition: min-width 0.3s ease-in-out;
+  overflow-y: auto;
+
+  .task-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+
+    .add-button {
+      margin-right: 20px;
+      margin-left: 15px;
+      align-items: center;
+      background-color: #b5179e;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 10px 15px;
+      font-size: 0.75rem;
+      width: 105px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0px 0px 5px rgba(181, 23, 158, 0.6);
+
+      &:hover {
+        background-color: #750564;
+        box-shadow: 0px 0px 5px rgba(117, 5, 100, 0.6);
+      }
+    }
+
+    .progress-bar-container {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        font-weight: bold;
+        width: 75%;
+
+        p {
+            padding-left: 20px;
+        }
+    }
+
+    .task-detail-leading {
+      display: flex;
+
+      .task-detail-back {
+        display: flex;
+        align-items: center;
+        color: #a5a5a5;
+        cursor: pointer;
+
+        &:hover {
+          color: #b5179e;
+        }
+      }
+
+      p {
+        font-size: 0.75rem;
+        padding-left: 7px;
+        padding-right: 15px;
+      }
+
+      .project-detail-trailing {
+        justify-items: center;
+        .project-detail-settings {
+          color: #a5a5a5;
+
+          &:hover {
+            color: #4895ef;
+          }
+        }
+      }
+    }
+  }
+
+  .task-detail-top-container {
+    display: flex;
+    flex-direction: column;
+    margin-right: 25px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e2e2e2;
+    width: 95%;
+  }
+
+  .task-detail-bottom-container {
+    .view-options {
+        display: flex;
+        margin-top: 8px;
+      }
+      .sort-capsule {
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 6px 8px;
+        width: 100px;
+        margin-left: 8px;
+        margin-right: 8px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+  
+        &:hover {
+          scale: (1.1);
+        }
+      }
+
+      .Board {
+        background-color: #f6d6e4;
+      }
+      .Board.selected {
+        color: white;
+        background-color: #f72585;
+      }
+
+      .List {
+        background-color: #d9f0f8;
+      }
+      .List.selected {
+        color: white;
+        background-color: #4cc9f0;
+      }
+
+      .task-detail-board {
+        margin-top: 25px;
+        p {
+          color: #ccc;
+          font-size: 0.85rem;
+        }
+      }
+  }
+}

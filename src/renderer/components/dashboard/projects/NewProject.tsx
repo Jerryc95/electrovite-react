@@ -39,7 +39,7 @@ const NewProject: React.FC<NewProjectProps> = ({
       id: id,
       description: description,
       startDate: startDate,
-      dueDate: endDate,
+      endDate: endDate,
       status: status,
       completed: false,
     };
@@ -80,7 +80,7 @@ const NewProject: React.FC<NewProjectProps> = ({
               />
             </label>
             <label className='new-project-label'>
-              Project Summary
+              Project Description
               <textarea
                 className='new-project-description-input'
                 value={description}

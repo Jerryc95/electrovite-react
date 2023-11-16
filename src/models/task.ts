@@ -1,14 +1,17 @@
-// import { status } from "src/enums/projectStatus";
+import { Subtask } from "./subTask";
 
-// export type Task = {
-//     taskID: string;
-//     projectID: string;
-//     name: string;
-//     description: string;
-//     notes: string;
-//     creationDate: Date;
-//     stateDate: Date;
-//     dueDate: Date;
-//     completionStatus: completionStatus;
-//     completed: boolean;
-// }
+export type Task = {
+    task_id: number;
+    project_id: string;
+    name: string;
+    description: string;
+    notes: string;
+    creation_date: Date;
+    start_date: Date;
+    due_date: Date;
+    task_status: string;
+    completed: Date;
+    priority: string;
+    column_index: number;
+    subTasks: Subtask[];
+}

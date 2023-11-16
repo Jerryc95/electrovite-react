@@ -47,7 +47,7 @@
 
     .contacts-upcoming-events {
       display: flex;
-     flex-direction: column;
+      flex-direction: column;
       padding-right: 20px;
       padding-left: 20px;
       width: 25%;
@@ -62,7 +62,8 @@
           margin-right: 20px;
           padding: 10px;
           border-radius: 15px;
-          background-color: #fefefe;
+          // background-color: #fefefe;
+          background-color: rgb(251, 251, 251);
           box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.1);
 
           .contact-event-header {
@@ -211,7 +212,8 @@
   height: 40px;
   margin: 10px;
   border-radius: 10px;
-  background-color: #fefefe;
+  // background-color: #fefefe;
+  background-color: rgb(251, 251, 251);
   box-shadow: 0px 0px 20px rgba(107, 107, 107, 0.1);
 
   &:hover {
@@ -388,7 +390,7 @@
 }
 
 .contact-detail-container {
-  background-color: #fff;
+  background-color: rgb(251, 251, 251);
   min-width: 83%;
   position: fixed;
   top: 0;
@@ -542,60 +544,59 @@
         background-color: #4895ef;
       }
     }
+  }
+}
+.contact-event-container {
+  width: 200px;
+  height: 125px;
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.1);
 
-    .contact-event-container {
-      width: 200px;
-      height: 125px;
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 15px;
-      background-color: #fefefe;
-      box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.1);
+  .contact-event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-      .contact-event-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
+  .contact-event-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-      .contact-event-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        .contact-event-date {
-          color: #000;
-          font-size: 0.85rem;
-        }
-
-        .contact-event-time {
-          color: #000;
-          font-size: 0.75rem;
-          font-weight: bold;
-        }
-      }
-
-      .contact-event-type {
-        font-weight: bold;
-      }
-      .Meeting {
-        color: #4895ef;
-      }
-
-      .Call {
-        color: #b5179e;
-      }
-
-      .Email {
-        color: #35046d;
-      }
-
-      .Follow-up {
-        color: #4cc9f0;
-      }
-      .Other {
-        color: #560bad;
-      }
+    .contact-event-date {
+      color: #000;
+      font-size: 0.85rem;
     }
+
+    .contact-event-time {
+      color: #000;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+  }
+
+  .contact-event-type {
+    font-weight: bold;
+  }
+  .Meeting {
+    color: #4895ef;
+  }
+
+  .Call {
+    color: #b5179e;
+  }
+
+  .Email {
+    color: #35046d;
+  }
+
+  .Follow-up {
+    color: #4cc9f0;
+  }
+  .Other {
+    color: #560bad;
   }
 }

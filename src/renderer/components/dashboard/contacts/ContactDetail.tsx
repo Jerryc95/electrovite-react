@@ -14,7 +14,7 @@ import { contactStatus } from '../../../../statuses/contactStatus';
 import { proposalStatus } from '../../../../statuses/proposalStatus';
 import { contractStatus } from '../../../../statuses/contractStatus';
 import CalendarField from '$renderer/components/CalendarField';
-import ContactBK from './componentPages/contactBK';
+import ContactBK from './componentPages/ContactBK';
 import ContactNotes from './componentPages/ContactNotes';
 
 interface ContactDetailProps {

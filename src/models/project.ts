@@ -4,9 +4,9 @@ export type Project = {
   name: string;
   description: string;
   notes: string;
-  creationDate: Date;
-  startDate: Date;
-  dueDate: Date;
+  creation_date: Date;
+  start_date: Date;
+  end_date: Date;
   status: string;
-  completed: boolean;
+  completed: Date;
 };

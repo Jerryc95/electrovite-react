@@ -1,0 +1,255 @@
+.board-container {
+  display: flex;
+  justify-content: flex-start;
+  padding-right: 100px;
+
+  .column-container {
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    // align-items: center;
+    width: 32%;
+    margin: 5px;
+    // border: 1.75px solid #480ca8;
+    // border-radius: 15px;
+
+    .column-header {
+      text-align: left;
+      // border-bottom: 1px solid #e2e2e2;
+    }
+  }
+
+  .dragged {
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.1);
+  }
+
+}
+
+.kanban-card-container {
+  display: flex;
+  flex-direction: column;
+  width: 275px;
+  height: 120px;
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.1);
+  justify-content: space-between;
+
+ 
+
+  .row {
+    display: flex;
+    align-items: center;
+  }
+
+  .space-between {
+    justify-content: space-between;
+  }
+
+  .no-tasks {
+    font-size: 0.75rem;
+    color: #909090;
+  }
+
+
+  p {
+    font-size: 0.75rem;
+  }
+
+  .task-name {
+    font-size: 0.95rem;
+  }
+
+  .task-description {
+    font-size: 0.65rem;
+  }
+
+  .task-due-date {
+    font-size: 0.75rem;
+    // font-weight: bold;
+    margin-left: 3px;
+    color: #909090;
+  }
+  .task-due-date-icon {
+    color: #909090;
+    // font-weight: bold;
+  }
+
+  .task-priority {
+    display: flex;
+    flex-direction: row-reverse;
+    font-size: 0.75rem;
+    font-weight: bold;
+    justify-content: right;
+  }
+
+  .progress-count {
+    font-size: 0.75rem;
+    color: #ccc;
+  }
+
+  .Low {
+    color: #4cc9f0;
+  }
+
+  .Medium {
+    color: #7209b7;
+  }
+
+  .High {
+    color: #f72585;
+  }
+}
+
+.hover {
+    &:hover {
+        border: 1.75px solid #3a0ca3;
+      }
+  }
+
+//////////////////////////
+///   TASK LIST   ///////
+////////////////////////
+
+.task-list-container {
+    display: flex;
+    flex-direction: column;
+   
+    width: 95%;
+    margin: 0;
+    // align-items: flex-start;
+}
+
+.task-list-item-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 95%;
+  height: 40px;
+  margin: 10px;
+//   margin-right: 25px;
+  border-radius: 10px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 20px rgba(107, 107, 107, 0.1);
+  &:hover {
+    border: 1.75px solid #480ca8;
+    cursor: pointer;
+  }
+
+  p {
+    font-size: 0.75rem;
+  }
+
+  .no-tasks {
+    font-size: 0.75rem;
+    color: #909090;
+    margin-left: 20px;
+  }
+
+
+  .task-name {
+    margin-left: 10px;
+    width: 330px;
+    font-weight: bold;
+  }
+  .task-progress {
+    width: 240px;
+  }
+  .task-priority {
+    margin-left: 40px;
+    font-weight: bold;
+    width: 145px;
+  }
+  .task-status {
+    width: 220px;
+    margin-right: 10px;
+  }
+  .task-due-date {
+    width: 120px;
+  }
+
+  .subtask-name {
+    margin-left: 10px;
+    width: 320px;
+    font-weight: bold;
+  }
+ 
+  .subtask-priority {
+    margin-left: 50px;
+    font-weight: bold;
+    width: 175px;
+  }
+  .subtask-status {
+    width: 220px;
+    margin-right: 10px;
+  }
+  .subtask-due-date {
+    width: 120px;
+  }
+
+  .Low {
+    color: #4cc9f0;
+  }
+
+  .Medium {
+    color: #7209b7;
+  }
+
+  .High {
+    color: #f72585;
+  }
+
+}
+
+.task-list-label-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 95%;
+  height: 30px;
+  margin-left: 10px;
+
+  p {
+    font-size: 0.75rem;
+    color: #ccc;
+  }
+
+  .task-name-label {
+    margin-left: 10px;
+    width: 350px;
+  }
+  .task-progress-label {
+    width: 220px;
+  }
+  .task-priority-label {
+    margin-left: 40px;
+    width: 145px;
+  }
+  .task-status-label {
+    width: 220px;
+    margin-right: 10px;
+  }
+  .task-due-date-label {
+    width: 120px;
+  }
+
+  .subtask-name-label {
+    margin-left: 10px;
+    width: 320px;
+  }
+
+  .subtask-priority-label {
+    margin-left: 50px;
+    width: 175px;
+  }
+  .subtask-status-label {
+    width: 220px;
+    margin-right: 10px;
+  }
+  .subtask-due-date-label {
+    width: 120px;
+  }
+}
