@@ -219,7 +219,7 @@ const Home: React.FC = () => {
         .then((response) => response.json())
         .then(async (data: IHomeData) => {
           await Promise.all([
-            console.log('raw Data:', data),
+            // console.log('raw Data:', data),
             data.contacts.forEach((contact) => {
               if (contact.events.length !== 0) {
                 contact.events.forEach((event) => {
@@ -303,7 +303,7 @@ const Home: React.FC = () => {
       <h3>Upcoming Tasks</h3>
       <div className='home-row'>
         {upcomingTasks.map((upcomingTask) => (
-          <div className='margin'>
+          <div className='margin' key={upcomingTask.task_id}>
             <UpcomingTaskView upcomingTask={upcomingTask} />
           </div>
         ))}

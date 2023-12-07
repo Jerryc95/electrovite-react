@@ -8,13 +8,12 @@ export const profileAPI = createApi({
 
   endpoints: (builder) => ({
     fetchProfile: builder.mutation<AccountProfile, number>({
-        query: (id) => ({
-          url: `${id}`,
-          method: 'GET',
-        }),
+      query: (id) => ({
+        url: `${id}`,
+        method: 'GET',
       }),
+    }),
   }),
-  
 });
 
 export const { useFetchProfileMutation } = profileAPI;

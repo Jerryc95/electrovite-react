@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 import { Project } from '../../../../models/project';
 import NewProjectTask from './taskViews/NewProjectTask';
@@ -81,7 +81,6 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
   };
 
   useEffect(() => {
-    
     const url = `http://localhost:3000/tasks?id=${project.id}`;
     fetch(url)
       .then((response) => response.json())
@@ -111,7 +110,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
         />,
       );
     }
-  }, [tasks, taskView]);
+  }, [tasks, taskView, project.name]);
 
   return (
     <div className='project-detail-container'>
@@ -124,14 +123,15 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
           <h2>{projectName}</h2>
         </div>
         <div className='project-detail-header-trailing'>
-          <FontAwesomeIcon
-            icon={faGear}
-            className='project-detail-settings'
-            onClick={toggleProjectEdit}
-          />
+        
           <button className='add-button' onClick={() => setAddingTask(true)}>
             Add Task
           </button>
+          <FontAwesomeIcon
+            icon={faPenToSquare}
+            className='project-detail-settings'
+            onClick={toggleProjectEdit}
+          />
         </div>
       </div>
       <div className='project-detail-top-container'>
@@ -197,10 +197,12 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
       )}
       {showingTask && (
         <TaskDetail
-          project={project}
           task={selectedTask}
           setShowingTask={setShowingTask}
           accountID={accountID}
+          setTasks={setTasks}
+          tasks={tasks}
+          projectName={projectName}
         />
       )}
       {editingProject && (

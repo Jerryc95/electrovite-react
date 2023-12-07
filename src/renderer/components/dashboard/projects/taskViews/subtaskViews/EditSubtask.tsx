@@ -2,44 +2,42 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 
 import DeleteModal from '$renderer/components/DeleteModal';
-import { Task } from 'src/models/task';
+import { Subtask } from 'src/models/subTask';
 
-interface EditTaskProps {
-  task: Task;
-  setEditingTask: React.Dispatch<React.SetStateAction<boolean>>;
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  tasks: Task[];
-  setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
-  setTaskName: React.Dispatch<React.SetStateAction<string>>;
+
+interface EditSubtaskProps {
+  subtask: Subtask;
+  setEditingSubtask: React.Dispatch<React.SetStateAction<boolean>>;
+  setSubtasks: React.Dispatch<React.SetStateAction<Subtask[]>>;
+  subtasks: Subtask[];
+  setSubtaskName: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const EditTask: React.FC<EditTaskProps> = ({
-  task,
-  setEditingTask,
-  setTasks,
-  tasks,
-  setShowingTask,
-  setTaskName,
+const EditSubtask: React.FC<EditSubtaskProps> = ({
+  subtask,
+  setEditingSubtask,
+  setSubtasks,
+  subtasks,
+  setSubtaskName,
 }) => {
-  const [name, setName] = useState(task.name);
+  const [name, setName] = useState(subtask.name);
   const [startDate, setStartDate] = useState<Date | null>();
   const [endDate, setEndDate] = useState<Date | null>();
   const [showingDeleteAlert, setShowingDeleteAlert] = useState(false);
 
-  const toggleDeleteTask = () => {
+  const toggleDeleteSubtask = () => {
     setShowingDeleteAlert(!showingDeleteAlert);
   };
 
-  const handleDeleteTask = () => {
-    const url = `http://localhost:3000/tasks/delete/${task.task_id}`;
+  const handleDeleteSubtask = () => {
+    const url = `http://localhost:3000/tasks/delete/${subtask.subtask_id}`;
     try {
       fetch(url, {
         method: 'DELETE',
       });
-      setTasks(
-        tasks.filter((t) => t.task_id != task.task_id),
+      setSubtasks(
+        subtasks.filter((st) => st.subtask_id != subtask.subtask_id),
       );
-      setShowingTask(false);
     } catch (error) {
       console.log(error);
     }
@@ -47,7 +45,7 @@ const EditTask: React.FC<EditTaskProps> = ({
   };
 
   const handleUpdateTask = async (id: number) => {
-    const url = `http://localhost:3000/tasks/update/${task.task_id}`;
+    const url = `http://localhost:3000/tasks/update/${subtask.subtask_id}`;
     const data = {
       name: name,
       startDate: startDate,
@@ -67,31 +65,31 @@ const EditTask: React.FC<EditTaskProps> = ({
     } catch (error) {
       console.log(error);
     }
-    const updatedTasks = tasks.map((t) => {
-      if (id === task.task_id) {
-        return task;
+    const updatedTasks = subtasks.map((st) => {
+      if (id === subtask.subtask_id) {
+        return subtask;
       } else {
-        return t;
+        return st;
       }
     });
-    setTaskName(name)
-    setTasks(updatedTasks);
-    setEditingTask(false);
+    setSubtaskName(name)
+    setSubtasks(updatedTasks);
+    setEditingSubtask(false);
   };
 
   useEffect(() => {
-    const currentStartDate = new Date(task.start_date);
-    const currentEndDate = new Date(task.due_date);
+    const currentStartDate = new Date(subtask.start_date);
+    const currentEndDate = new Date(subtask.due_date);
     setStartDate(currentStartDate);
     setEndDate(currentEndDate);
-  }, [task.due_date, task.start_date]);
+  }, [subtask.due_date, subtask.start_date]);
 
   return (
     <div className='edit-project-container'>
       <div className='edit-project-form'>
         <div className='edit-project-heading'>
           <h2>Edit Task</h2>
-          <button onClick={() => setEditingTask(false)}>Cancel</button>
+          <button onClick={() => setEditingSubtask(false)}>Cancel</button>
         </div>
         <div className='edit-project-details'>
           <div className='edit-project-info'>
@@ -123,22 +121,22 @@ const EditTask: React.FC<EditTaskProps> = ({
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
                   className='edit-project-date-input'
-                  startDate={task.start_date}
+                  startDate={subtask.start_date}
                   endDate={endDate}
-                  minDate={task.start_date}
+                  minDate={subtask.start_date}
                 />
               </div>
             </div>
             <div className='edit-buttons'>
               <button
                 className='button-brand-lighter-blue'
-                onClick={() => handleUpdateTask(task.task_id)}
+                onClick={() => handleUpdateTask(subtask.subtask_id)}
               >
                 Update
               </button>
               <button
                 className='button-brand-pink'
-                onClick={toggleDeleteTask}
+                onClick={toggleDeleteSubtask}
               >
                 Delete
               </button>
@@ -148,7 +146,7 @@ const EditTask: React.FC<EditTaskProps> = ({
       </div>
       {showingDeleteAlert && (
         <DeleteModal
-          onDelete={handleDeleteTask}
+          onDelete={handleDeleteSubtask}
           setShowingModal={setShowingDeleteAlert}
           item='task'
         />
@@ -157,4 +155,4 @@ const EditTask: React.FC<EditTaskProps> = ({
   );
 };
 
-export default EditTask;
+export default EditSubtask;

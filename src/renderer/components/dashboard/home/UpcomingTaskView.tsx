@@ -63,7 +63,7 @@ const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
   useEffect(() => {
     let uncompleted = 0;
     let completed = 0;
-    console.log(upcomingTask)
+    // console.log(upcomingTask)
     if (upcomingTask.subtasks) {
         
       upcomingTask.subtasks.forEach((subtask) => {

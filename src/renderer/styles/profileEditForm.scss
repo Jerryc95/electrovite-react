@@ -28,7 +28,6 @@
     .profile-edit-submit-button {
       button {
         align-items: center;
-        // background-color: #f72585;
         color: #fff;
         border: none;
         border-radius: 10px;
@@ -38,12 +37,6 @@
         width: 50%;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        // box-shadow: 0px 0px 10px rgba(247, 37, 133, 0.6);
-
-        // &:hover {
-        //   background-color: #cd1367;
-        //   box-shadow: 0px 0px 10px rgba(192, 12, 93, 0.6);
-        // }
       }
     }
   }

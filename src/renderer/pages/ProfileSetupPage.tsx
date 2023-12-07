@@ -73,7 +73,7 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
       <h2>Set up your profile</h2>
       <p className='profile-edit-form-description'>
         Please take a moment to set up your account to help streamline your
-        workflow.{' '}
+        workflow.
       </p>
       <ProfileEditForm
         type='creating'

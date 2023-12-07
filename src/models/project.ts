@@ -8,5 +8,5 @@ export type Project = {
   start_date: Date;
   end_date: Date;
   status: string;
-  completed: Date;
+  completed: boolean;
 };

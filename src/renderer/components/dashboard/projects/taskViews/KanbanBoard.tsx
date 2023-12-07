@@ -50,7 +50,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({
         }
       }
       const data = {
-        status: foundTask.task_status,
+        taskStatus: foundTask.task_status,
         columnIndex: updatedIndex,
       };
       const url = `http://localhost:3000/tasks/update/${foundTask.task_id}`;

@@ -12,6 +12,7 @@ import {
   faGear,
   faRightFromBracket,
   faCoins,
+  faCircleInfo,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../services/store';
@@ -20,7 +21,7 @@ import Projects from '$renderer/pages/Projects';
 import Contacts from '../pages/Contacts';
 import Documents from './dashboard/Documents';
 import Bookkeeping from '$renderer/pages/Bookkeeping';
-import Settings from './dashboard/Settings';
+import Settings from '../pages/Settings';
 import Avatar from './Avatar';
 import exampleAvatar from '../../../assets/Avatars/exampleAvatar.png';
 
@@ -62,7 +63,6 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
   };
 
   const handleSignOut = () => {
-    console.log('clicked');
     signOutAccount(accountState);
     navigate('/');
   };
@@ -183,7 +183,15 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
                 Sign Out
               </span>
             </li>
-
+            <li
+              onClick={() => handleSettingsClick(<Settings />, 'settings')}
+              className={`${showingSettings ? '' : 'hidden'}`}
+            >
+              <FontAwesomeIcon icon={faCircleInfo} className='navbar-li-icon' />
+              <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
+                About
+              </span>
+            </li>
             <li
               onClick={() => handleSettingsClick(<Settings />, 'settings')}
               className={`${showingSettings ? '' : 'hidden'}`}

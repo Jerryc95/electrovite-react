@@ -6,7 +6,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  z-index: 400;
+  z-index: 600;
   align-items: center;
   padding-top: 30px;
   margin-left: 225px;
@@ -14,6 +14,7 @@
   transition: margin-left 0.3s ease-in-out;
   transition: min-width 0.3s ease-in-out;
   overflow-y: auto;
+  overflow-x: hidden;
 
   .task-detail-header {
     display: flex;
@@ -74,9 +75,9 @@
         padding-right: 15px;
       }
 
-      .project-detail-trailing {
+      .task-detail-trailing {
         justify-items: center;
-        .project-detail-settings {
+        .task-detail-settings {
           color: #a5a5a5;
 
           &:hover {

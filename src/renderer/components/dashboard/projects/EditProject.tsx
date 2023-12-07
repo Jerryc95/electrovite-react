@@ -1,7 +1,7 @@
-import DeleteModal from '$renderer/components/DeleteModal';
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 
+import DeleteModal from '$renderer/components/DeleteModal';
 import { Project } from 'src/models/project';
 
 interface EditProjectProps {

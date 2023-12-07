@@ -78,6 +78,14 @@
     // font-weight: bold;
   }
 
+  .task-edit-icon {
+    color: #ccc;
+    
+    &:hover {
+      color: #4cc9f0;
+    }
+  }
+
   .task-priority {
     display: flex;
     flex-direction: row-reverse;

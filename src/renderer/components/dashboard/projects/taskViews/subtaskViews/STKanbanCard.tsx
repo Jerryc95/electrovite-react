@@ -1,28 +1,33 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { Draggable } from 'react-beautiful-dnd';
 
 import { Subtask } from 'src/models/subTask';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import EditSubtask from './EditSubtask';
 // import { taskStatus } from '../../../../../../statuses/taskStatus';
 
 interface KanbanCardProps {
   index: number;
   subtask: Subtask;
+  setSubtasks: React.Dispatch<SetStateAction<Subtask[]>>
+  subtasks: Subtask[];
 }
 
 const STKanbanCard: React.FC<KanbanCardProps> = ({
   index,
   subtask,
+  setSubtasks,
+  subtasks
 }) => {
-//   const [uncompletedSubTasks, setUncompletedSubTasks] = useState(0);
-//   const [completedSubTask, setCompletedSubTasks] = useState(0);
-//   const [totalSubTasks, setTotalSubTasks] = useState(uncompletedSubTasks + completedSubTask)
 
-//   const handleSetTask = (subtask: Subask) => {
-//     setSelectedTask(subtask);
-//     setShowingTask(true);
-//   };
+const [editingSubtask, setEditingSubtask] = useState(false)
+const [subtaskName, setSubtaskName] = useState("")
+
+const toggleEditSubtask = () => {
+  setEditingSubtask(!editingSubtask)
+}
 
   const dateParser = (date: Date) => {
     return new Date(date);
@@ -87,26 +92,31 @@ const STKanbanCard: React.FC<KanbanCardProps> = ({
                 {subtask.priority}
               </span>
             </div>
-            <div className='row'>
+            <div className='row space-between'>
+              <div className='row'>
               <FontAwesomeIcon
                 icon={faCalendar}
                 className='task-due-date-icon'
               />
               <p className='task-due-date'>{getDaysRemaining(subtask.due_date)}</p>
+              </div>
+              <FontAwesomeIcon
+                icon={faPenToSquare}
+                className='task-edit-icon'
+                onClick={toggleEditSubtask}
+              />
             </div>
           </div>
-          {/* {uncompletedSubTasks !== 0 ? (
-            <div className='row'>
-              <ProgressBar current={completedSubTask} total={totalSubTasks} height={15} />
-              <span className='progress-count'>
-                {completedSubTask}/{totalSubTasks}
-              </span>
-            </div>
-          ) : (
-            <span className='no-tasks'>No subtasks added</span>
-          )} */}
+          {editingSubtask && (
+            <EditSubtask 
+            subtask={subtask}
+            setEditingSubtask={setEditingSubtask}
+            setSubtasks={setSubtasks}
+            subtasks={subtasks}
+            setSubtaskName={setSubtaskName}
+            />
+          )}
         </div>
-        // </div>
       )}
     </Draggable>
   );

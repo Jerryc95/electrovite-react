@@ -74,6 +74,8 @@ export const accountSlice = createSlice({
       (state) => {
         state.loading = initialState.loading;
         state.account = initialState.account;
+        state.accountProfile = initialState.accountProfile
+        state.error = initialState.error
       },
     );
 

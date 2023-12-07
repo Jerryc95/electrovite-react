@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 import { Subscription } from '../../models/subscription';
 
@@ -19,7 +19,7 @@ const SubscriptionSelector: React.FC<SubscriptionSelectorProps> = ({
   planType,
 }) => {
   // const [createSubscriber] = useCreateSubscribedAccountMutation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   let colorClass = '';
   let buttonColorClass = '';
