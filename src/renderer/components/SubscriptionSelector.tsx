@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 
 import { Subscription } from '../../models/subscription';
@@ -8,18 +8,23 @@ import '../styles/subSelector.scss';
 interface SubscriptionSelectorProps {
   setSubscription: React.Dispatch<React.SetStateAction<Subscription | null>>;
   setCreationStep: React.Dispatch<React.SetStateAction<number>>;
+  setCustomer: React.Dispatch<React.SetStateAction<string>>;
   subscription: Subscription;
   planType: string;
+  email: string;
 }
 
 const SubscriptionSelector: React.FC<SubscriptionSelectorProps> = ({
   setSubscription,
   setCreationStep,
+  setCustomer,
   subscription,
   planType,
+  email,
 }) => {
   // const [createSubscriber] = useCreateSubscribedAccountMutation();
   // const navigate = useNavigate();
+
 
   let colorClass = '';
   let buttonColorClass = '';
@@ -57,12 +62,27 @@ const SubscriptionSelector: React.FC<SubscriptionSelectorProps> = ({
       billing_cycle = '';
   }
 
-  const handlePlanSelection = () => {
-    setSubscription(subscription)
+  const handlePlanSelection = async () => {
+    setSubscription(subscription);
     if (planType == 'free' && subscription !== null) {
       setCreationStep(3);
     } else {
-      setCreationStep(2);
+      try {
+        const response = await fetch('http://localhost:3000/payment/create-customer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+                email: email,
+              }),
+        })
+        const responseData = await response.json()
+        setCustomer(responseData.data)
+        setCreationStep(2);
+      } catch (error) {
+        console.log(error)
+      }
     }
   };
 

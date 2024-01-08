@@ -7,6 +7,7 @@ import { HashRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import persistStore from 'redux-persist/es/persistStore';
+// import {StripeProvider} from 'react-stripe-elements';
 
 import App from '$components/App';
 import store from '../services/store';
@@ -15,6 +16,7 @@ import '$styles/app.scss';
 
 const persistedStore = persistStore(store);
 // dotenv.config();
+
 
 // Render application
 createRoot(document.getElementById('app') as HTMLElement).render(
@@ -26,5 +28,5 @@ createRoot(document.getElementById('app') as HTMLElement).render(
         </HashRouter>
       </PersistGate>
     </Provider>
-  </StrictMode>
+  </StrictMode>,
 );

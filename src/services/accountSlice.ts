@@ -8,10 +8,14 @@ import { authAPI } from './authAPI';
 import { profileAPI } from './profileAPI';
 import { AccountProfile } from 'src/models/accountProfile';
 import { Account } from 'src/models/account';
+import { Subscription } from 'src/models/subscription';
+import { StripeSubscription } from 'src/models/stripeSubscription';
 
 interface accountState {
   account: Account | null;
   accountProfile: AccountProfile | null;
+  // subscription: Subscription | null
+  // stripeSubscription: StripeSubscription | null;
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
 }
@@ -19,6 +23,8 @@ interface accountState {
 const initialState: accountState = {
   account: null,
   accountProfile: null,
+  // subscription: null,
+  // stripeSubscription: null,
   loading: 'idle',
   error: null,
 };

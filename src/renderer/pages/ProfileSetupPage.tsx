@@ -14,6 +14,7 @@ interface Subscription {
   price: number;
   billing_cycle: string;
   features: string[];
+  stripe_price_id: string;
 }
 
 interface ProfileSetupPageProps {
@@ -42,10 +43,6 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
     company: string | null;
     role: string | null;
   }) => {
-    console.log('form:', formData);
-    console.log('email', email);
-    console.log('password:', password);
-    console.log('subscription:', subscription);
     registerAccount({
       profile: formData,
       email: email,
@@ -53,14 +50,12 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
       subscription: subscription,
     }).then(() => {
       signInAccount({ email: email, password: password }).then(() => {
-        
         navigate('/creating-account');
       });
     });
   };
 
   const handleBackClick = () => {
-    console.log('clicked');
     if (subscription?.id !== 1) {
       setCreationStep(2);
     } else {

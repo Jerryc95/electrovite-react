@@ -15,6 +15,7 @@ const defaultSubscription: Subscription = {
   price: 0,
   billing_cycle: '',
   features: [],
+  stripe_price_id: "",
 };
 
 const SignUpPage: React.FC = () => {
@@ -23,8 +24,8 @@ const SignUpPage: React.FC = () => {
   const [subscription, setSubscription] = useState<Subscription | null>(
     defaultSubscription,
   );
-
   const [creationStep, setCreationStep] = useState(0);
+  const [customer, setCustomer] = useState("")
 
   const handleSignUp = async (formData: {
     email: string;
@@ -32,10 +33,7 @@ const SignUpPage: React.FC = () => {
   }) => {
     setEmail(formData.email);
     setPassword(formData.password);
-    // do a fetch to see if the email exists if not than set creation step to 1
-    // else give email arleady taken alert
     setCreationStep(1);
-
     // registerUser(formData).then((data) => {
     //   if (data) {
     //     navigate('/setup/plans');
@@ -48,20 +46,27 @@ const SignUpPage: React.FC = () => {
   const renderComponent = () => {
     switch (creationStep) {
       case 0:
-        return <AuthForm type='signup' onSubmit={handleSignUp} />;
+        return (
+          <AuthForm
+            type='signup'
+            onSubmit={handleSignUp}
+          />
+        );
       case 1:
         return (
           <SubscriptionSelectorPage
             setSubscription={setSubscription}
             setCreationStep={setCreationStep}
+            email={email}
+            setCustomer={setCustomer}
           />
         );
       case 2:
-        // this page needs work once i get stripe.js set up
         return (
           <SubPlanPaymentPage
-            setCreationStep={setCreationStep}
-            subscription={subscription}
+          setCreationStep={setCreationStep}
+          subscription={subscription}
+          customer={customer}
           />
         );
       case 3:

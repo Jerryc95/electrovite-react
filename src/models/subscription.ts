@@ -5,4 +5,5 @@ export type Subscription = {
   price: number;
   billing_cycle: string;
   features: string[];
+  stripe_price_id: string;
 };

@@ -1,55 +1,212 @@
 import React, { useState, useEffect } from 'react';
-import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import {
+  useStripe,
+  useElements,
+  PaymentElement,
+  AddressElement,
+} from '@stripe/react-stripe-js';
 
-export default function StripePaymentForm() {
-  const [success, setSuccess] = useState(false);
+import '../../styles/components/StripePaymentForm.scss';
+import { StripeAddressElementOptions } from '@stripe/stripe-js';
+import { contactStatus } from 'src/statuses/contactStatus';
 
+interface Subscription {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  billing_cycle: string;
+  features: string[];
+  stripe_price_id: string;
+}
+
+interface StripePaymentFormProps {
+  setCreationStep: React.Dispatch<React.SetStateAction<number>>;
+  subscription: Subscription | null;
+  customer: string;
+}
+
+export default function StripePaymentForm({
+  setCreationStep,
+  subscription,
+  customer,
+}: StripePaymentFormProps): JSX.Element {
+  const [isLoading, setisLoading] = useState(false);
+  // const [clientSecret, setClientSecret] = useState('');
   const stripe = useStripe();
   const elements = useElements();
 
-  const handleSubcribe = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleBackClick = () => {
+    const url = `http://localhost:3000/payment/delete-customer/${customer.toString()}`;
+    try {
+      fetch(url, {
+        method: 'DELETE',
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    setCreationStep(1);
+  };
+
+  const handleSubcribe = async () => {
+    // event.preventDefault();
 
     if (!stripe || !elements) {
-      console.log('stripe:', stripe, 'elements:', elements);
+      return;
+    }
+    const addressElement = elements.getElement('address');
+    if (!addressElement) {
       return;
     }
 
-    console.log('stripe:', stripe, 'elements:', elements);
+    const { complete, value } = await addressElement.getValue();
 
-    const cardElement = elements.getElement(CardElement);
-    if (!cardElement) {
+    if (!complete) {
+      // set an alert message here
       return;
     }
 
-    const { paymentMethod, error } = await stripe.createPaymentMethod({
-      type: 'card',
-      card: cardElement,
-      billing_details: {
-        name: 'John Doe',
-      },
-    });
+    try {
+      const addressResponse = await fetch(
+        'http://localhost:3000/payment/update-customer',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            customer: customer.toString(),
+            name: value.name,
+            address: value.address,
+          }),
+        },
+      );
+      const addressData = await addressResponse.json();
+      console.log(addressData);
+    } catch (error) {
+      console.log(error);
+    }
 
-    //   Handle the result or error.
-    if (error) {
-      console.error('error:', error);
-    } else {
-      console.log(paymentMethod);
+    setisLoading(true);
+    try {
+      if (subscription) {
+        const subscribeResponse = await fetch(
+          'http://localhost:3000/payment/create-subscription',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              customer: customer.toString(),
+              priceID: subscription.stripe_price_id.toString(),
+            }),
+          },
+        );
+
+        const subResponseData = await subscribeResponse.json();
+
+        elements.submit();
+
+        const confirmIntent =
+        subResponseData.type === 'setup'
+            ? stripe.confirmSetup
+            : stripe.confirmPayment;
+
+        const { error } = await confirmIntent({
+          elements: elements,
+          clientSecret: subResponseData.clientSecret,
+          confirmParams: {
+            return_url: 'http://localhost:5173/creating-account',
+          },
+          redirect: 'if_required',
+        });
+
+        if (error) {
+          console.log(error);
+        } else {
+          // Your customer is redirected to your `return_url`. For some payment
+          // methods like iDEAL, your customer is redirected to an intermediate
+          // site first to authorize the payment, then redirected to the `return_url`.
+        }
+        setCreationStep(3);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
+  const addressOptions: StripeAddressElementOptions = {
+    mode: 'billing',
+  };
 
   return (
     <div className='payment-form-container'>
-      <form onSubmit={handleSubcribe}>
+      <h1>Billing Details</h1>
+      <form id='payment-form'>
         <div className='row'>
-          <CardElement />
+          <div className='form-section'>
+            <h2>Plan Summary</h2>
+            <h3>Plan: {subscription?.name}</h3>
+            <h3>
+              Price: {subscription?.price}/{subscription?.billing_cycle}
+            </h3>
+            <ul>
+              {subscription?.features.map((feature) => (
+                <li key={feature}>{feature}</li>
+              ))}
+            </ul>
+          </div>
+          <div className='form-section'>
+            <h2>Billing Address</h2>
+            <AddressElement options={addressOptions} />
+          </div>
+          <div className='form-section'>
+            <h2>Payment Method</h2>
+            <PaymentElement />
+          </div>
         </div>
-        <button>Subscribe</button>
+        <div className='row'>
+          <button
+            className='button-brand-dark-purple'
+            onClick={handleBackClick}
+          >
+            Back
+          </button>
+          <button
+            className='button-brand-pink'
+            disabled={isLoading || !stripe || !elements}
+            onClick={handleSubcribe}
+          >
+            Subscribe
+          </button>
+        </div>
       </form>
+      <p className='payment-disclaimer'>
+        Every plan comes with a 7-day free trial. Explore our features and see
+        how FlowPlanr can benefit you. After the trial, you'll be automatically
+        charged based on your selected plan.
+      </p>
+      <p className='payment-disclaimer'>
+        All payments on this platform are securely processed and handled by our
+        trusted payment partner, Stripe. Stripe is a secure and widely-used
+        online payment processing service that ensures the confidentiality and
+        integrity of your payment information. We do not store any sensitive
+        payment details on our servers. Your transactions are encrypted and
+        protected by industry-standard security measures. By making a payment,
+        you acknowledge that your transaction will be processed through Stripe's
+        secure payment gateway.
+      </p>
+      <p className='payment-disclaimer'>
+        Stripe collects and processes personal data, including identifying
+        information about the devices that connect to its services. Stripe uses
+        this information to operate and improve the services it provides to us,
+        including for fraud detection and prevention. You can learn more about
+        Stripe and its processing activities via privacy policy at
+        https://stripe.com/privacy.
+      </p>
     </div>
   );
 }
-
 
 // export default StripePaymentForm;

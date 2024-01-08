@@ -1,0 +1,54 @@
+.payment-form-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 80%;
+  height: 100vh;
+
+  #payment-form {
+    display: flex;
+    flex-direction: column;
+    margin: 25px;
+    align-items: center;
+
+    .row {
+      display: flex;
+      justify-content: space-evenly;
+      
+      .form-section {
+        margin: 25px;
+        padding: 25px;
+
+        h2 {
+            padding-bottom: 20px;
+        }
+        h3 {
+            padding-bottom: 5px;
+        }
+        li {
+            font-size: 0.9rem;
+            padding-bottom: 5px;
+        }
+      }
+    }
+    button {
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin: 15px;
+    font-size: 1rem;
+    width: 225px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    }
+  }
+
+  .payment-disclaimer {
+    font-size: 0.75rem;
+    text-align: center;
+    padding: 5px 185px;
+    color: #909090;
+}
+
+}
+

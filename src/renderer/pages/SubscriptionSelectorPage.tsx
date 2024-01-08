@@ -10,16 +10,21 @@ interface Subscription {
   price: number;
   billing_cycle: string;
   features: string[];
+  stripe_price_id: string;
 }
 
 interface SubscriptionSelectorPageProps {
   setSubscription: React.Dispatch<React.SetStateAction<Subscription | null>>;
   setCreationStep: React.Dispatch<React.SetStateAction<number>>;
+  setCustomer: React.Dispatch<React.SetStateAction<string>>;
+  email: string,
 }
 
 const SubscriptionSelectorPage: React.FC<SubscriptionSelectorPageProps> = ({
   setSubscription,
   setCreationStep,
+  setCustomer,
+  email,
 }) => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [isMonthly, setIsMonthly] = useState(true);
@@ -78,6 +83,8 @@ const SubscriptionSelectorPage: React.FC<SubscriptionSelectorPageProps> = ({
                 planType={subscription.id == 1 ? 'free' : 'premium'}
                 setSubscription={setSubscription}
                 setCreationStep={setCreationStep}
+                setCustomer={setCustomer}
+                email={email}
               />
             </li>
           ))}
