@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   useStripe,
   useElements,
@@ -8,7 +8,7 @@ import {
 
 import '../../styles/components/StripePaymentForm.scss';
 import { StripeAddressElementOptions } from '@stripe/stripe-js';
-import { contactStatus } from 'src/statuses/contactStatus';
+import { StripeSubscription } from 'src/models/stripeSubscription';
 
 interface Subscription {
   id: number;
@@ -24,12 +24,16 @@ interface StripePaymentFormProps {
   setCreationStep: React.Dispatch<React.SetStateAction<number>>;
   subscription: Subscription | null;
   customer: string;
+  setStripeSubscription: React.Dispatch<
+    React.SetStateAction<StripeSubscription | null>
+  >;
 }
 
 export default function StripePaymentForm({
   setCreationStep,
   subscription,
   customer,
+  setStripeSubscription,
 }: StripePaymentFormProps): JSX.Element {
   const [isLoading, setisLoading] = useState(false);
   // const [clientSecret, setClientSecret] = useState('');
@@ -82,7 +86,6 @@ export default function StripePaymentForm({
         },
       );
       const addressData = await addressResponse.json();
-      console.log(addressData);
     } catch (error) {
       console.log(error);
     }
@@ -106,10 +109,27 @@ export default function StripePaymentForm({
 
         const subResponseData = await subscribeResponse.json();
 
+        console.log(subResponseData)
+
+        const newSubscription: StripeSubscription = {
+          id: subResponseData.subscription.id,
+          customer: subResponseData.subscription.customer,
+          start_date: subResponseData.subscription.start_date,
+          current_period_end: subResponseData.subscription.current_period_end,
+          current_period_start: subResponseData.subscription.current_period_start,
+          trial_end: subResponseData.subscription.trial_end,
+          cancel_at: subResponseData.subscription.cancel_at,
+          cancel_at_period_end: subResponseData.subscription.cancel_at_period_end,
+          canceled_at: subResponseData.subscription.canceled_at,
+          status: subResponseData.subscription.status,
+        };
+
+        console.log(newSubscription)
+        setStripeSubscription(newSubscription);
         elements.submit();
 
         const confirmIntent =
-        subResponseData.type === 'setup'
+          subResponseData.type === 'setup'
             ? stripe.confirmSetup
             : stripe.confirmPayment;
 
@@ -205,6 +225,11 @@ export default function StripePaymentForm({
         Stripe and its processing activities via privacy policy at
         https://stripe.com/privacy.
       </p>
+      {isLoading && (
+         <div className='spinner-dimmed-container'>
+         <div className='spinner'></div>
+       </div>
+      )}
     </div>
   );
 }

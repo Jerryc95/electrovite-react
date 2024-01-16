@@ -6,6 +6,7 @@ import {
   useSignInAccountMutation,
 } from '../../services/authAPI';
 import ProfileEditForm from '$renderer/components/ProfileEditForm';
+import { StripeSubscription } from 'src/models/stripeSubscription';
 
 interface Subscription {
   id: number;
@@ -22,6 +23,7 @@ interface ProfileSetupPageProps {
   email: string;
   password: string;
   subscription: Subscription | null;
+  stripeSubscription: StripeSubscription | null;
 }
 
 const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
@@ -29,6 +31,7 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
   password,
   setCreationStep,
   subscription,
+  stripeSubscription,
 }) => {
   const [registerAccount] = useRegisterAccountMutation();
   const [signInAccount] = useSignInAccountMutation();
@@ -48,6 +51,7 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
       email: email,
       password: password,
       subscription: subscription,
+      stripeSubscription: stripeSubscription
     }).then(() => {
       signInAccount({ email: email, password: password }).then(() => {
         navigate('/creating-account');

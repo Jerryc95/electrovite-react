@@ -62,6 +62,7 @@
 
     h5 {
       padding-top: 10px;
+      padding-bottom: 5px;
       margin-left: 5px;
 
       span {
@@ -118,20 +119,29 @@
       transition: background-color 0.3s ease;
     }
 
+    .feature-highlights {
+      justify-content: space-between;
+      justify-items: flex-start;
+      align-items: center;
+    }
+
     .settings-section-row {
       display: flex;
       margin-left: 15px;
       margin-bottom: 10px;
+      flex-wrap: wrap;
+      text-align: left;
+
       .plan-highlight {
         color: #888;
-    }
+      }
       p {
         padding: 0;
         color: #000;
 
         .check-icon {
-            color: #4895ef;
-            margin-right: 5px;
+          color: #4895ef;
+          margin-right: 5px;
         }
       }
       .settings-section-column {
@@ -145,12 +155,12 @@
     }
 
     .margin-top {
-        margin-top: 20px;
+      margin-top: 15px;
     }
 
     .space-between {
-        justify-content: space-evenly;
-        justify-items: flex-start;
+      justify-content: space-evenly;
+      justify-items: flex-start;
     }
 
     .settings-section-header {
@@ -214,15 +224,15 @@
         font-size: 0.85rem;
 
         .edit-settings-long-input {
-            flex: 1;
-            width: 200%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            margin-bottom: 15px;
-            outline-color: #f72585;
-            font-weight: normal;
+          flex: 1;
+          width: 200%;
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 10px;
+          font-size: 0.85rem;
+          margin-bottom: 15px;
+          outline-color: #f72585;
+          font-weight: normal;
         }
 
         .edit-settings-input {
@@ -387,3 +397,174 @@
     }
   }
 }
+
+.invoices-container {
+  text-align: center;
+}
+
+.invoice-row-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 95%;
+  height: 40px;
+  margin: 10px;
+  border-radius: 10px;
+  // background-color: #fefefe;
+  background-color: rgb(251, 251, 251);
+  box-shadow: 0px 0px 20px rgba(107, 107, 107, 0.1);
+  text-align: left;
+
+  p {
+    color: #000 !important;
+    font-size: 0.75rem;
+  }
+
+  .invoice-description {
+    width: 375px;
+  }
+
+  .invoice-amount {
+    width: 120px;
+  }
+
+  .invoice-start {
+    width: 165px;
+  }
+
+  .invoice-end {
+    width: 220px;
+  }
+
+  .download-button {
+    width: 50px;
+
+    &:hover {
+      color: #f72585;
+    }
+  }
+}
+
+.invoice-row-label-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 95%;
+  height: 30px;
+  margin: 10px;
+  text-align: left;
+
+  p {
+    font-size: 0.75rem;
+    color: #ccc;
+    // padding: 0 !important;
+  }
+
+  .invoice-description {
+    width: 365px;
+  }
+
+  .invoice-amount {
+    width: 120px;
+  }
+
+  .invoice-start {
+    width: 170px;
+  }
+
+  .invoice-end {
+    width: 170px;
+  }
+
+  .download-button {
+    width: 100px;
+  }
+}
+
+.subscription-update-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+
+  .close-button {
+    margin-right: 55px;
+    margin-top: 10px;
+    align-items: center;
+    color: #fff;
+    border: none;
+    border-radius: 15px;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    width: 95px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .cancel-sub {
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin: 15px;
+    font-size: 1rem;
+    width: 200px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .subscription-columns-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    width: 85%;
+    height: 95%;
+    border-radius: 25px;
+    // justify-content: center;
+    padding-top: 20px;
+
+    .sub-selector-heading {
+      display: flex;
+      justify-content: space-between;
+
+      h2, h3 {
+        margin-left: 55px;
+        margin-top: 10px;
+      }
+    }
+
+  }
+  .subscription-cancel-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    width: 35%;
+    height: 60%;
+    border-radius: 25px;
+    padding-top: 20px;
+    
+    
+    .cancel-sub-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-items: center;
+
+       P {
+        text-align: center;
+        margin: 15px 50px 50px 50px;
+        font-size: 0.85rem;
+        color: #888;
+       }
+    }
+  }
+}
+
+

@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { Subscription } from 'src/models/subscription';
-import type { SubscribedAccount } from 'src/models/subscribedAccount';
+import type { SubscriptionInfo } from 'src/models/subscriptionInfo';
 
 export const subscriptionAPI = createApi({
   reducerPath: 'subscriptionAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'hpp://localhost:/3000/subscription' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/subscription' }),
 
   endpoints: (builder) => ({
     fetchSubscriptions: builder.mutation<Subscription, object>({
@@ -15,17 +15,24 @@ export const subscriptionAPI = createApi({
       }),
     }),
 
-    createSubscribedAccount: builder.mutation<SubscribedAccount, object>({
-      query: (subscribedAccount) => ({
+    createSubscriptionInfo: builder.mutation<SubscriptionInfo, object>({
+      query: (subscriptionInfo) => ({
         url: '/account/add',
         method: 'POST',
-        body: subscribedAccount,
+        body: subscriptionInfo,
+      }),
+    }),
+
+    fetchSubscriptionInfo: builder.mutation<SubscriptionInfo, number>({
+      query: (id) => ({
+        url: `/account/${id}`,
+        method: 'GET'
       }),
     }),
   }),
 });
 
 export const {
-  useFetchSubscriptionsMutation,
-  useCreateSubscribedAccountMutation,
+  useFetchSubscriptionInfoMutation,
+  useCreateSubscriptionInfoMutation,
 } = subscriptionAPI;

@@ -9,5 +9,4 @@ export type StripeSubscription = {
   cancel_at_period_end: boolean,
   canceled_at: number | null,
   status: string;
-
 };

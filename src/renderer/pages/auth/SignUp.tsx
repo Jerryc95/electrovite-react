@@ -7,6 +7,7 @@ import SubscriptionSelectorPage from '../SubscriptionSelectorPage';
 import ProfileSetupPage from '../ProfileSetupPage';
 import SubPlanPaymentPage from '../SubPlanPaymentPage';
 import { Subscription } from 'src/models/subscription';
+import { StripeSubscription } from 'src/models/stripeSubscription';
 
 const defaultSubscription: Subscription = {
   id: 1,
@@ -15,7 +16,7 @@ const defaultSubscription: Subscription = {
   price: 0,
   billing_cycle: '',
   features: [],
-  stripe_price_id: "",
+  stripe_price_id: '',
 };
 
 const SignUpPage: React.FC = () => {
@@ -25,7 +26,9 @@ const SignUpPage: React.FC = () => {
     defaultSubscription,
   );
   const [creationStep, setCreationStep] = useState(0);
-  const [customer, setCustomer] = useState("")
+  const [customer, setCustomer] = useState('');
+  const [stripeSubscription, setStripeSubscription] =
+    useState<StripeSubscription | null>(null);
 
   const handleSignUp = async (formData: {
     email: string;
@@ -46,12 +49,7 @@ const SignUpPage: React.FC = () => {
   const renderComponent = () => {
     switch (creationStep) {
       case 0:
-        return (
-          <AuthForm
-            type='signup'
-            onSubmit={handleSignUp}
-          />
-        );
+        return <AuthForm type='signup' onSubmit={handleSignUp} />;
       case 1:
         return (
           <SubscriptionSelectorPage
@@ -64,9 +62,10 @@ const SignUpPage: React.FC = () => {
       case 2:
         return (
           <SubPlanPaymentPage
-          setCreationStep={setCreationStep}
-          subscription={subscription}
-          customer={customer}
+            setCreationStep={setCreationStep}
+            setStripeSubscription={setStripeSubscription}
+            subscription={subscription}
+            customer={customer}
           />
         );
       case 3:
@@ -76,6 +75,7 @@ const SignUpPage: React.FC = () => {
             password={password}
             setCreationStep={setCreationStep}
             subscription={subscription}
+            stripeSubscription={stripeSubscription}
           />
         );
     }

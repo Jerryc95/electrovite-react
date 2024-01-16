@@ -21,12 +21,14 @@ const SettingsDeleteAccount: React.FC = () => {
           <h4>Delete Account</h4>
         </div>
         <p>
-          Please be advised that deleting your account is a permanent action,
-          and once completed, the process cannot be undone. All associated data,
-          including projects, contacts, bookkeeping and all other information
-          and content, will be irreversibly removed from our system. Ensure you
-          have carefully considered this decision, as there is no way to recover
-          your account or its contents once the deletion is confirmed.{' '}
+          Deleting your account is a permanent action, and once completed, all
+          associated data, including projects, contacts, and other information,
+          will be irreversibly removed from our system. However, to prevent
+          accidental deletions, we offer a 30-day recovery period. During this
+          time, you can sign in to regain access to your account. After the
+          30-day period, the deletion will be irreversible, so please consider
+          this decision carefully. Once the recovery period elapses, there will
+          be no way to retrieve your account or its contents.{' '}
         </p>
         <button
           className='button-brand-pink delete'
@@ -39,7 +41,9 @@ const SettingsDeleteAccount: React.FC = () => {
         <div className='delete-account-container'>
           <div className='delete-account-form'>
             <h4>Deleting Account...</h4>
-            <span>Please enter and confirm your password to delete your account.</span>
+            <span>
+              Please enter and confirm your password to delete your account.
+            </span>
             <label className='delete-account-label'>
               Password
               <input
@@ -63,8 +67,18 @@ const SettingsDeleteAccount: React.FC = () => {
               />
             </label>
             <div className='button-row'>
-              <button className='button-brand-blue' onClick={toggleDeleteAccount}>Cancel</button>
-              <button className='button-brand-pink' onClick={toggleDeleteAccount}>Delete</button>
+              <button
+                className='button-brand-blue'
+                onClick={toggleDeleteAccount}
+              >
+                Cancel
+              </button>
+              <button
+                className='button-brand-pink'
+                onClick={toggleDeleteAccount}
+              >
+                Delete
+              </button>
             </div>
             <p>Deleting your account is permanent and irreversible.</p>
           </div>

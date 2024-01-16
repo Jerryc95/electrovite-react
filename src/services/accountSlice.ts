@@ -7,15 +7,14 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { authAPI } from './authAPI';
 import { profileAPI } from './profileAPI';
 import { AccountProfile } from 'src/models/accountProfile';
+import { subscriptionAPI } from './subscriptionAPI';
 import { Account } from 'src/models/account';
-import { Subscription } from 'src/models/subscription';
-import { StripeSubscription } from 'src/models/stripeSubscription';
+import { SubscriptionInfo } from 'src/models/subscriptionInfo';
 
 interface accountState {
   account: Account | null;
   accountProfile: AccountProfile | null;
-  // subscription: Subscription | null
-  // stripeSubscription: StripeSubscription | null;
+  subscriptionInfo: SubscriptionInfo | null;
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
 }
@@ -23,8 +22,7 @@ interface accountState {
 const initialState: accountState = {
   account: null,
   accountProfile: null,
-  // subscription: null,
-  // stripeSubscription: null,
+  subscriptionInfo: null,
   loading: 'idle',
   error: null,
 };
@@ -80,8 +78,8 @@ export const accountSlice = createSlice({
       (state) => {
         state.loading = initialState.loading;
         state.account = initialState.account;
-        state.accountProfile = initialState.accountProfile
-        state.error = initialState.error
+        state.accountProfile = initialState.accountProfile;
+        state.error = initialState.error;
       },
     );
 
@@ -96,8 +94,23 @@ export const accountSlice = createSlice({
     builder.addMatcher(
       profileAPI.endpoints.fetchProfile.matchFulfilled,
       (state, action: PayloadAction<AccountProfile>) => {
-        state.loading = "fulfilled";
+        state.loading = 'fulfilled';
         state.accountProfile = action.payload;
+      },
+    );
+
+    //SUBSCRIPTION API
+    builder.addMatcher(
+      subscriptionAPI.endpoints.fetchSubscriptionInfo.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
+    builder.addMatcher(
+      subscriptionAPI.endpoints.fetchSubscriptionInfo.matchFulfilled,
+      (state, action: PayloadAction<SubscriptionInfo>) => {
+        state.loading = 'fulfilled';
+        state.subscriptionInfo = action.payload;
       },
     );
   },
