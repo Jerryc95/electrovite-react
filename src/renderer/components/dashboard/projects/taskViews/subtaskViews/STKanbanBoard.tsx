@@ -3,6 +3,7 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { StrictModeDroppable } from '../../../../../../StrictModeDroppable';
 
 import { Subtask } from 'src/models/subTask';
+import { Task } from 'src/models/task';
 
 // import KanbanCard from './kanbanCard';
 import { taskStatus } from '../../../../../../statuses/taskStatus';
@@ -10,12 +11,17 @@ import STKanbanCard from './STKanbanCard';
 
 interface KanbanProps {
   subtasks: Subtask[];
+  task: Task;
   setSubtasks: React.Dispatch<React.SetStateAction<Subtask[]>>;
-  //   setSelectedSubtask: React.Dispatch<React.SetStateAction<Subtask>>;
-  //   setShowingSubtask: React.Dispatch<React.SetStateAction<boolean>>;
+  // setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
-const STKanbanBoard: React.FC<KanbanProps> = ({ subtasks, setSubtasks }) => {
+const STKanbanBoard: React.FC<KanbanProps> = ({
+  subtasks,
+  task,
+  setSubtasks,
+  // setTasks,
+}) => {
   const [notStartedSubtasks, setNotStartedSubtasks] =
     useState<Subtask[]>(subtasks);
   const [inProgSubtasks, setInProgSubtasks] = useState<Subtask[]>([]);
@@ -171,16 +177,9 @@ const STKanbanBoard: React.FC<KanbanProps> = ({ subtasks, setSubtasks }) => {
                     subtask={subtask}
                     setSubtasks={setSubtasks}
                     subtasks={subtasks}
+                    // setTasks={setTasks}
+                    // task={task}
                   />
-                  //   <KanbanCard
-                  //     index={index}
-                  //     task={task}
-                  //     tasks={notStartedSubtasks}
-                  //     // setTasks={setNotStartedTasks}
-                  //     setSelectedTask={setSelectedSubtask}
-                  //     setShowingTask={setShowingSubtask}
-                  //     key={task.task_id}
-                  //   />
                 ))}
               {provided.placeholder}
             </div>
@@ -202,20 +201,13 @@ const STKanbanBoard: React.FC<KanbanProps> = ({ subtasks, setSubtasks }) => {
                   return 0;
                 })
                 .map((subtask, index) => (
-                  //   <KanbanCard
-                  //     index={index}
-                  //     task={task}
-                  //     tasks={inProgSubtasks}
-                  //     // setTasks={setInProgTasks}
-                  //     setSelectedTask={setSelectedSubtask}
-                  //     setShowingTask={setShowingSubtask}
-                  //     key={task.task_id}
-                  //   />
                   <STKanbanCard
                     index={index}
                     subtask={subtask}
                     setSubtasks={setSubtasks}
                     subtasks={subtasks}
+                    // setTasks={setTasks}
+                    // task={task}
                   />
                 ))}
 
@@ -239,20 +231,13 @@ const STKanbanBoard: React.FC<KanbanProps> = ({ subtasks, setSubtasks }) => {
                   return 0;
                 })
                 .map((subtask, index) => (
-                  //   <KanbanCard
-                  //     index={index}
-                  //     task={task}
-                  //     tasks={completedSubtasks}
-                  //     // setTasks={setCompletedTasks}
-                  //     setSelectedTask={setSelectedTask}
-                  //     setShowingTask={setShowingSubtask}
-                  //     key={task.task_id}
-                  //   />
                   <STKanbanCard
                     index={index}
                     subtask={subtask}
                     setSubtasks={setSubtasks}
                     subtasks={subtasks}
+                    // setTasks={setTasks}
+                    // task={task}
                   />
                 ))}
               {provided.placeholder}

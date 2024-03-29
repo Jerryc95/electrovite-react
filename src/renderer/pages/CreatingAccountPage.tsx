@@ -19,9 +19,13 @@ const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
 
   useEffect(() => {
     if (accountState.account) {
+      console.log("1")
       fetchProfile(accountState.account.id).then(() => {
+        console.log("2")
         if (accountState.account) {
+          console.log("3")
           fetchSubscriptionInfo(accountState.account.id).then(() => {
+            console.log("4")
             navigate('/dashboard');
           });
         }

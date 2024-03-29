@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateSubscription } from '../../../services/subscriptionSlice';
 import {
   useStripe,
   useElements,
@@ -7,8 +9,10 @@ import {
 } from '@stripe/react-stripe-js';
 
 import '../../styles/components/StripePaymentForm.scss';
+import { RootState } from '../../../services/store';
 import { StripeAddressElementOptions } from '@stripe/stripe-js';
 import { StripeSubscription } from 'src/models/stripeSubscription';
+import { SubscriptionState } from '@reduxjs/toolkit/dist/query/core/apiState';
 
 interface Subscription {
   id: number;
@@ -21,10 +25,13 @@ interface Subscription {
 }
 
 interface StripePaymentFormProps {
-  setCreationStep: React.Dispatch<React.SetStateAction<number>>;
+  setCreationStep?: React.Dispatch<React.SetStateAction<number>>;
+  setIsUpdatingPlan?: React.Dispatch<React.SetStateAction<boolean>>;
+  setViewingPlans?: React.Dispatch<React.SetStateAction<boolean>>;
+  setSuccessfullySubscribedAlert?: React.Dispatch<React.SetStateAction<boolean>>;
   subscription: Subscription | null;
   customer: string;
-  setStripeSubscription: React.Dispatch<
+  setStripeSubscription?: React.Dispatch<
     React.SetStateAction<StripeSubscription | null>
   >;
 }
@@ -34,27 +41,37 @@ export default function StripePaymentForm({
   subscription,
   customer,
   setStripeSubscription,
+  setIsUpdatingPlan,
+  setViewingPlans,
+  setSuccessfullySubscribedAlert,
 }: StripePaymentFormProps): JSX.Element {
   const [isLoading, setisLoading] = useState(false);
-  // const [clientSecret, setClientSecret] = useState('');
   const stripe = useStripe();
   const elements = useElements();
+  const dispatch = useDispatch();
+  const subscriptionState = useSelector(
+    (state: RootState) => state.subscriptionReducer,
+  );
+  const accountState = useSelector((state: RootState) => state.accountReducer);
 
   const handleBackClick = () => {
-    const url = `http://localhost:3000/payment/delete-customer/${customer.toString()}`;
-    try {
-      fetch(url, {
-        method: 'DELETE',
-      });
-    } catch (error) {
-      console.log(error);
+    if (setCreationStep) {
+      const url = `http://localhost:3000/payment/delete-customer/${customer.toString()}`;
+      try {
+        fetch(url, {
+          method: 'DELETE',
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      setCreationStep(1);
+    } else if (setIsUpdatingPlan) {
+      setIsUpdatingPlan(false);
     }
-    setCreationStep(1);
   };
 
   const handleSubcribe = async () => {
     // event.preventDefault();
-
     if (!stripe || !elements) {
       return;
     }
@@ -64,7 +81,6 @@ export default function StripePaymentForm({
     }
 
     const { complete, value } = await addressElement.getValue();
-
     if (!complete) {
       // set an alert message here
       return;
@@ -109,23 +125,56 @@ export default function StripePaymentForm({
 
         const subResponseData = await subscribeResponse.json();
 
-        console.log(subResponseData)
+        console.log(subResponseData);
 
         const newSubscription: StripeSubscription = {
           id: subResponseData.subscription.id,
           customer: subResponseData.subscription.customer,
           start_date: subResponseData.subscription.start_date,
           current_period_end: subResponseData.subscription.current_period_end,
-          current_period_start: subResponseData.subscription.current_period_start,
+          current_period_start:
+            subResponseData.subscription.current_period_start,
           trial_end: subResponseData.subscription.trial_end,
           cancel_at: subResponseData.subscription.cancel_at,
-          cancel_at_period_end: subResponseData.subscription.cancel_at_period_end,
+          cancel_at_period_end:
+            subResponseData.subscription.cancel_at_period_end,
           canceled_at: subResponseData.subscription.canceled_at,
           status: subResponseData.subscription.status,
+          default_payment_method: subResponseData.subscription.default_payment_method,
         };
 
-        console.log(newSubscription)
-        setStripeSubscription(newSubscription);
+        console.log(newSubscription);
+        if (setStripeSubscription) {
+          setStripeSubscription(newSubscription);
+        } else {
+          const updatedSubscription = {
+            subscription: subscription,
+            stripeSubscription: newSubscription,
+            loading: subscriptionState.loading,
+            error: subscriptionState.error,
+          };
+          dispatch(updateSubscription(updatedSubscription));
+          try {
+            const response = await fetch("http://localhost:3000/subscription/update/account", {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                accountID: accountState.account?.id,
+                subscriptionID: subscription.id,
+                stripeSubID: newSubscription.id,
+              }),
+            });
+            if (!response.ok) {
+              throw new Error('Failed to update project');
+            }
+          } catch (error) {
+            console.log(error);
+          }
+
+        }
+      
         elements.submit();
 
         const confirmIntent =
@@ -149,7 +198,14 @@ export default function StripePaymentForm({
           // methods like iDEAL, your customer is redirected to an intermediate
           // site first to authorize the payment, then redirected to the `return_url`.
         }
-        setCreationStep(3);
+        if (setCreationStep) {
+          setCreationStep(3);
+        } else if(setIsUpdatingPlan && setSuccessfullySubscribedAlert && setViewingPlans) {
+          setViewingPlans(false)
+          setIsUpdatingPlan(false)
+          setSuccessfullySubscribedAlert(true)
+        }
+
       }
     } catch (error) {
       console.log(error);
@@ -186,6 +242,7 @@ export default function StripePaymentForm({
             <PaymentElement />
           </div>
         </div>
+
         <div className='row'>
           <button
             className='button-brand-dark-purple'
@@ -226,9 +283,9 @@ export default function StripePaymentForm({
         https://stripe.com/privacy.
       </p>
       {isLoading && (
-         <div className='spinner-dimmed-container'>
-         <div className='spinner'></div>
-       </div>
+        <div className='spinner-dimmed-container'>
+          <div className='spinner'></div>
+        </div>
       )}
     </div>
   );

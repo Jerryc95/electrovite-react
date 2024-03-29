@@ -54,7 +54,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
         <div className='input-row'>
           <select className='dropdown-input' onChange={handleChange}>
             {data.map((item) => (
-              <option>
+              <option key={item.id}>
                 {item.first_name} {item.last_name}
               </option>
             ))}

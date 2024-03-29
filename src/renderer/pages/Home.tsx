@@ -15,11 +15,14 @@ import {
 import { RootState } from '../../services/store';
 
 import '../styles/Home.scss';
+import { paseDate } from '../../helpers/ParseDate';
 import { ContactEvent } from 'src/models/contactEvent';
 import { BKEntry } from 'src/models/BKEntry';
 import { Contact } from 'src/models/contact';
 import UpcomingEventView from '$renderer/components/dashboard/contacts/events/UpcomingEventView';
 import UpcomingTaskView from '$renderer/components/dashboard/home/UpcomingTaskView';
+import NewClientsBox from '$renderer/components/dashboard/home/NewClientsBox';
+import InvoiceInfoBox from '$renderer/components/dashboard/home/InvoiceInfoBox';
 // import { taskStatus } from 'src/statuses/taskStatus';
 // import { Subtask } from 'src/models/subTask';
 
@@ -29,9 +32,9 @@ interface UpcomingEvent {
 }
 
 interface ISubtask {
-    subtask_id: number;
-    task_id: number;
-    subtask_status: string;
+  subtask_id: number;
+  task_id: number;
+  subtask_status: string;
 }
 
 interface UpcomingTask {
@@ -65,24 +68,21 @@ interface IRevenueChartData {
 
 const Home: React.FC = () => {
   const accountState = useSelector((state: RootState) => state.accountReducer);
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [timeOfDay, setTimeOfDay] = useState('Morning');
   const [timeIcon, setTimeIcon] = useState(faSun);
   const [upcomingTasks, setUpcomingTasks] = useState<UpcomingTask[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
   const [revenueEntries, setRevenueEntries] = useState<IRevenueChartData[]>([]);
-//   const [uncompletedSubtasks, setUncompletedSubtasks] = useState(0);
-//   const [completedSubtasks, setCompletedSubtasks] = useState(0);
-//   const [totalSubtasks, setTotalSubtasks] = useState(uncompletedSubtasks + completedSubtasks);
+  //   const [uncompletedSubtasks, setUncompletedSubtasks] = useState(0);
+  //   const [completedSubtasks, setCompletedSubtasks] = useState(0);
+  //   const [totalSubtasks, setTotalSubtasks] = useState(uncompletedSubtasks + completedSubtasks);
 
   const today = new Date();
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-  };
-
-  const dateParser = (date: Date) => {
-    return new Date(date);
   };
 
   const timeDifference = (date: Date) => {
@@ -92,16 +92,16 @@ const Home: React.FC = () => {
   };
 
   const YAxisFormatter = (amount: number) => {
-    if(amount > 1000000000){
-        return '$'+ (amount/1000000000).toString() + 'B';
-      }else if(amount > 1000000){
-        return '$'+ (amount/1000000).toString() + 'M';
-      }else if(amount > 1000){
-        return '$'+ (amount/1000).toString() + 'K';
-      }else{
-        return '$'+ amount.toString();
-      }
-  }
+    if (amount > 1000000000) {
+      return '$' + (amount / 1000000000).toString() + 'B';
+    } else if (amount > 1000000) {
+      return '$' + (amount / 1000000).toString() + 'M';
+    } else if (amount > 1000) {
+      return '$' + (amount / 1000).toString() + 'K';
+    } else {
+      return '$' + amount.toString();
+    }
+  };
 
   const handleSetRevenueEntries = (entries: BKEntry[], daysAgo: number) => {
     const historicEntries: IRevenueEntryData[] = [];
@@ -153,8 +153,8 @@ const Home: React.FC = () => {
       const entryDay = new Date(entry.date);
       for (let i = 0; entries.length > i; i++) {
         if (
-          dateParser(entries[i].entry_date).getDate() === entryDay.getDate() &&
-          dateParser(entries[i].entry_date).getMonth() === entryDay.getMonth()
+          paseDate(entries[i].entry_date).getDate() === entryDay.getDate() &&
+          paseDate(entries[i].entry_date).getMonth() === entryDay.getMonth()
         ) {
           entry.amount = parseFloat(entries[i].total_amount);
           previousHistoricRevenue += entry.amount;
@@ -179,11 +179,11 @@ const Home: React.FC = () => {
       const entryDay = new Date(entry.date);
       for (let i = 0; entries.length > i; i++) {
         if (
-          dateParser(entries[i].entry_date).getDate() === entryDay.getDate() &&
-          dateParser(entries[i].entry_date).getMonth() === entryDay.getMonth()
+          paseDate(entries[i].entry_date).getDate() === entryDay.getDate() &&
+          paseDate(entries[i].entry_date).getMonth() === entryDay.getMonth()
         ) {
-        entry.amount = parseFloat(entries[i].total_amount);
-        previousRecentRevenue += entry.amount
+          entry.amount = parseFloat(entries[i].total_amount);
+          previousRecentRevenue += entry.amount;
         } else {
           entry.amount = previousRecentRevenue;
         }
@@ -212,18 +212,19 @@ const Home: React.FC = () => {
       const url = `http://localhost:3000/home?id=${accountState.account?.id}`;
       const upcomingEventsArray: UpcomingEvent[] = [];
       const upcomingTasksArray: UpcomingTask[] = [];
-    //   let uncompleted = 0
-    //   let completed = 0
+      //   let uncompleted = 0
+      //   let completed = 0
 
       fetch(url)
         .then((response) => response.json())
         .then(async (data: IHomeData) => {
           await Promise.all([
             // console.log('raw Data:', data),
+            setContacts(data.contacts),
             data.contacts.forEach((contact) => {
               if (contact.events.length !== 0) {
                 contact.events.forEach((event) => {
-                  if (dateParser(event.event_date) > today) {
+                  if (paseDate(event.event_date) > today) {
                     const upcomingEvent: UpcomingEvent = {
                       contact: contact,
                       event: event,
@@ -236,8 +237,8 @@ const Home: React.FC = () => {
             setUpcomingEvents(
               upcomingEventsArray
                 .sort((a, b) => {
-                  const dateA = dateParser(a.event.event_date);
-                  const dateB = dateParser(b.event.event_date);
+                  const dateA = paseDate(a.event.event_date);
+                  const dateB = paseDate(b.event.event_date);
                   if (dateA.getTime() < dateB.getTime()) {
                     return -1;
                   }
@@ -246,31 +247,30 @@ const Home: React.FC = () => {
                   }
                   return 0;
                 })
-                .slice(0, 4),
+                .slice(0, 3),
             ),
-               
+
             data.upcomingTasks.forEach((upcomingTask) => {
               const daysRemaining = Math.ceil(
                 timeDifference(upcomingTask.due_date) / (1000 * 60 * 60 * 24),
               );
               if (daysRemaining < 7) {
                 upcomingTasksArray.push(upcomingTask);
-            //     upcomingTask.subtasks.forEach((subtask) => {
-            //         if (subtask.subtask_status === taskStatus.Completed) {
-            //             completed += 1;
-            //           } else {
-            //             uncompleted += 1;
-            //           }
-            //     })
+                //     upcomingTask.subtasks.forEach((subtask) => {
+                //         if (subtask.subtask_status === taskStatus.Completed) {
+                //             completed += 1;
+                //           } else {
+                //             uncompleted += 1;
+                //           }
+                //     })
               }
               setUpcomingTasks(upcomingTasksArray.slice(0, 3));
-            //   setUncompletedSubtasks(uncompleted)
-            //   setCompletedSubtasks(completed)
+              //   setUncompletedSubtasks(uncompleted)
+              //   setCompletedSubtasks(completed)
             }),
             handleSetRevenueEntries(data.revenue, 60),
           ]);
         });
-
     }
     const currentHour = today.getHours();
 
@@ -319,39 +319,10 @@ const Home: React.FC = () => {
       <h3>Finances</h3>
       <div className='home-row'>
         <div className='home-col'>
-          <div className='client-overview-container'>
-            <div className='home-row'>
-              <div className='home-col'>
-                <h4>New Clients</h4>
-                <h3>12</h3>
-              </div>
-              <div className='home-col'>
-                <p>+15%</p>
-              </div>
-            </div>
-          </div>
-          <div className='client-overview-container'>
-            <div className='home-row'>
-              <div className='home-col'>
-                <h4>Invoices Overdue</h4>
-                <h3>3</h3>
-              </div>
-              <div className='home-col'>
-                <p>-8%</p>
-              </div>
-            </div>
-          </div>
-          <div className='client-overview-container'>
-            <div className='home-row'>
-              <div className='home-col'>
-                <h4>Invoices Paid</h4>
-                <h3>7</h3>
-              </div>
-              <div className='home-col'>
-                <p>0%</p>
-              </div>
-            </div>
-          </div>
+          <NewClientsBox contacts={contacts} />
+          <InvoiceInfoBox label='Overdue Invoices' invoices={[]} />
+          <InvoiceInfoBox label='Paid Invoices' invoices={[]} />
+          <InvoiceInfoBox label='Recurring Expenses' invoices={[]} />
         </div>
         <div
           className='revenue-chart-container'
@@ -378,7 +349,7 @@ const Home: React.FC = () => {
                 allowDuplicatedCategory={false}
                 interval={6}
               />
-              <YAxis tickFormatter={YAxisFormatter}/>
+              <YAxis tickFormatter={YAxisFormatter} />
               <Tooltip />
               <Legend />
               {revenueEntries.map((entries) => (

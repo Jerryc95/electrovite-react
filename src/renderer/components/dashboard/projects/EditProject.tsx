@@ -1,81 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 
+import {
+  useUpdateProjectMutation,
+  useRemoveProjectMutation,
+} from '../../../../services/projectAPI';
 import DeleteModal from '$renderer/components/DeleteModal';
 import { Project } from 'src/models/project';
 
 interface EditProjectProps {
   project: Project;
   setEditingProject: React.Dispatch<React.SetStateAction<boolean>>;
-  setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
-  projects: Project[];
   setShowingProject: React.Dispatch<React.SetStateAction<boolean>>;
-  setProjectName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const EditProject: React.FC<EditProjectProps> = ({
   project,
   setEditingProject,
-  setProjects,
-  projects,
   setShowingProject,
-  setProjectName,
 }) => {
   const [name, setName] = useState(project.name);
   const [startDate, setStartDate] = useState<Date | null>();
   const [endDate, setEndDate] = useState<Date | null>();
   const [showingDeleteAlert, setShowingDeleteAlert] = useState(false);
 
+  const [removeProject] = useRemoveProjectMutation();
+  const [updateProject] = useUpdateProjectMutation();
+
   const toggleDeleteProject = () => {
     setShowingDeleteAlert(!showingDeleteAlert);
   };
 
   const handleDeleteProject = () => {
-    const url = `http://localhost:3000/projects/delete/${project.id}`;
-    try {
-      fetch(url, {
-        method: 'DELETE',
-      });
-      setProjects(
-        projects.filter((p) => p.id != project.id),
-      );
-      setShowingProject(false);
-    } catch (error) {
-      console.log(error);
-    }
+    removeProject(project.id)
+    setShowingProject(false)
     setShowingDeleteAlert(false);
   };
 
   const handleUpdateProject = async () => {
-    const url = `http://localhost:3000/projects/update/${project.id}`;
     const data = {
+      id: project.id,
       name: name,
       startDate: startDate,
       endDate: endDate,
     };
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update project');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    const updatedProjects = projects.map((p, i) => {
-      if (i === project.id) {
-        return project;
-      } else {
-        return p;
-      }
-    });
-    setProjectName(name)
-    setProjects(updatedProjects);
+    updateProject(data);
     setEditingProject(false);
   };
 

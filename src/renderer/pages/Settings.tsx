@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faLock, faFileInvoiceDollar, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+  faUser,
+  faLock,
+  faFileInvoiceDollar,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../services/store';
+import { useFetchPaymentMethodMutation } from '../../services/paymentAPI';
+import usePagePicker from '../../hooks/usePagePicker';
 import SettingsProfile from '$renderer/components/settings/SettingsProfile';
 import SettingsSecurity from '$renderer/components/settings/SettingsSecurity';
 import SettingsBilling from '$renderer/components/settings/SettingsBilling';
@@ -12,14 +19,35 @@ import SettingsDeleteAccount from '$renderer/components/settings/SettingsDeleteA
 import '../styles/settings.scss';
 
 const Settings: React.FC = () => {
-  const accountState = useSelector((state: RootState) => state.accountReducer);
-  const [page, setPage] = useState(<SettingsProfile />);
-  const [activeSettingsItem, setActiveSettingsItem] = useState('profile');
+  const { page, toggleComponent, activeMenuItem } = usePagePicker(
+    <SettingsProfile />,
+    'profile',
+  );
+  const subscriptionState = useSelector(
+    (state: RootState) => state.subscriptionReducer,
+  );
+  const paymentMethodState = useSelector(
+    (state: RootState) => state.paymentReducer,
+  );
 
-  const toggleComponent = (component: JSX.Element, menuItem: string) => {
-    setPage(component);
-    setActiveSettingsItem(menuItem);
-  };
+  const [fetchPaymentMethod] = useFetchPaymentMethodMutation();
+
+  useEffect(() => {
+    if (
+      subscriptionState.stripeSubscription &&
+      paymentMethodState.payment == null
+    ) {
+      const customerInfo = {
+        customer: subscriptionState.stripeSubscription.customer,
+        id: subscriptionState.stripeSubscription.default_payment_method,
+      };
+      fetchPaymentMethod(customerInfo);
+    }
+  }, [
+    fetchPaymentMethod,
+    paymentMethodState.payment,
+    subscriptionState.stripeSubscription,
+  ]);
 
   return (
     <div className='settings-container'>
@@ -30,30 +58,30 @@ const Settings: React.FC = () => {
       <ul className='settings-navbar'>
         <li
           onClick={() => toggleComponent(<SettingsProfile />, 'profile')}
-          className={`${activeSettingsItem == 'profile' ? 'active' : ''}`}
+          className={`${activeMenuItem == 'profile' ? 'active' : ''}`}
         >
           <FontAwesomeIcon icon={faUser} className='li-icon' />
           <span>Profile</span>
         </li>
         <li
           onClick={() => toggleComponent(<SettingsSecurity />, 'security')}
-          className={`${activeSettingsItem == 'security' ? 'active' : ''}`}
+          className={`${activeMenuItem == 'security' ? 'active' : ''}`}
         >
-            <FontAwesomeIcon icon={faLock} className='li-icon' />
+          <FontAwesomeIcon icon={faLock} className='li-icon' />
           <span>Security</span>
         </li>
         <li
           onClick={() => toggleComponent(<SettingsBilling />, 'billing')}
-          className={`${activeSettingsItem == 'billing' ? 'active' : ''}`}
+          className={`${activeMenuItem == 'billing' ? 'active' : ''}`}
         >
-            <FontAwesomeIcon icon={faFileInvoiceDollar} className='li-icon' />
+          <FontAwesomeIcon icon={faFileInvoiceDollar} className='li-icon' />
           <span>Billing & Plan</span>
         </li>
         <li
           onClick={() => toggleComponent(<SettingsDeleteAccount />, 'delete')}
-          className={`${activeSettingsItem == 'delete' ? 'active' : ''}`}
+          className={`${activeMenuItem == 'delete' ? 'active' : ''}`}
         >
-            <FontAwesomeIcon icon={faTrash} className='li-icon' />
+          <FontAwesomeIcon icon={faTrash} className='li-icon' />
           <span>Delete Account</span>
         </li>
       </ul>

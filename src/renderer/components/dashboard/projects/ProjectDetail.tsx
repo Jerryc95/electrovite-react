@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import {
+  faChevronLeft,
+  faPenToSquare,
+} from '@fortawesome/free-solid-svg-icons';
+
+import { clearTaskState, selectedTasks } from '../../../../services/taskSlice';
+import { useFetchTasksQuery } from '../../../../services/taskAPI';
 
 import { Project } from '../../../../models/project';
 import NewProjectTask from './taskViews/NewProjectTask';
@@ -18,34 +25,30 @@ interface ProjectDetailProps {
   project: Project;
   setShowingProject: React.Dispatch<React.SetStateAction<boolean>>;
   accountID: number | undefined;
-  setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
-  projects: Project[];
 }
 
 const ProjectDetail: React.FC<ProjectDetailProps> = ({
   project,
   setShowingProject,
   accountID,
-  setProjects,
-  projects,
 }) => {
+  const tasks = useSelector(selectedTasks);
   const [addingTask, setAddingTask] = useState(false);
   const [showingTask, setShowingTask] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task>(tasks[0]);
   const [taskView, setTaskView] = useState('Board');
   const [editingProject, setEditingProject] = useState(false);
-  const [projectName, setProjectName] = useState("")
 
   const viewOptions = ['Board', 'List'];
   const [componentView, setComponentView] = useState<JSX.Element>(
     <KanbanBoard
       tasks={tasks}
-      setTasks={setTasks}
       setSelectedTask={setSelectedTask}
       setShowingTask={setShowingTask}
     />,
   );
+  // clearTaskState();
+  const fetchTasks = useFetchTasksQuery(project.id);
 
   const toggleProject = () => {
     setShowingProject(false);
@@ -55,62 +58,37 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
     setEditingProject(!editingProject);
   };
 
-  const toggleView = (view: string) => {
-    setTaskView(view);
-    switch (view) {
-      case 'Board':
-        setComponentView(
-          <KanbanBoard
-            tasks={tasks}
-            setTasks={setTasks}
-            setSelectedTask={setSelectedTask}
-            setShowingTask={setShowingTask}
-          />,
-        );
-        break;
-      case 'List':
-        setComponentView(
-          <TaskList
-            tasks={tasks}
-            setTasks={setTasks}
-            setSelectedTask={setSelectedTask}
-            setShowingTask={setShowingTask}
-          />,
-        );
-    }
-  };
+  const toggleView = useCallback(
+    (view: string) => {
+      setTaskView(view);
+      switch (view) {
+        case 'Board':
+          setComponentView(
+            <KanbanBoard
+              tasks={tasks}
+              setSelectedTask={setSelectedTask}
+              setShowingTask={setShowingTask}
+            />,
+          );
+          break;
+        case 'List':
+          setComponentView(
+            <TaskList
+              tasks={tasks}
+              setSelectedTask={setSelectedTask}
+              setShowingTask={setShowingTask}
+            />,
+          );
+      }
+    },
+    [tasks],
+  );
 
   useEffect(() => {
-    const url = `http://localhost:3000/tasks?id=${project.id}`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        setTasks(data);
-      });
-  }, [project]);
-
-  useEffect(() => {
-    setProjectName(project.name)
-    if (taskView === 'Board') {
-      setComponentView(
-        <KanbanBoard
-          tasks={tasks}
-          setTasks={setTasks}
-          setSelectedTask={setSelectedTask}
-          setShowingTask={setShowingTask}
-        />,
-      );
-    } else {
-      setComponentView(
-        <TaskList
-          tasks={tasks}
-          setTasks={setTasks}
-          setSelectedTask={setSelectedTask}
-          setShowingTask={setShowingTask}
-        />,
-      );
-    }
-  }, [tasks, taskView, project.name]);
+    clearTaskState();
+    fetchTasks;
+    toggleView('Board');
+  }, [fetchTasks, toggleView]);
 
   return (
     <div className='project-detail-container'>
@@ -120,10 +98,9 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
             <FontAwesomeIcon icon={faChevronLeft} />
             <p>Projects</p>
           </div>
-          <h2>{projectName}</h2>
+          <h2>{project.name}</h2>
         </div>
         <div className='project-detail-header-trailing'>
-        
           <button className='add-button' onClick={() => setAddingTask(true)}>
             Add Task
           </button>
@@ -178,7 +155,11 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
           ))}
         </div>
 
-        <div className='project-detail-board'>
+        <div
+          className={
+            taskView == 'Board' ? `project-detail-board` : 'project-detail-list'
+          }
+        >
           {tasks.length === 0 ? (
             <p>Tasks will appear here once added.</p>
           ) : (
@@ -191,7 +172,6 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
           setAddingTask={setAddingTask}
           accountID={project.account_id}
           projectID={project.id}
-          setTasks={setTasks}
           tasks={tasks}
         />
       )}
@@ -200,19 +180,15 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
           task={selectedTask}
           setShowingTask={setShowingTask}
           accountID={accountID}
-          setTasks={setTasks}
-          tasks={tasks}
-          projectName={projectName}
+          // tasks={tasks}
+          project={project}
         />
       )}
       {editingProject && (
         <EditProject
           project={project}
           setEditingProject={setEditingProject}
-          setProjects={setProjects}
-          projects={projects}
           setShowingProject={setShowingProject}
-          setProjectName={setProjectName}
         />
       )}
     </div>

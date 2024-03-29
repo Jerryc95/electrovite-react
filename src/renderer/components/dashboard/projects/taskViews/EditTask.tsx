@@ -7,8 +7,6 @@ import { Task } from 'src/models/task';
 interface EditTaskProps {
   task: Task;
   setEditingTask: React.Dispatch<React.SetStateAction<boolean>>;
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  tasks: Task[];
   setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
   setTaskName: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -16,8 +14,6 @@ interface EditTaskProps {
 const EditTask: React.FC<EditTaskProps> = ({
   task,
   setEditingTask,
-  setTasks,
-  tasks,
   setShowingTask,
   setTaskName,
 }) => {
@@ -31,22 +27,22 @@ const EditTask: React.FC<EditTaskProps> = ({
   };
 
   const handleDeleteTask = () => {
-    const url = `http://localhost:3000/tasks/delete/${task.task_id}`;
-    try {
-      fetch(url, {
-        method: 'DELETE',
-      });
-      setTasks(
-        tasks.filter((t) => t.task_id != task.task_id),
-      );
-      setShowingTask(false);
-    } catch (error) {
-      console.log(error);
-    }
-    setShowingDeleteAlert(false);
+    // const url = `http://localhost:3000/tasks/delete/${task.task_id}`;
+    // try {
+    //   fetch(url, {
+    //     method: 'DELETE',
+    //   });
+    //   setTasks(
+    //     tasks.filter((t) => t.task_id != task.task_id),
+    //   );
+    //   setShowingTask(false);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+    // setShowingDeleteAlert(false);
   };
 
-  const handleUpdateTask = async (id: number) => {
+  const handleUpdateTask = async () => {
     const url = `http://localhost:3000/tasks/update/${task.task_id}`;
     const data = {
       name: name,
@@ -67,15 +63,15 @@ const EditTask: React.FC<EditTaskProps> = ({
     } catch (error) {
       console.log(error);
     }
-    const updatedTasks = tasks.map((t) => {
-      if (id === task.task_id) {
-        return task;
-      } else {
-        return t;
-      }
-    });
+    // const updatedTasks = tasks.map((t, i) => {
+    //   if (i === task.task_id) {
+    //     return task;
+    //   } else {
+    //     return t;
+    //   }
+    // });
     setTaskName(name)
-    setTasks(updatedTasks);
+    // setTasks(updatedTasks);
     setEditingTask(false);
   };
 
@@ -132,7 +128,7 @@ const EditTask: React.FC<EditTaskProps> = ({
             <div className='edit-buttons'>
               <button
                 className='button-brand-lighter-blue'
-                onClick={() => handleUpdateTask(task.task_id)}
+                onClick={() => handleUpdateTask()}
               >
                 Update
               </button>

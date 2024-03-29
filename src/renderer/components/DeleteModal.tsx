@@ -27,11 +27,11 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       <div className='modal-content'>
         <h3>{`Are you sure you want to delete this ${item}?`}</h3>
         <div className='button-row'>
-          <button className='button-brand-pink' onClick={handleDelete}>
-            Delete
-          </button>
           <button className='button-brand-dark-blue' onClick={handleCancel}>
             Cancel
+          </button>
+          <button className='button-brand-pink' onClick={handleDelete}>
+            Delete
           </button>
         </div>
       </div>

@@ -29,6 +29,41 @@ export const authAPI = createApi({
         body: account,
       }),
     }),
+
+    deleteAccount: builder.mutation<Account, object>({
+      query: (account) => ({
+        url: '/delete',
+        method: 'PATCH',
+        body: account,
+      }),
+    }),
+
+    updateEmail: builder.mutation<
+      Account,
+      { id: number | undefined; email: string }
+    >({
+      query: (account) => ({
+        url: `/update/email/${account.id}`,
+        method: 'PUT',
+        body: account,
+      }),
+    }),
+
+    updatePassword: builder.mutation<
+      object,
+      {
+        id: number | undefined;
+        email: string| undefined;
+        password: string;
+        newPassword: string;
+      }
+    >({
+      query: (arg) => ({
+        url: `/update/password/${arg.id}`,
+        method: 'PUT',
+        body: arg,
+      }),
+    }),
   }),
 });
 
@@ -36,4 +71,7 @@ export const {
   useRegisterAccountMutation,
   useSignInAccountMutation,
   useSignOutAccountMutation,
+  useDeleteAccountMutation,
+  useUpdateEmailMutation,
+  useUpdatePasswordMutation,
 } = authAPI;

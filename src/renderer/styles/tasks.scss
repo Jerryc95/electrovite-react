@@ -1,5 +1,4 @@
 .task-detail-container {
-  // background-color: #fefefe;
   background-color: rgb(251, 251, 251);
   min-width: 85%;
   position: fixed;
@@ -10,7 +9,6 @@
   align-items: center;
   padding-top: 30px;
   margin-left: 225px;
-  // padding-right: 35px;
   transition: margin-left 0.3s ease-in-out;
   transition: min-width 0.3s ease-in-out;
   overflow-y: auto;
@@ -44,15 +42,15 @@
     }
 
     .progress-bar-container {
-        display: flex;
-        flex-direction: column;
-        text-align: left;
-        font-weight: bold;
-        width: 75%;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      font-weight: bold;
+      width: 75%;
 
-        p {
-            padding-left: 20px;
-        }
+      p {
+        padding-left: 20px;
+      }
     }
 
     .task-detail-leading {
@@ -74,15 +72,14 @@
         padding-left: 7px;
         padding-right: 15px;
       }
+    }
+    .task-detail-trailing {
+      justify-items: center;
+      .task-detail-settings {
+        color: #a5a5a5;
 
-      .task-detail-trailing {
-        justify-items: center;
-        .task-detail-settings {
-          color: #a5a5a5;
-
-          &:hover {
-            color: #4895ef;
-          }
+        &:hover {
+          color: #4895ef;
         }
       }
     }
@@ -100,48 +97,48 @@
 
   .task-detail-bottom-container {
     .view-options {
-        display: flex;
-        margin-top: 8px;
-      }
-      .sort-capsule {
-        font-size: 0.65rem;
-        font-weight: 600;
-        text-align: center;
-        padding: 6px 8px;
-        width: 100px;
-        margin-left: 8px;
-        margin-right: 8px;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: background-color 0.3s ease-in-out;
-  
-        &:hover {
-          scale: (1.1);
-        }
-      }
+      display: flex;
+      margin-top: 8px;
+    }
+    .sort-capsule {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 6px 8px;
+      width: 100px;
+      margin-left: 8px;
+      margin-right: 8px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease-in-out;
 
-      .Board {
-        background-color: #f6d6e4;
+      &:hover {
+        scale: (1.1);
       }
-      .Board.selected {
-        color: white;
-        background-color: #f72585;
-      }
+    }
 
-      .List {
-        background-color: #d9f0f8;
-      }
-      .List.selected {
-        color: white;
-        background-color: #4cc9f0;
-      }
+    .Board {
+      background-color: #f6d6e4;
+    }
+    .Board.selected {
+      color: white;
+      background-color: #f72585;
+    }
 
-      .task-detail-board {
-        margin-top: 25px;
-        p {
-          color: #ccc;
-          font-size: 0.85rem;
-        }
+    .List {
+      background-color: #d9f0f8;
+    }
+    .List.selected {
+      color: white;
+      background-color: #4cc9f0;
+    }
+
+    .task-detail-board {
+      margin-top: 25px;
+      p {
+        color: #909090;
+        font-size: 0.85rem;
       }
+    }
   }
 }

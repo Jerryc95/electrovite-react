@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
 
 import AuthForm from '$renderer/components/AuthForm';
-// import { useRegisterAccountMutation } from '../../../services/authAPI';
 import SubscriptionSelectorPage from '../SubscriptionSelectorPage';
 import ProfileSetupPage from '../ProfileSetupPage';
 import SubPlanPaymentPage from '../SubPlanPaymentPage';
@@ -37,13 +35,6 @@ const SignUpPage: React.FC = () => {
     setEmail(formData.email);
     setPassword(formData.password);
     setCreationStep(1);
-    // registerUser(formData).then((data) => {
-    //   if (data) {
-    //     navigate('/setup/plans');
-    //   } else {
-    //     console.log('no data');
-    //   }
-    // });
   };
 
   const renderComponent = () => {
@@ -76,6 +67,7 @@ const SignUpPage: React.FC = () => {
             setCreationStep={setCreationStep}
             subscription={subscription}
             stripeSubscription={stripeSubscription}
+            customer={customer}
           />
         );
     }

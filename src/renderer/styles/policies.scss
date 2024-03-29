@@ -1,0 +1,49 @@
+.policy-container {
+    padding-left: 15px;
+    .policy-header {
+        background: linear-gradient(to right, #f72585, #480ca8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .policy-sub-header {
+        text-align: left;
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .policy-sections {
+        ol {
+            font-size: 0.9rem;
+            list-style:decimal;
+            padding-left: 20px;
+            // list-style:armenian;
+        }
+
+        .policy-section-header {
+            padding: 5px;
+            font-size: 1.2rem;
+        }
+
+        .policy-section-sub-header {
+            padding: 5px;
+            font-size: 1rem;
+        }
+
+        .policy-section-details {
+            font-size: 0.9rem;
+            padding: 10px;
+             a {
+                background: linear-gradient(to right, #f72585, #480ca8);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+             }
+        }
+
+       
+       
+    }
+
+}

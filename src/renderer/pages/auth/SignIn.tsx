@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -6,12 +6,12 @@ import { RootState } from '../../../services/store';
 
 import AuthForm from '$renderer/components/AuthForm';
 import { useSignInAccountMutation } from '../../../services/authAPI';
-import { useFetchProfileMutation } from '../../../services/profileAPI';
+// import { useFetchProfileMutation } from '../../../services/profileAPI';
 
 const SignInPage: React.FC = () => {
   const accountState = useSelector((state: RootState) => state.accountReducer);
   const [signInUser] = useSignInAccountMutation();
-  const [fetchProfile] = useFetchProfileMutation();
+  // const [fetchProfile] = useFetchProfileMutation();
   const navigate = useNavigate();
 
   const handleSignIn = async (formData: {

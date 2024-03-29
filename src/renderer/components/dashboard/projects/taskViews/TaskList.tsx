@@ -5,7 +5,6 @@ import TaskListLabel from './TaskListLabel';
 
 interface TaskListProps {
   tasks: Task[];
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
   setSelectedTask: React.Dispatch<React.SetStateAction<Task>>;
   setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
 }

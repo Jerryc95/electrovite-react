@@ -6,6 +6,8 @@ import NewProject from '$renderer/components/dashboard/projects/NewProject';
 import ProjectDetail from '$renderer/components/dashboard/projects/ProjectDetail';
 import { Project } from '../../models/project';
 import { RootState } from '../../services/store';
+import { selectedProjects } from '../../services/projectSlice';
+import { useFetchProjectsQuery } from '../../services/projectAPI';
 import { RecurringTask } from 'src/models/recurringTask';
 import '../styles/projects.scss';
 import '../styles/detailPage.scss';
@@ -19,14 +21,22 @@ interface IProjectData {
 }
 
 const Projects: React.FC = () => {
+  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const projects = useSelector(selectedProjects);
+  // const recurringTasks = useSelector(selectedRecurringTasks)
+
+  // const memoizedProjects = useMemo(() => projects, [projects]);
+
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [addingProject, setAddingProject] = useState(false);
   const [addingRecurringTask, setAddingRecurringTask] = useState(false);
   const [recurringTasks, setRecurringTasks] = useState<RecurringTask[]>([]);
   const [showingProject, setShowingProject] = useState(false);
-  const [projects, setProjects] = useState<Project[]>([]);
+  // const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project>(projects[0]);
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+
+  useFetchProjectsQuery(accountState.account?.id);
+  //add fetch recurring maybe here
 
   const toggleProject = (project: Project) => {
     setSelectedProject(project);
@@ -42,30 +52,30 @@ const Projects: React.FC = () => {
   ];
 
   const filteredProjects = projects.filter((project) => {
-    switch(selectedFilter) {
-      case "All": {
+    switch (selectedFilter) {
+      case 'All': {
         return project;
       }
-      case "Not Started": {
-        if(project.status === "Not Started") {
+      case 'Not Started': {
+        if (project.status === 'Not Started') {
           return project;
         }
         break;
       }
-      case "In Progress": {
-        if(project.status === "In Progress") {
+      case 'In Progress': {
+        if (project.status === 'In Progress') {
           return project;
         }
         break;
       }
-      case "Live": {
-        if(project.status === "Live") {
+      case 'Live': {
+        if (project.status === 'Live') {
           return project;
         }
         break;
       }
-      case "Completed": {
-        if(project.status === "Completed") {
+      case 'Completed': {
+        if (project.status === 'Completed') {
           return project;
         }
         break;
@@ -73,33 +83,9 @@ const Projects: React.FC = () => {
     }
   });
 
-  useEffect(() => {
-    if (accountState) {
-      const url = `http://localhost:3000/projects?id=${accountState.account?.id}`;
-      fetch(url)
-        .then((response) => response.json())
-        .then(async (data: IProjectData) => {
-          await Promise.all([
-            setProjects(
-              data.projects.sort((a, b) => {
-                if (a.id < b.id) {
-                  return -1;
-                }
-                return 0;
-              }),
-            ),
-            setRecurringTasks(
-              data.recurringTasks.sort((a, b) => {
-                if (a.rt_id < b.rt_id) {
-                  return -1;
-                }
-                return 0;
-              }),
-            ),
-          ]);
-        });
-    }
-  }, [recurringTasks]);
+useEffect(()=>{
+  console.log(projects)
+},[])
 
   return (
     <div className='projects-container'>
@@ -179,8 +165,6 @@ const Projects: React.FC = () => {
       {addingProject && (
         <NewProject
           setAddingProject={setAddingProject}
-          addingProject={addingProject}
-          setProjects={setProjects}
           id={accountState.account?.id}
         />
       )}
@@ -190,8 +174,6 @@ const Projects: React.FC = () => {
           project={selectedProject}
           setShowingProject={setShowingProject}
           accountID={accountState.account?.id}
-          setProjects={setProjects}
-          projects={projects}
         />
       )}
       {addingRecurringTask && (

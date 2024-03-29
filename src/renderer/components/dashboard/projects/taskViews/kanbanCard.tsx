@@ -79,7 +79,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
       setUncompletedSubTasks(uncompleted);
       setCompletedSubTasks(completed);
     }
-  }, []);
+  }, [task.subTasks]);
   return (
     <Draggable draggableId={task.task_id.toString()} index={index}>
       {(provided) => (

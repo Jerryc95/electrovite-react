@@ -331,6 +331,8 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
             className='third-detail-card pd4'
             onClick={() => console.log(entry)}
           >
+
+            {/* ALL THIS NEEDS TO BE UPDATED TO PROPERLY LINK */}
             {contact ? (
               <div className='detail-col pd4'>
                 <h3>
@@ -361,7 +363,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
                 <p className='filler-text'>No Invoice Connected</p>
 
                 <button className='main-button button-brand-purple'>
-                  Connect Invoice
+                  Generate Invoice
                 </button>
               </div>
             )}

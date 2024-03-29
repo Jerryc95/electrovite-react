@@ -7,17 +7,18 @@ import { Task } from 'src/models/task';
 import '../../../../styles/kanban.scss';
 import KanbanCard from './kanbanCard';
 import { taskStatus } from '../../../../../statuses/taskStatus';
+import { useUpdateTaskMutation } from '../../../../../services/taskAPI';
 
 interface KanbanProps {
   tasks: Task[];
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  // setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
   setSelectedTask: React.Dispatch<React.SetStateAction<Task>>;
   setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const KanbanBoard: React.FC<KanbanProps> = ({
   tasks,
-  setTasks,
+  // setTasks,
   setSelectedTask,
   setShowingTask,
 }) => {
@@ -25,50 +26,78 @@ const KanbanBoard: React.FC<KanbanProps> = ({
   const [inProgTasks, setInProgTasks] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
 
+  const [updateTask] = useUpdateTaskMutation();
+
   const handleUpdateTask = async (
     tasks: Task[],
     liftedTask: Task,
     updatedStatus: string,
     updatedIndex: number,
   ) => {
+   
     const foundTask = tasks.find((task) => {
       return task.task_id === liftedTask.task_id;
     });
+  
     if (foundTask) {
       switch (updatedStatus) {
         case 'not-started': {
-          foundTask.task_status = taskStatus.NotStarted;
+          updateTask({
+            taskID: foundTask.task_id,
+            taskStatus: taskStatus.NotStarted,
+            columnIndex: updatedIndex
+          })
+          // foundTask.task_status = taskStatus.NotStarted;
           break;
         }
         case 'in-progress': {
-          foundTask.task_status = taskStatus.InProgress;
+          // foundTask.task_status = taskStatus.InProgress;
+          updateTask({
+            taskID: foundTask.task_id,
+            taskStatus: taskStatus.InProgress,
+            columnIndex: updatedIndex
+          })
           break;
         }
         case 'completed': {
-          foundTask.task_status = taskStatus.Completed;
+          // foundTask.task_status = taskStatus.Completed;
+          updateTask({
+            taskID: foundTask.task_id,
+            taskStatus: taskStatus.Completed,
+            columnIndex: updatedIndex
+          })
           break;
         }
       }
-      const data = {
-        taskStatus: foundTask.task_status,
-        columnIndex: updatedIndex,
-      };
-      const url = `http://localhost:3000/tasks/update/${foundTask.task_id}`;
-      try {
-        const response = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-          throw new Error('Failed to update value');
-        }
-      } catch (error) {
-        console.log(error);
-      }
+      // const data = {
+      //   taskID: foundTask.task_id,
+      //   // taskStatus: 'In Progress',
+      //   taskStatus: foundTask.task_status,
+      //   columnIndex: updatedIndex,
+      // };
+      // console.log("data:",data)
+      
+      // const url = `http://localhost:3000/tasks/update/${foundTask.task_id}`;
+      // try {
+      //   const response = await fetch(url, {
+      //     method: 'PUT',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify(data),
+      //   });
+      //   if (!response.ok) {
+      //     throw new Error('Failed to update value');
+      //   }
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      // updateTask(data)
+      
     }
+ 
+    
+
   };
 
   const handleOnDragEnd = (result: DropResult) => {
@@ -125,7 +154,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({
         destination.index,
       );
 
-      setTasks([...notStartedTasks, ...inProgTasks, ...completedTasks]);
+      // setTasks([...notStartedTasks, ...inProgTasks, ...completedTasks]);
     }
   };
 
@@ -170,7 +199,6 @@ const KanbanBoard: React.FC<KanbanProps> = ({
                     index={index}
                     task={task}
                     tasks={notStartedTasks}
-                    // setTasks={setNotStartedTasks}
                     setSelectedTask={setSelectedTask}
                     setShowingTask={setShowingTask}
                     key={task.task_id}
@@ -200,7 +228,6 @@ const KanbanBoard: React.FC<KanbanProps> = ({
                     index={index}
                     task={task}
                     tasks={inProgTasks}
-                    // setTasks={setInProgTasks}
                     setSelectedTask={setSelectedTask}
                     setShowingTask={setShowingTask}
                     key={task.task_id}
@@ -230,7 +257,6 @@ const KanbanBoard: React.FC<KanbanProps> = ({
                     index={index}
                     task={task}
                     tasks={completedTasks}
-                    // setTasks={setCompletedTasks}
                     setSelectedTask={setSelectedTask}
                     setShowingTask={setShowingTask}
                     key={task.task_id}

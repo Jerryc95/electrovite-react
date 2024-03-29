@@ -11,21 +11,29 @@ import {
 import { RootState } from '../../../services/store';
 import { StripeInvoice } from 'src/models/stripeInvoice';
 import InvoiceRow from './InvoiceRow';
-import { StripeSubscription } from 'src/models/stripeSubscription';
+// import { StripeSubscription } from 'src/models/stripeSubscription';
 import InvoiceRowLabel from './InvoiceRowLabel';
-import SubscriptionUpdate from './subscriptionUpdate';
+import SubscriptionUpdate from './subscriptionSettings/subscriptionUpdate';
+import SuccessfullySubscribed from './subscriptionSettings/SuccessfullySubscribed';
+import UpdatingPaymentMethod from './subscriptionSettings/UpdatingPaymentMethod';
 
 const SettingsBilling: React.FC = () => {
-  const accountState = useSelector((state: RootState) => state.accountReducer);
-  const [editingPlan, setEditingPlan] = useState(false);
+  const subscriptionState = useSelector(
+    (state: RootState) => state.subscriptionReducer,
+  );
+  const paymentMethodState = useSelector(
+    (state: RootState) => state.paymentReducer,
+  );
+
+  // const [editingPlan, setEditingPlan] = useState(false);
   const [invoices, setInvoices] = useState<StripeInvoice[]>([]);
   const [recentInvoices, setRecentInvoices] = useState<StripeInvoice[]>([]);
-  const [stripeSubcriptionInfo, setStripeSubscriptionInfo] =
-    useState<StripeSubscription | null>(null);
-  // const [editingBilling, constEditingBilling] = useState(false);
   const [showingAllHistory, setShowingAllHistory] = useState(false);
   const [nextBillingDate, setNextBillingDate] = useState<string | null>(null);
-  const [updatingPlan, setUpdatingPlan] = useState(false);
+  const [viewingPlans, setViewingPlans] = useState(false);
+  const [sucessfullySubscribedAlert, setSuccessfullySubscribedAlert] =
+    useState(false);
+  const [showingUpdatingPayment, setShowingUpdatingPayment] = useState(false);
 
   const toggleEdit = (
     setEditing: React.Dispatch<React.SetStateAction<boolean>>,
@@ -34,8 +42,7 @@ const SettingsBilling: React.FC = () => {
   };
 
   let planClass = 'Starter';
-
-  switch (accountState.subscriptionInfo?.name) {
+  switch (subscriptionState.subscription?.name) {
     case 'Starter':
       planClass = 'starter';
       break;
@@ -50,8 +57,8 @@ const SettingsBilling: React.FC = () => {
   }
 
   useEffect(() => {
-    if (accountState.subscriptionInfo?.customer_id !== null) {
-      const pastInvoiceUrl = `http://localhost:3000/payment/past-invoices/${accountState.subscriptionInfo?.customer_id}`;
+    if (subscriptionState.stripeSubscription?.customer !== null) {
+      const pastInvoiceUrl = `http://localhost:3000/payment/past-invoices/${subscriptionState.stripeSubscription?.customer}`;
       fetch(pastInvoiceUrl)
         .then((response) => response.json())
         .then((data) => {
@@ -73,7 +80,6 @@ const SettingsBilling: React.FC = () => {
           }));
 
           const sortedData: StripeInvoice[] = invoiceData.sort(
-            // const sortedData: StripeInvoice[] = data.data.sort(
             (a: StripeInvoice, b: StripeInvoice) => {
               const dateA = a.period_start;
               const dateB = b.period_start;
@@ -90,36 +96,25 @@ const SettingsBilling: React.FC = () => {
           setRecentInvoices(filteredInvoices.slice(0, 1));
         });
     }
-  }, []);
+  }, [subscriptionState.stripeSubscription?.customer]);
 
   useEffect(() => {
-    if (accountState.subscriptionInfo?.customer_id !== null) {
-      const subInfoUrl = `http://localhost:3000/payment/retrieve-subscription/${accountState.subscriptionInfo?.stripe_sub_id}`;
-      fetch(subInfoUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          const subInfo: StripeSubscription = {
-            id: data.id,
-            customer: data.customer,
-            start_date: data.start_date,
-            current_period_end: data.current_period_end,
-            current_period_start: data.current_period_start,
-            trial_end: data.current_trial_end,
-            cancel_at: data.cancel_at,
-            cancel_at_period_end: data.cancel_at_period_end,
-            canceled_at: data.canceled_at,
-            status: data.status,
-          };
-          console.log(subInfo)
-          setStripeSubscriptionInfo(subInfo);
-          const billingDate = new Date(subInfo.current_period_end * 1000);
-          const formattedBillingDate = billingDate.toLocaleString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          });
-          setNextBillingDate(formattedBillingDate);
-        });
+    if (
+      subscriptionState.stripeSubscription?.current_period_end &&
+      subscriptionState.subscription?.id != 1
+    ) {
+      const billingDate = new Date(
+        subscriptionState.stripeSubscription.current_period_end * 1000,
+      );
+      const formattedBillingDate = billingDate.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+
+      setNextBillingDate(formattedBillingDate);
+    } else {
+      setNextBillingDate('N/A');
     }
   }, []);
 
@@ -132,60 +127,53 @@ const SettingsBilling: React.FC = () => {
         <h5>
           Current Plan:
           <span className={planClass}>
-            {accountState.subscriptionInfo?.name.toUpperCase()}
-            {stripeSubcriptionInfo !== null &&
-              stripeSubcriptionInfo?.status === 'trialing' && (
-                <span>TRIAL</span>
-              )}
-            {stripeSubcriptionInfo !== null &&
-              stripeSubcriptionInfo?.status === 'canceled' && (
-                <span>CANCELED</span>
-              )}
+            {subscriptionState.subscription?.name.toUpperCase()}
+            {subscriptionState.subscription?.id != 1 && (
+              <span>
+                {subscriptionState.stripeSubscription?.status ===
+                  'trialing' && <span>TRIAL</span>}
+                {subscriptionState.stripeSubscription?.status ===
+                  'canceled' && <span>CANCELED</span>}
+              </span>
+            )}
           </span>
           <button
             className='button-brand-purple'
-            onClick={() => toggleEdit(setUpdatingPlan)}
+            onClick={() => toggleEdit(setViewingPlans)}
           >
-            Update
+            {subscriptionState.subscription?.id == 1 ? (
+              <span>Subscribe</span>
+            ) : (
+              <span>Update</span>
+            )}
           </button>
         </h5>
         <div className='settings-section-row'>
           <div className='settings-section-column'>
             <p className='header'>Cost</p>
-            <p>${accountState.subscriptionInfo?.price}</p>
+            <p>${subscriptionState.subscription?.price}</p>
           </div>
           <div className='settings-section-column'>
             <p className='header'>Term</p>
-            <p>{accountState.subscriptionInfo?.billing_cycle}</p>
+            <p>{subscriptionState.subscription?.billing_cycle}</p>
           </div>
           <div className='settings-section-column'>
-            {stripeSubcriptionInfo !== null &&
-            stripeSubcriptionInfo?.status === 'canceled' &&
-            accountState.subscriptionInfo?.id != 1 ? (
-              <div>
+            <div>
+              {subscriptionState.stripeSubscription?.status == 'canceled' &&
+              subscriptionState.subscription?.id != 1 ? (
                 <p className='header'>Subscription Ends</p>
-                {nextBillingDate !== null ? (
-                  <p>{nextBillingDate}</p>
-                ) : (
-                  <p>N/A</p>
-                )}
-              </div>
-            ) : (
-              <div>
+              ) : (
                 <p className='header'>Next Billing Date</p>
-                {nextBillingDate !== null ? (
-                  <p>{nextBillingDate}</p>
-                ) : (
-                  <p>N/A</p>
-                )}
-              </div>
-            )}
+              )}
+
+              <p>{nextBillingDate}</p>
+            </div>
           </div>
         </div>
         <h5>What You're Getting:</h5>
-        <div className='settings-section-row margin-top feature-highlights'>
-          {accountState.subscriptionInfo?.features.map((feature) => (
-            <div className='settings-section-column'>
+        <div className='settings-section-features-column margin-top feature-highlights'>
+          {subscriptionState.subscription?.features.map((feature) => (
+            <div key={feature} className='settings-section-column'>
               <p className='plan-highlight'>
                 <FontAwesomeIcon icon={faCircleCheck} className='check-icon' />
                 {feature}
@@ -194,67 +182,54 @@ const SettingsBilling: React.FC = () => {
           ))}
         </div>
       </div>
-      <div className='settings-section bottom-border'>
-        <div className='settings-section-header'>
-          <h4>Billing Info</h4>
-          <div
-            className='settings-section-edit'
-            onClick={() => toggleEdit(setEditingPlan)}
-          >
-            {editingPlan ? <span>Cancel</span> : <span>Update</span>}
-            <FontAwesomeIcon
-              icon={faPenToSquare}
-              className='edit-icon'
-              size='sm'
-            />
+      {paymentMethodState.payment && (
+        <div className='settings-section bottom-border'>
+          <div className='settings-section-header'>
+            <h4>Billing Info</h4>
+            {/* <div
+              className='settings-section-edit'
+              onClick={() => toggleEdit(setShowingUpdatingPayment)}
+            >
+              <span>Update</span>
+              <FontAwesomeIcon
+                icon={faPenToSquare}
+                className='edit-icon'
+                size='sm'
+              />
+            </div> */}
+          </div>
+          <div className='settings-section-row billing'>
+            <div className='setttings-section-column '>
+              <h5>Billing Address</h5>
+              <div className='billing-details'>
+                <p>{paymentMethodState.payment?.address.line1}</p>
+                <p>{paymentMethodState.payment?.address.line2}</p>
+                <p>
+                  {paymentMethodState.payment?.address.city},{' '}
+                  {paymentMethodState.payment?.address.state}{' '}
+                  {paymentMethodState.payment?.address.postal_code}
+                </p>
+              </div>
+            </div>
+            <div className='settings-section-column'>
+              <h5>Payment Method</h5>
+              <div className='billing-details'>
+                <p>
+                  <span>Card: </span>
+                  {paymentMethodState.payment?.card} ending in{' '}
+                  {paymentMethodState.payment?.lastFour}
+                </p>
+                <p>
+                  <span>Expiration Date: </span>
+                  {paymentMethodState.payment?.expirationMonth}/
+                  {paymentMethodState.payment?.expirationYear}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-        <div className='settings-section-row'>
-          <div className='setttings-section-column'>
-            <h5>Billing Address</h5>
-            <form className='settings-form'>
-              <label className='edit-settings-label'>
-                Address
-                <input
-                  className='edit-settings-long-input'
-                  type='text'
-                  name='first_name'
-                  placeholder='Enter Street'
-                  value=''
-                  // onChange={}
-                />
-              </label>
-            </form>
-          </div>
-          <div className='settings-section-column'>
-            <h5>Payment Method</h5>
-            <form className='settings-form'>
-              <label className='edit-settings-label'>
-                Card Holder
-                <input
-                  className='edit-settings-long-input'
-                  type='text'
-                  name='card_holder'
-                  placeholder='John Smith'
-                  value=''
-                  // onChange={}
-                />
-              </label>
-              <label className='edit-settings-label'>
-                Credit Card Number
-                <input
-                  className='edit-settings-long-input'
-                  type='text'
-                  name='credit_number'
-                  placeholder='0123 XXXX XXXX XXXX'
-                  value=''
-                  // onChange={}
-                />
-              </label>
-            </form>
-          </div>
-        </div>
-      </div>
+      )}
+
       <div className='settings-section'>
         <div className='settings-section-header'>
           <h4>Payment History</h4>
@@ -285,13 +260,13 @@ const SettingsBilling: React.FC = () => {
               {!showingAllHistory ? (
                 <div>
                   {recentInvoices.map((invoice) => (
-                    <InvoiceRow invoice={invoice} />
+                    <InvoiceRow key={invoice.id} invoice={invoice} />
                   ))}
                 </div>
               ) : (
                 <div>
                   {invoices.map((invoice) => (
-                    <InvoiceRow invoice={invoice} />
+                    <InvoiceRow key={invoice.id} invoice={invoice} />
                   ))}
                 </div>
               )}
@@ -305,11 +280,21 @@ const SettingsBilling: React.FC = () => {
           </p>
         </div>
       </div>
-      {updatingPlan && (
+      {viewingPlans && (
         <SubscriptionUpdate
-          setUpdatingPlan={setUpdatingPlan}
-          setStripeSubscriptionInfo={setStripeSubscriptionInfo}
-          stripeSubcriptionInfo={stripeSubcriptionInfo}
+          setViewingPlans={setViewingPlans}
+          customer={subscriptionState.stripeSubscription!.customer}
+          setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
+        />
+      )}
+      {sucessfullySubscribedAlert && (
+        <SuccessfullySubscribed
+          setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
+        />
+      )}
+      {showingUpdatingPayment && (
+        <UpdatingPaymentMethod
+          setShowingUpdatingPayment={setShowingUpdatingPayment}
         />
       )}
     </div>

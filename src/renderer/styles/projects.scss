@@ -2,8 +2,6 @@
   display: flex;
   flex-direction: column;
   min-width: 80%;
-  // min-width: 930px;
-  // background-color: #fefefe;
   height: 100vh;
   flex-grow: 1;
   transition: margin-left 0.3s ease-in-out;
@@ -46,9 +44,11 @@
     padding-left: 8px;
     padding-right: 8px;
     border-bottom: 1px solid #e2e2e2;
-    width: p {
-      color: #ccc;
+    
+    p {
+      color: #909090;
       text-align: center;
+      font-size: 0.85rem;
     }
   }
 
@@ -160,8 +160,8 @@
       // background-color: #fefefe;
 
       .info-text {
-        font-size: 0.7rem;
-        color: #ccc;
+        font-size: 0.85rem;
+        color: #909090;
         padding-bottom: 15px;
         padding-left: 15px;
         text-align: center;
@@ -212,6 +212,18 @@
     margin-left: 80px;
     padding-left: 10px;
     padding-right: 10px;
+
+    .project-detail-list {
+      width: 95%;
+      margin: 0;
+    }
+
+    .task-detail-container {
+      width: 95%;
+      margin-left: 80px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
   }
 }
 
@@ -421,7 +433,7 @@
       margin-right: 15px;
 
       .new-project-date-input {
-        width: 100%;
+        width: 110%;
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 10px;
@@ -429,6 +441,7 @@
         margin-bottom: 15px;
         outline-color: #4cc9f0;
         font-weight: normal;
+        text-align: end;
       }
 
       .new-project-dropdown {
@@ -447,9 +460,9 @@
 
 //Project details
 .project-detail-container {
-  // background-color: #fefefe;
   background-color: rgb(251, 251, 251);
-  min-width: 85%;
+  // min-width: 85%;
+  width: 85%;
   position: fixed;
   top: 0;
   left: 0;
@@ -589,12 +602,21 @@
       padding-top: 20px;
       // justify-content: space-evenly;
     }
+
+    .project-detail-list {
+      display: flex;
+      flex-direction: column;
+      justify-content: left;
+      width: 100%;
+   
+    }
+    
     .project-detail-task-list {
       display: flex;
       flex-direction: column;
       align-items: center;
       align-content: center;
-      // width: 25%;
+      width: 25%;
 
       border-left: 1px solid #e2e2e2;
     }
@@ -739,6 +761,7 @@
               margin-bottom: 15px;
               outline-color: #4cc9f0;
               font-weight: normal;
+              text-align: end;
             }
           }
         }

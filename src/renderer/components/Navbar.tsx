@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -21,12 +21,15 @@ import Projects from '$renderer/pages/Projects';
 import Contacts from '../pages/Contacts';
 import Documents from './dashboard/Documents';
 import Bookkeeping from '$renderer/pages/Bookkeeping';
+import AboutPage from '$renderer/pages/AboutPage';
 import Settings from '../pages/Settings';
 import Avatar from './Avatar';
 import exampleAvatar from '../../../assets/Avatars/exampleAvatar.png';
-
-import '../styles/navbar.scss';
+import usePagePicker from '../../hooks/usePagePicker';
 import { useSignOutAccountMutation } from '../../services/authAPI';
+import { clearSubscriptionInfo } from '../../services/subscriptionSlice';
+import { clearPaymentState } from '../..//services/paymentSlice';
+import '../styles/navbar.scss';
 
 
 interface NavbarProps {
@@ -34,13 +37,14 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
+  const {toggleComponent, activeMenuItem} = usePagePicker(<Home />, 'home')
   const [collapsed, setCollapsed] = useState(false);
-  const [activeMenuItem, setActiveMenuItem] = useState('home');
   const [showingSettings, setShowingSettings] = useState(false);
 
   const [signOutAccount] = useSignOutAccountMutation();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const accountState = useSelector((state: RootState) => state.accountReducer);
 
@@ -48,9 +52,9 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
     setCollapsed(!collapsed);
   };
 
-  const toggleComponent = (component: JSX.Element, menuItem: string) => {
+  const setPage = (component: JSX.Element, menuItem: string) => {
     setComponent(component);
-    setActiveMenuItem(menuItem);
+    toggleComponent(component, menuItem)
   };
 
   const toggleSettings = () => {
@@ -59,11 +63,13 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
 
   const handleSettingsClick = (component: JSX.Element, menuItem: string) => {
     toggleSettings();
-    toggleComponent(component, menuItem);
+    setPage(component, menuItem);
   };
 
   const handleSignOut = () => {
     signOutAccount(accountState);
+    dispatch(clearSubscriptionInfo())
+    dispatch(clearPaymentState())
     navigate('/');
   };
 
@@ -73,11 +79,12 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
     }
   };
 
+
   return (
     <nav className={`navbar ${collapsed ? 'collapsed-nav' : ''}`}>
       <ul className='navbar-top'>
         <div className='navbar-heading'>
-          <h2>{collapsed ? 'FP' : 'FlowPlanr'}</h2>
+          <h2>{collapsed ? 'FP' : 'Flowplanr'}</h2>
           <div
             className={`navbar-chevron-container ${
               collapsed ? 'collapsed-chevron-container' : ''
@@ -94,7 +101,7 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
           </div>
         </div>
         <li
-          onClick={() => toggleComponent(<Home />, 'home')}
+          onClick={() => setPage(<Home />, 'home')}
           className={`${activeMenuItem == 'home' ? 'active-menu-item' : ''}`}
         >
           <FontAwesomeIcon icon={faHome} className='navbar-li-icon' />
@@ -103,7 +110,7 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
           </span>
         </li>
         <li
-          onClick={() => toggleComponent(<Projects />, 'projects')}
+          onClick={() => setPage(<Projects />, 'projects')}
           className={`${
             activeMenuItem == 'projects' ? 'active-menu-item' : ''
           }`}
@@ -114,7 +121,7 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
           </span>
         </li>
         <li
-          onClick={() => toggleComponent(<Contacts />, 'contacts')}
+          onClick={() => setPage(<Contacts />, 'contacts')}
           className={`${
             activeMenuItem == 'contacts' ? 'active-menu-item' : ''
           }`}
@@ -125,7 +132,7 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
           </span>
         </li>
         <li
-          onClick={() => toggleComponent(<Documents />, 'documents')}
+          onClick={() => setPage(<Documents />, 'documents')}
           className={`${
             activeMenuItem == 'documents' ? 'active-menu-item' : ''
           }`}
@@ -136,7 +143,7 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
           </span>
         </li>
         <li
-          onClick={() => toggleComponent(<Bookkeeping />, 'bookkeeping')}
+          onClick={() => setPage(<Bookkeeping />, 'bookkeeping')}
           className={`${
             activeMenuItem == 'bookkeeping' ? 'active-menu-item' : ''
           }`}
@@ -165,7 +172,8 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
               {capitalize(accountState.accountProfile?.first_name)}{' '}
               {capitalize(accountState.accountProfile?.last_name)}
             </p>
-            {accountState?.account?.email}
+            {/* {accountState?.account?.email} */}
+            {accountState.accountProfile?.title}
           </div>
         </li>
         <div className={`${showingSettings ? 'settings-menu' : 'nav-drawer'}`}>
@@ -184,7 +192,7 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
               </span>
             </li>
             <li
-              onClick={() => handleSettingsClick(<Settings />, 'settings')}
+              onClick={() => handleSettingsClick(<AboutPage />, 'about')}
               className={`${showingSettings ? '' : 'hidden'}`}
             >
               <FontAwesomeIcon icon={faCircleInfo} className='navbar-li-icon' />

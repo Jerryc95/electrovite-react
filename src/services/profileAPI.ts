@@ -12,7 +12,15 @@ export const profileAPI = createApi({
         method: 'GET',
       }),
     }),
+
+    updateProfile: builder.mutation<AccountProfile, AccountProfile>({
+      query: (account) => ({
+        url: `update/profile/${account.account_id}`,
+        method: 'PUT',
+        body: account,
+      }),
+    }),
   }),
 });
 
-export const { useFetchProfileMutation } = profileAPI;
+export const { useFetchProfileMutation, useUpdateProfileMutation } = profileAPI;

@@ -24,7 +24,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
       );
       const data = await response.json();
       setIsEmailAvailable(data.isAvailable);
-      console.log(data);
     } catch (error) {
       console.error('Error checking email availability:', error);
     }

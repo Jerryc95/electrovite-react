@@ -3,14 +3,16 @@ import DatePicker from 'react-datepicker';
 
 import DeleteModal from '$renderer/components/DeleteModal';
 import { Subtask } from 'src/models/subTask';
-
+import { Task } from 'src/models/task';
 
 interface EditSubtaskProps {
   subtask: Subtask;
   setEditingSubtask: React.Dispatch<React.SetStateAction<boolean>>;
   setSubtasks: React.Dispatch<React.SetStateAction<Subtask[]>>;
   subtasks: Subtask[];
-  setSubtaskName: React.Dispatch<React.SetStateAction<string>>;
+  // setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  // tasks: Task[];
+  // setSubtaskName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const EditSubtask: React.FC<EditSubtaskProps> = ({
@@ -18,7 +20,9 @@ const EditSubtask: React.FC<EditSubtaskProps> = ({
   setEditingSubtask,
   setSubtasks,
   subtasks,
-  setSubtaskName,
+  // setTasks,
+  // tasks,
+  // setSubtaskName,
 }) => {
   const [name, setName] = useState(subtask.name);
   const [startDate, setStartDate] = useState<Date | null>();
@@ -30,22 +34,21 @@ const EditSubtask: React.FC<EditSubtaskProps> = ({
   };
 
   const handleDeleteSubtask = () => {
-    const url = `http://localhost:3000/tasks/delete/${subtask.subtask_id}`;
+    console.log('clicked');
+    const url = `http://localhost:3000/subtasks/delete/${subtask.subtask_id}`;
     try {
       fetch(url, {
         method: 'DELETE',
       });
-      setSubtasks(
-        subtasks.filter((st) => st.subtask_id != subtask.subtask_id),
-      );
+      setSubtasks(subtasks.filter((st) => st.subtask_id != subtask.subtask_id));
     } catch (error) {
       console.log(error);
     }
     setShowingDeleteAlert(false);
   };
 
-  const handleUpdateTask = async (id: number) => {
-    const url = `http://localhost:3000/tasks/update/${subtask.subtask_id}`;
+  const handleUpdateSubtask = async () => {
+    const url = `http://localhost:3000/subtasks/update/${subtask.subtask_id}`;
     const data = {
       name: name,
       startDate: startDate,
@@ -65,15 +68,17 @@ const EditSubtask: React.FC<EditSubtaskProps> = ({
     } catch (error) {
       console.log(error);
     }
-    const updatedTasks = subtasks.map((st) => {
-      if (id === subtask.subtask_id) {
+    const updatedSubtasks = subtasks.map((st, i) => {
+      if (i === subtask.subtask_id) {
         return subtask;
       } else {
         return st;
       }
     });
-    setSubtaskName(name)
-    setSubtasks(updatedTasks);
+   
+    // setSubtaskName(name)
+    setSubtasks(updatedSubtasks);
+    // setTasks(updatedSubtasksTest)
     setEditingSubtask(false);
   };
 
@@ -130,7 +135,7 @@ const EditSubtask: React.FC<EditSubtaskProps> = ({
             <div className='edit-buttons'>
               <button
                 className='button-brand-lighter-blue'
-                onClick={() => handleUpdateTask(subtask.subtask_id)}
+                onClick={() => handleUpdateSubtask()}
               >
                 Update
               </button>

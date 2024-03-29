@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
+import { useAddTaskMutation } from '../../../../../services/taskAPI';
 import { Task } from 'src/models/task';
 import { taskStatus } from '../../../../../statuses/taskStatus';
 
@@ -8,7 +9,6 @@ interface NewProjectTaskProps {
   setAddingTask: React.Dispatch<React.SetStateAction<boolean>>;
   accountID: number | undefined;
   projectID: number;
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
   tasks: Task[];
 }
 
@@ -16,7 +16,6 @@ const NewProjectTask: React.FC<NewProjectTaskProps> = ({
   setAddingTask,
   accountID,
   projectID,
-  setTasks,
   tasks,
 }) => {
   const today = new Date();
@@ -31,13 +30,9 @@ const NewProjectTask: React.FC<NewProjectTaskProps> = ({
   const [startDate, setStartDate] = useState<Date | null>(today);
   const [endDate, setEndDate] = useState<Date | null>(nextMonth);
 
-  const handleCreateNewTask = async () => {
-    const url = 'http://localhost:3000/tasks/add';
+  const [addTask] = useAddTaskMutation();
 
-    // const filteredTasks = tasks.filter(
-    //   (t) => t.status === taskStatus.NotStarted,
-    // );
-    // console.log(filteredTasks)
+  const handleCreateNewTask = async () => {
     const index = tasks
       .filter((t) => t.task_status === taskStatus.NotStarted)
       .reduce(
@@ -54,37 +49,9 @@ const NewProjectTask: React.FC<NewProjectTaskProps> = ({
       projectID: projectID,
       columnIndex: index,
     };
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newTask),
-      });
-      const responseData = await response.json();
-      const responseTask: Task = {
-        task_id: responseData.task_id,
-        project_id: responseData.project_id,
-        name: responseData.name,
-        description: responseData.description,
-        notes: responseData.notes,
-        creation_date: responseData.creation_date,
-        start_date: responseData.start_date,
-        due_date: responseData.due_date,
-        task_status: responseData.task_status,
-        completed: responseData.completed,
-        priority: responseData.priority,
-        column_index: responseData.column_index,
-        subTasks: [],
-      }
 
-      console.log(responseData)
-      setTasks((t) => [...t, responseTask]);
-      setAddingTask(false);
-    } catch (error) {
-      console.log(error);
-    }
+    addTask(newTask);
+    setAddingTask(false);
   };
 
   return (

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import EditField from '$renderer/components/EditField';
 import { RootState } from '../../../../services/store';
@@ -16,6 +16,7 @@ import { contractStatus } from '../../../../statuses/contractStatus';
 import CalendarField from '$renderer/components/CalendarField';
 import ContactBK from './componentPages/ContactBK';
 import ContactNotes from './componentPages/ContactNotes';
+import DeleteModal from '$renderer/components/DeleteModal';
 
 interface ContactDetailProps {
   setContacts: React.Dispatch<React.SetStateAction<Contact[]>>;
@@ -30,6 +31,7 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
 }) => {
   const accountState = useSelector((state: RootState) => state.accountReducer);
   const [selectedPage, setSelectedPage] = useState('Bookkeeping');
+  const [showingDeleteContact, setShowingDeleteContact] = useState(false);
   const [addingEvent, setAddingEvent] = useState(false);
   const [sortedContactEvents, setSortedContactEvents] = useState<
     ContactEvent[]
@@ -43,16 +45,16 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
     setSelectedPage(page);
     switch (page) {
       case 'Projects':
-        setComponentPage(<ContactBK contact={contact}/>);
+        setComponentPage(<ContactBK contact={contact} />);
         break;
       case 'Documents':
-        setComponentPage(<ContactBK contact={contact}/>);
+        setComponentPage(<ContactBK contact={contact} />);
         break;
       case 'Bookkeeping':
-        setComponentPage(<ContactBK contact={contact}/>);
+        setComponentPage(<ContactBK contact={contact} />);
         break;
       case 'Notes':
-        setComponentPage(<ContactNotes contact={contact}/>);
+        setComponentPage(<ContactNotes contact={contact} />);
         break;
     }
   };
@@ -91,6 +93,10 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
     }
   };
 
+  const handleDeleteContact = () => {
+    // delete contact here with new RTK method
+  };
+
   useEffect(() => {
     handleSortContacts();
   }, []);
@@ -108,8 +114,12 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
           </h2>
         </div>
         <div className='contact-detail-header-trailing'>
-          <FontAwesomeIcon icon={faGear} className='' />
           <button onClick={() => setAddingEvent(true)}>Add Event</button>
+          <FontAwesomeIcon
+            icon={faTrash}
+            className='delete-contact-button'
+            onClick={() => setShowingDeleteContact(true)}
+          />
         </div>
       </div>
       <div className='contact-detail-top-container'>
@@ -182,7 +192,7 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
               baseURL='http://localhost:3000/contacts/update/'
             />
             <CalendarField
-              label='Last Contact:'
+              label='Next Contact:'
               field='nextContactDate'
               value={contact.next_contact_date}
               id={contact.id}
@@ -284,6 +294,13 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
           addingEvent={addingEvent}
           contact={contact}
           setSortedEvents={setSortedContactEvents}
+        />
+      )}
+      {showingDeleteContact && (
+        <DeleteModal
+          onDelete={handleDeleteContact}
+          setShowingModal={setShowingDeleteContact}
+          item='contact'
         />
       )}
     </div>

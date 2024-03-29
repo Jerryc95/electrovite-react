@@ -1,6 +1,6 @@
 import React from 'react';
 import { Subtask } from 'src/models/subTask';
-import SubtaskListLabel from './SUbtaskListLabel';
+import SubtaskListLabel from './SubtaskListLabel';
 import SubtaskListItem from './SubtaskListItem';
 
 interface SubtaskListProps {

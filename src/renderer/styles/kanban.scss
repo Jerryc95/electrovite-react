@@ -125,11 +125,16 @@
 .task-list-container {
     display: flex;
     flex-direction: column;
-   
-    width: 95%;
-    margin: 0;
+  // margin-left: 20px;  
+    // width: 100%;
+    width: 1000px;
+    // margin: 0;
     // align-items: flex-start;
 }
+.collapsed-nav ~ .task-list-container {
+  margin-left: 10px;
+}
+
 
 .task-list-item-container {
   display: flex;

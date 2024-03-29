@@ -1,19 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+
+import { RootState } from '../../../../services/store';
 import { Subscription } from 'src/models/subscription';
+import ExistingAccountSubscribeForm from './ExistingAccountSubscribeForm';
 
 interface SubDetailColumnProps {
   subscription: Subscription;
-  currentSubscription: Subscription;
+  customer: string;
+  setViewingPlans: React.Dispatch<React.SetStateAction<boolean>>
+  setSuccessfullySubscribedAlert: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const SubDetailColumn: React.FC<SubDetailColumnProps> = ({
   subscription,
-  currentSubscription,
+  customer,
+  setSuccessfullySubscribedAlert,
+  setViewingPlans
 }) => {
+  const subscriptionState = useSelector(
+    (state: RootState) => state.subscriptionReducer,
+  );
+  const [UpdatingPlan, setUpdatingPlan] = useState(false);
+  const [buttonLabel, setButtonLabel] = useState("Subscribe")
 
-   const handleUpdatePlanClick = () => {
-// update sub 
-    }
+  const handleUpdatePlanClick = () => {
+    setUpdatingPlan(true);
+  };
 
   let colorClass = '';
   let buttonColorClass = '';
@@ -50,6 +63,15 @@ const SubDetailColumn: React.FC<SubDetailColumnProps> = ({
     default:
       billing_cycle = '';
   }
+
+  useEffect(()=> {
+    if(subscriptionState.subscription?.id == subscription.id && subscriptionState.stripeSubscription?.status != "canceled") {
+      setButtonLabel("Subscribed")
+    } else if (subscriptionState.subscription?.id == subscription.id && subscriptionState.stripeSubscription?.status == "canceled") {
+      setButtonLabel("Resubscribe")
+    }
+  },[])
+
   return (
     <div className='subscription-detail-container'>
       <h2 className={`subscription-detail-name ${colorClass}`}>
@@ -60,31 +82,32 @@ const SubDetailColumn: React.FC<SubDetailColumnProps> = ({
         ${subscription.price}
       </div>
       <div className='subscription-detail-billing'>{billing_cycle}</div>
-      {/* <div className='subscription-detail-description'>
-      {subscription.description}
-    </div> */}
       <button
         disabled={
-          currentSubscription.name === subscription.name &&
-          currentSubscription.billing_cycle === subscription.billing_cycle
+          subscriptionState.subscription?.name === subscription.name &&
+          subscriptionState.subscription?.billing_cycle === subscription.billing_cycle &&
+          subscriptionState.stripeSubscription?.status !== 'canceled'
             ? true
             : false
         }
         className={`subscription-detail-button ${buttonColorClass}`}
-        //   onClick={() => handlePlanSelection()}
+        onClick={handleUpdatePlanClick}
       >
-        {currentSubscription.name === subscription.name &&
-        currentSubscription.billing_cycle === subscription.billing_cycle ? (
-          <p>Subscribed</p>
-        ) : (
-          <p>Update</p>
-        )}
+      <p>{buttonLabel}</p>
       </button>
       <ul className='subscription-detail-features'>
         {subscription.features.map((feature) => (
           <li key={feature}>{feature}</li>
         ))}
       </ul>
+      {UpdatingPlan && (
+        <ExistingAccountSubscribeForm
+          subscription={subscription}
+          setUpdatingPlan={setUpdatingPlan}
+          setViewingPlans={setViewingPlans}
+          setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
+        />
+      )}
     </div>
   );
 };

@@ -54,6 +54,7 @@ function SubPlanPaymentPage({
             subscription={subscription}
             customer={customer}
             setStripeSubscription={setStripeSubscription}
+
           />
         </Elements>
       ) : (

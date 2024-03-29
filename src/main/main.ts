@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import path from 'path';
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
@@ -53,15 +53,20 @@ app.on('window-all-closed', () => {
  * Create main window
  * @returns {BrowserWindow} Main window instance
  */
-
+// Menu.setApplicationMenu(Menu.getApplicationMenu())
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    minWidth: 1200,
+    minHeight: 800,
     backgroundColor: '#202020',
     show: false,
     autoHideMenuBar: true,
     icon: path.resolve('assets/favicon.ico'),
+    title: "Flowplanr",
+    // titleBarStyle: "hidden",
+    // focusable: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -71,6 +76,9 @@ function createMainWindow() {
       sandbox: false,
     },
   });
+
+  
+
 
   // Load the index.html of the app window.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {

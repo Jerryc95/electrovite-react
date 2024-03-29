@@ -1,29 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { StripeSubscription } from 'src/models/stripeSubscription';
-import { RootState } from '../../../services/store';
+import { RootState } from '../../../../services/store';
 import { Subscription } from 'src/models/subscription';
 import SubDetailColumn from './SubDetailColumn';
 import ConfirmCancelSub from './ConfirmCancelSub';
 
 interface SubscriptionUpdateProps {
-  setUpdatingPlan: React.Dispatch<React.SetStateAction<boolean>>;
-  setStripeSubscriptionInfo: React.Dispatch<
-    React.SetStateAction<StripeSubscription | null>
-  >;
-  stripeSubcriptionInfo: StripeSubscription | null;
+  setViewingPlans: React.Dispatch<React.SetStateAction<boolean>>;
+  setSuccessfullySubscribedAlert: React.Dispatch<React.SetStateAction<boolean>>;
+  customer: string;
 }
 
 const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
-  setUpdatingPlan,
-  setStripeSubscriptionInfo,
-  stripeSubcriptionInfo,
+  setViewingPlans,
+  setSuccessfullySubscribedAlert,
+  customer,
 }) => {
+  const subscriptionState = useSelector(
+    (state: RootState) => state.subscriptionReducer,
+  );
   const accountState = useSelector((state: RootState) => state.accountReducer);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const [currentSubscription, setCurrentSubscription] =
-    useState<Subscription>();
   const [isMonthly, setIsMonthly] = useState(true);
   const [isCancelingSub, setIsCancelingSub] = useState(false);
 
@@ -34,10 +32,9 @@ const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
       : subscription.billing_cycle === 'Yearly' ||
         subscription.billing_cycle === 'N/A',
   );
-
+  
   const handleCancelSubClick = () => {
     setIsCancelingSub(true);
-    console.log(stripeSubcriptionInfo)
   };
 
   const fetchSubscriptions = async () => {
@@ -48,22 +45,8 @@ const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
       });
   };
 
-  const fetchCurrentSubscription = async () => {
-    await fetch(
-      `http://localhost:3000/subscription/${accountState.subscriptionInfo?.id}`,
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setCurrentSubscription(data);
-      });
-  };
-
   useEffect(() => {
     fetchSubscriptions();
-  }, []);
-
-  useEffect(() => {
-    fetchCurrentSubscription();
   }, []);
 
   return (
@@ -73,16 +56,12 @@ const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
           <h2>Update your plan</h2>
           <button
             className='button-brand-dark-purple close-button'
-            onClick={() => setUpdatingPlan(false)}
+            onClick={() => setViewingPlans(false)}
           >
             close
           </button>
         </div>
         <div className='sub-selector-container'>
-          {/* <h2>
-            Current Plan: {currentSubscription?.name.toUpperCase()}{' '}
-            {currentSubscription?.billing_cycle}
-          </h2> */}
           <label
             className={`toggle-slider ${isMonthly ? 'monthly' : 'yearly'}`}
           >
@@ -106,16 +85,15 @@ const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
                 <li key={subscription.id}>
                   <SubDetailColumn
                     subscription={subscription}
-                    currentSubscription={
-                      currentSubscription ? currentSubscription : subscription
-                    }
+                    customer={customer}
+                    setViewingPlans={setViewingPlans}
+                    setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
                   />
                 </li>
               ))}
           </ul>
-
-          {currentSubscription?.name !== 'starter' &&
-            stripeSubcriptionInfo?.status !== 'canceled' && (
+          {subscriptionState.subscription?.name !== 'Starter' &&
+            subscriptionState.stripeSubscription?.status !== 'canceled' && (
               <button
                 className='button-brand-pink cancel-sub'
                 onClick={handleCancelSubClick}
@@ -123,13 +101,13 @@ const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
                 Cancel Subscription
               </button>
             )}
+
           {isCancelingSub && (
             <ConfirmCancelSub
-              stripe_sub_id={accountState.subscriptionInfo?.stripe_sub_id}
+              stripe_sub_id={subscriptionState.stripeSubscription?.id}
               accountID={accountState.account?.id}
               setIsCancelingSub={setIsCancelingSub}
-              setUpdatingPlan={setUpdatingPlan}
-              setStripeSubscriptionInfo={setStripeSubscriptionInfo}
+              setViewingPlans={setViewingPlans}
             />
           )}
         </div>

@@ -64,25 +64,25 @@ const SubscriptionSelector: React.FC<SubscriptionSelectorProps> = ({
 
   const handlePlanSelection = async () => {
     setSubscription(subscription);
+    try {
+      const response = await fetch('http://localhost:3000/payment/create-customer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+              email: email,
+            }),
+      })
+      const responseData = await response.json()
+      setCustomer(responseData.data)
+    } catch (error) {
+      console.log(error)
+    }
     if (planType == 'free' && subscription !== null) {
       setCreationStep(3);
     } else {
-      try {
-        const response = await fetch('http://localhost:3000/payment/create-customer', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-                email: email,
-              }),
-        })
-        const responseData = await response.json()
-        setCustomer(responseData.data)
-        setCreationStep(2);
-      } catch (error) {
-        console.log(error)
-      }
+      setCreationStep(2);
     }
   };
 

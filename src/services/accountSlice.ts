@@ -7,31 +7,35 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { authAPI } from './authAPI';
 import { profileAPI } from './profileAPI';
 import { AccountProfile } from 'src/models/accountProfile';
-import { subscriptionAPI } from './subscriptionAPI';
 import { Account } from 'src/models/account';
-import { SubscriptionInfo } from 'src/models/subscriptionInfo';
 
 interface accountState {
   account: Account | null;
   accountProfile: AccountProfile | null;
-  subscriptionInfo: SubscriptionInfo | null;
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
 }
 
-const initialState: accountState = {
+const initialAccountState: accountState = {
   account: null,
   accountProfile: null,
-  subscriptionInfo: null,
   loading: 'idle',
   error: null,
 };
 
 export const accountSlice = createSlice({
   name: 'account',
-  initialState,
+  initialState: initialAccountState,
   reducers: {
-    resetAccountState: () => initialState,
+    resetAccountState: () => initialAccountState,
+    updateProfileState: (state, action: PayloadAction<AccountProfile>) => {
+      state.accountProfile = action.payload;
+    },
+    updateEmailState: (state, action: PayloadAction<string>) => {
+      if (state.account != null) {
+        state.account.email = action.payload;
+      }
+    },
   },
 
   extraReducers: (builder) => {
@@ -76,10 +80,10 @@ export const accountSlice = createSlice({
     builder.addMatcher(
       authAPI.endpoints.signOutAccount.matchFulfilled,
       (state) => {
-        state.loading = initialState.loading;
-        state.account = initialState.account;
-        state.accountProfile = initialState.accountProfile;
-        state.error = initialState.error;
+        state.loading = initialAccountState.loading;
+        state.account = initialAccountState.account;
+        state.accountProfile = initialAccountState.accountProfile;
+        state.error = initialAccountState.error;
       },
     );
 
@@ -98,23 +102,9 @@ export const accountSlice = createSlice({
         state.accountProfile = action.payload;
       },
     );
-
-    //SUBSCRIPTION API
-    builder.addMatcher(
-      subscriptionAPI.endpoints.fetchSubscriptionInfo.matchPending,
-      (state) => {
-        state.loading = 'pending';
-      },
-    );
-    builder.addMatcher(
-      subscriptionAPI.endpoints.fetchSubscriptionInfo.matchFulfilled,
-      (state, action: PayloadAction<SubscriptionInfo>) => {
-        state.loading = 'fulfilled';
-        state.subscriptionInfo = action.payload;
-      },
-    );
   },
 });
 
-export const { resetAccountState } = accountSlice.actions;
+export const { resetAccountState, updateProfileState, updateEmailState } =
+  accountSlice.actions;
 export default accountSlice.reducer;

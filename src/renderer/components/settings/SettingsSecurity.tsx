@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../../services/store';
+import {
+  useUpdateEmailMutation,
+  useUpdatePasswordMutation,
+} from '../../../services/authAPI';
+import { updateEmailState } from '../../../services/accountSlice';
+import { checkEmail } from '../../../helpers/CheckEmail';
+import { checkPassword } from '../../../helpers/CheckPassword';
 
 const SettingsSecurity: React.FC = () => {
   const accountState = useSelector((state: RootState) => state.accountReducer);
@@ -16,6 +23,13 @@ const SettingsSecurity: React.FC = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [emailAlertMessage, setEmailAlertMessage] = useState('');
+  const [passwordAlertMessage, setPasswordAlertMessage] = useState('');
+
+  const dispatch = useDispatch();
+
+  const [updateEmail] = useUpdateEmailMutation();
+  const [updatePassword] = useUpdatePasswordMutation();
 
   const toggleEdit = (
     setEditing: React.Dispatch<React.SetStateAction<boolean>>,
@@ -25,9 +39,67 @@ const SettingsSecurity: React.FC = () => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
+    const { name, value } = event.target;
+    switch (name) {
+      case 'email': {
+        setEmail(value);
+        break;
+      }
+      case 'confirm_email': {
+        setConfirmEmail(value);
+        break;
+      }
+      case 'password': {
+        setCurrentPassword(value);
+        break;
+      }
+      case 'new_password': {
+        setPassword(value);
+        break;
+      }
+      case 'confirm_password': {
+        setConfirmPassword(value);
+        break;
+      }
+      default:
+        break;
+    }
+  };
 
-    // const { name, value } = event.target;
-    // setAccountProfile((prevProfile) => ({ ...prevProfile!, [name]: value }));
+  const handleUpdateEmail = () => {
+    if (email !== confirmEmail) {
+      setEmailAlertMessage('Emails do not match.');
+    } else if (!checkEmail(email)) {
+      setEmailAlertMessage('Email is not a valid Email address.');
+    } else {
+      dispatch(updateEmailState(email));
+      updateEmail({ id: accountState.account?.id, email: email });
+      setEmailAlertMessage('');
+      toggleEdit(setEditingSecurity);
+    }
+  };
+
+  const handleUpdatePassword = () => {
+    if (!checkPassword(password)) {
+      return setPasswordAlertMessage(
+        'Password must be at least 8 characters long, have a number, and one uppercase letter.',
+      );
+    } else {
+      updatePassword({
+        id: accountState.account?.id,
+        email: accountState.account?.email,
+        password: currentPassword,
+        newPassword: password,
+      }).then((data) => {
+        if(data) {
+          console.log(data)
+        } else {
+          console.log("correct password")
+        }
+      });
+      setPasswordAlertMessage("")
+      toggleEdit(setEditingSecurity)
+    }
   };
 
   return (
@@ -47,7 +119,7 @@ const SettingsSecurity: React.FC = () => {
             />
           </div>
         </div>
-        <form className='settings-form'>
+        <div className='settings-form'>
           <label className='edit-settings-label'>
             Email
             {editingSecurity ? (
@@ -76,10 +148,11 @@ const SettingsSecurity: React.FC = () => {
                   value={confirmEmail}
                   onChange={handleInputChange}
                 />
+                <p>{emailAlertMessage}</p>
                 {editingSecurity && (
                   <button
                     className='button-brand-blue'
-                    onClick={() => console.log('hi')}
+                    onClick={handleUpdateEmail}
                   >
                     Update
                   </button>
@@ -87,6 +160,8 @@ const SettingsSecurity: React.FC = () => {
               </div>
             )}
           </label>
+        </div>
+        <div className='settings-form'>
           <label className='edit-settings-label'>
             Password
             {editingSecurity ? (
@@ -124,16 +199,16 @@ const SettingsSecurity: React.FC = () => {
                   onChange={handleInputChange}
                 />
               </label>
-
+            <p>{passwordAlertMessage}</p>
               <button
                 className='button-brand-blue'
-                onClick={() => console.log('hi')}
+                onClick={handleUpdatePassword}
               >
                 Update
               </button>
             </div>
           )}
-        </form>
+        </div>
       </div>
       <div className='settings-section'>
         <div className='settings-section-header'>

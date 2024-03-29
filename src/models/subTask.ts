@@ -1,6 +1,6 @@
 export type Subtask = {
   subtask_id: number;
-  task_id: string;
+  task_id: number;
   name: string;
   description: string;
   notes: string;

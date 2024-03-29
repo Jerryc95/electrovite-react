@@ -8,16 +8,16 @@ interface NewSubtaskProps {
   setAddingSubtask: React.Dispatch<React.SetStateAction<boolean>>;
   accountID: number | undefined;
   taskID: number;
-  setSubtasks: React.Dispatch<React.SetStateAction<Subtask[]>>;
-  subTasks: Subtask[];
+  // setSubtasks: React.Dispatch<React.SetStateAction<Subtask[]>>;
+  // subTasks: Subtask[];
 }
 
 const NewSubtask: React.FC<NewSubtaskProps> = ({
   setAddingSubtask,
   accountID,
   taskID,
-  setSubtasks,
-  subTasks,
+  // setSubtasks,
+  // subTasks,
 }) => {
     const today = new Date();
   const nextMonth = new Date(
@@ -66,7 +66,7 @@ const NewSubtask: React.FC<NewSubtaskProps> = ({
       }
 
       console.log(responseData)
-      setSubtasks((t) => [...t, responseSubtask]);
+      // setSubtasks((t) => [...t, responseSubtask]);
       setAddingSubtask(false);
     } catch (error) {
       console.log(error);

@@ -24,6 +24,7 @@ interface ProfileSetupPageProps {
   password: string;
   subscription: Subscription | null;
   stripeSubscription: StripeSubscription | null;
+  customer: string;
 }
 
 const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
@@ -32,10 +33,10 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
   setCreationStep,
   subscription,
   stripeSubscription,
+  customer,
 }) => {
   const [registerAccount] = useRegisterAccountMutation();
   const [signInAccount] = useSignInAccountMutation();
-
 
   const navigate = useNavigate();
   const handleSetup = (formData: {
@@ -51,7 +52,8 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
       email: email,
       password: password,
       subscription: subscription,
-      stripeSubscription: stripeSubscription
+      stripeSubscription: stripeSubscription,
+      customer: customer,
     }).then(() => {
       signInAccount({ email: email, password: password }).then(() => {
         navigate('/creating-account');
@@ -66,6 +68,7 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
       setCreationStep(1);
     }
   };
+
 
   return (
     <div className='profile-edit-form-container'>

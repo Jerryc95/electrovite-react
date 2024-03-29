@@ -4,6 +4,7 @@ import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { Draggable } from 'react-beautiful-dnd';
 
 import { Subtask } from 'src/models/subTask';
+import { Task } from 'src/models/task';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import EditSubtask from './EditSubtask';
 // import { taskStatus } from '../../../../../../statuses/taskStatus';
@@ -13,17 +14,21 @@ interface KanbanCardProps {
   subtask: Subtask;
   setSubtasks: React.Dispatch<SetStateAction<Subtask[]>>
   subtasks: Subtask[];
+  // tasks: Task[];
+  // setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
 const STKanbanCard: React.FC<KanbanCardProps> = ({
   index,
   subtask,
   setSubtasks,
-  subtasks
+  subtasks,
+  // tasks,
+  // setTasks,
 }) => {
 
 const [editingSubtask, setEditingSubtask] = useState(false)
-const [subtaskName, setSubtaskName] = useState("")
+// const [subtaskName, setSubtaskName] = useState("")
 
 const toggleEditSubtask = () => {
   setEditingSubtask(!editingSubtask)
@@ -113,7 +118,9 @@ const toggleEditSubtask = () => {
             setEditingSubtask={setEditingSubtask}
             setSubtasks={setSubtasks}
             subtasks={subtasks}
-            setSubtaskName={setSubtaskName}
+            // setTasks={setTasks}
+            // tasks={tasks}
+            // setSubtaskName={setSubtaskName}
             />
           )}
         </div>

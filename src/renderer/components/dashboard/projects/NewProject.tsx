@@ -1,24 +1,17 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
+import { useAddProjectMutation } from '../../../../services/projectAPI';
 import { projectStatus } from '../../../../statuses/projectStatus';
 
 import 'react-datepicker/dist/react-datepicker.css';
-import { Project } from 'src/models/project';
 
 interface NewProjectProps {
   setAddingProject: React.Dispatch<React.SetStateAction<boolean>>;
-  addingProject: boolean;
-  setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
   id: number | undefined;
 }
 
-const NewProject: React.FC<NewProjectProps> = ({
-  setAddingProject,
-  addingProject,
-  setProjects,
-  id,
-}) => {
+const NewProject: React.FC<NewProjectProps> = ({ setAddingProject, id }) => {
   const today = new Date();
   const nextMonth = new Date(
     today.getFullYear(),
@@ -31,8 +24,9 @@ const NewProject: React.FC<NewProjectProps> = ({
   const [startDate, setStartDate] = useState<Date | null>(today);
   const [endDate, setEndDate] = useState<Date | null>(nextMonth);
 
+  const [addProject] = useAddProjectMutation();
+
   const handleCreateProject = async () => {
-    const url = 'http://localhost:3000/projects/add';
     const status = projectStatus.NotStarted;
     const newProject = {
       name: name,
@@ -43,28 +37,16 @@ const NewProject: React.FC<NewProjectProps> = ({
       status: status,
       completed: false,
     };
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newProject),
-      });
-      const responseData = await response.json();
-
-      setProjects((projects) => [...projects, responseData]);
-      setAddingProject(!addingProject);
-    } catch (error) {
-      console.log(error);
-    }
+    addProject(newProject);
+    setAddingProject(false);
   };
+
   return (
     <div className='new-project-container'>
       <div className='new-project-form'>
         <div className='new-project-heading'>
           <h2>Creating new project</h2>
-          <button onClick={() => setAddingProject(!addingProject)}>
+          <button onClick={() => setAddingProject(false)}>
             Cancel
           </button>
         </div>

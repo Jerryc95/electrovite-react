@@ -69,9 +69,6 @@
         }
       }
     }
-
-    .side-content-container {
-    }
   }
 }
 
@@ -188,6 +185,7 @@
     align-items: center;
 
     .settings-button {
+      color: #a5a5a5;
       &:hover {
         color: #b5179e;
       }

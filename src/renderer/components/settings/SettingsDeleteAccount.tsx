@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { RootState } from '../../../services/store';
+import { useDeleteAccountMutation } from '../../../services/authAPI';
 
 const SettingsDeleteAccount: React.FC = () => {
   const accountState = useSelector((state: RootState) => state.accountReducer);
@@ -9,9 +11,37 @@ const SettingsDeleteAccount: React.FC = () => {
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const navigate = useNavigate();
+
+  const [deleteAccount] = useDeleteAccountMutation();
+  
 
   const toggleDeleteAccount = () => {
     setShowDeleteAccount(!showDeleteAccount);
+  };
+
+  const handleDeleteAccount = () => {
+    try {
+      if (password == confirmPassword) {
+        const accountObject = {
+          email: accountState.account?.email,
+          password: password,
+        }
+        deleteAccount(accountObject).then((data) => {
+          if('error' in data) {
+            console.log(data)
+            setAlertMessage("Error deleting account.")
+          } else {
+            navigate('/')
+          }
+        })
+      } else {
+        setAlertMessage('Passwords do not match.');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -48,7 +78,7 @@ const SettingsDeleteAccount: React.FC = () => {
               Password
               <input
                 className='delete-account-input'
-                type='text'
+                type='password'
                 name='password'
                 placeholder='Password'
                 value={password}
@@ -59,11 +89,11 @@ const SettingsDeleteAccount: React.FC = () => {
               Confirm Password
               <input
                 className='delete-account-input'
-                type='text'
+                type='password'
                 name='password'
                 placeholder='Confirm Password'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </label>
             <div className='button-row'>
@@ -75,11 +105,12 @@ const SettingsDeleteAccount: React.FC = () => {
               </button>
               <button
                 className='button-brand-pink'
-                onClick={toggleDeleteAccount}
+                onClick={handleDeleteAccount}
               >
                 Delete
               </button>
             </div>
+            <p className='alert'>{alertMessage}</p>
             <p>Deleting your account is permanent and irreversible.</p>
           </div>
         </div>

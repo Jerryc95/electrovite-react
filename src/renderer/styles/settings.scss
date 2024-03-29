@@ -67,6 +67,7 @@
 
       span {
         padding-left: 5px;
+        padding-right: 5px;
       }
 
       button {
@@ -75,9 +76,8 @@
         border: none;
         border-radius: 5px;
         padding: 4px 3px;
+        padding-right: 2px;
         font-size: 0.75rem;
-        width: 60px;
-        margin-left: 20px;
         cursor: pointer;
         transition: background-color 0.3s ease;
       }
@@ -89,18 +89,6 @@
 
     .off {
       color: #f72585;
-    }
-
-    .starter {
-      color: #f72585;
-    }
-
-    .plus {
-      color: #4895ef;
-    }
-
-    .pro {
-      color: #480ca8;
     }
 
     .delete {
@@ -120,9 +108,52 @@
     }
 
     .feature-highlights {
-      justify-content: space-between;
       justify-items: flex-start;
-      align-items: center;
+    }
+
+    .settings-section-features-column {
+      display: flex;
+      flex-direction: column;
+      margin-left: 15px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      height: 40px;
+
+      .plan-highlight {
+        color: #888;
+        margin-right: 15px;
+      }
+      p {
+        padding: 0;
+        color: #000;
+
+        .check-icon {
+          color: #4895ef;
+          margin-right: 5px;
+        }
+      }
+    }
+
+    .billing {
+      justify-content: space-between;
+      align-items: flex-start;
+      align-content: flex-start;
+      justify-items: flex-start;
+      width: 70%;
+
+      .no-billing {
+        P {
+          text-align: center !important;
+        }
+      }
+
+      .billing-details {
+        padding: 2px 5px;
+
+        span {
+          font-weight: bold;
+        }
+      }
     }
 
     .settings-section-row {
@@ -134,6 +165,7 @@
 
       .plan-highlight {
         color: #888;
+        margin-right: 15px;
       }
       p {
         padding: 0;
@@ -145,7 +177,7 @@
         }
       }
       .settings-section-column {
-        margin-right: 120px;
+        margin-right: 110px;
 
         .header {
           color: #000;
@@ -202,7 +234,7 @@
       align-content: start;
       display: flex;
       flex-direction: column;
-      margin-right: 250px;
+      margin-right: 230px;
       border-radius: 15px;
 
       .edit-settings-row {
@@ -225,7 +257,7 @@
 
         .edit-settings-long-input {
           flex: 1;
-          width: 200%;
+          width: 180%;
           padding: 8px;
           border: 1px solid #ccc;
           border-radius: 10px;
@@ -262,7 +294,6 @@
         border: none;
         border-radius: 10px;
         padding: 8px 4px;
-        // margin: 5px 250px;
         font-size: 1rem;
         width: 30%;
         cursor: pointer;
@@ -289,7 +320,6 @@
     .two-factor-option {
       display: flex;
       height: 100px;
-      // border-bottom: 1px solid #e2e2e2;
       justify-content: space-between;
       align-items: center;
       button {
@@ -310,7 +340,6 @@
 
       p {
         padding: 5px;
-        // width: 50%;
       }
     }
   }
@@ -351,12 +380,15 @@
     color: #888;
   }
 
+  .alert {
+    color: #f72585;
+  }
+
   p {
     text-align: center;
     font-size: 0.75rem;
     color: #888;
     padding-top: 10px;
-    // padding-bottom: 15px;
   }
 
   .delete-account-form {
@@ -369,18 +401,14 @@
     justify-content: flex-start;
     justify-content: center;
     align-items: center;
-    // padding: 20px 10px 0 10px;
 
     .button-row {
       display: flex;
-      //   width: 200%;
     }
     .delete-account-label {
       display: flex;
       flex-direction: column;
       margin-bottom: 10px;
-      // margin-left: 5px;
-      // margin-right: 2px;
       font-weight: bold;
       font-size: 0.85rem;
 
@@ -410,7 +438,6 @@
   height: 40px;
   margin: 10px;
   border-radius: 10px;
-  // background-color: #fefefe;
   background-color: rgb(251, 251, 251);
   box-shadow: 0px 0px 20px rgba(107, 107, 107, 0.1);
   text-align: left;
@@ -457,7 +484,6 @@
   p {
     font-size: 0.75rem;
     color: #ccc;
-    // padding: 0 !important;
   }
 
   .invoice-description {
@@ -481,6 +507,12 @@
   }
 }
 
+.collapsed-nav ~ .settings-container {
+  // min-width: 1100px;
+  // min-width: 75%;
+  margin-left: 90px;
+}
+
 .subscription-update-container {
   background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
@@ -492,7 +524,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
 
   .close-button {
     margin-right: 55px;
@@ -521,25 +552,91 @@
   }
 
   .subscription-columns-container {
+    position: relative;
     display: flex;
     flex-direction: column;
     background-color: #fff;
     width: 85%;
     height: 95%;
     border-radius: 25px;
-    // justify-content: center;
     padding-top: 20px;
+    overflow: scroll;
 
     .sub-selector-heading {
       display: flex;
       justify-content: space-between;
 
-      h2, h3 {
+      h2,
+      h3 {
         margin-left: 55px;
         margin-top: 10px;
       }
     }
+    .confirm-sub-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+      height: 85%;
 
+      .columns-row {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        align-content: space-evenly;
+        height: 95%;
+        width: 75%;
+        .columns-row-section {
+          display: flex;
+          flex-direction: column;
+          // justify-content: center;
+          padding: 15px;
+          border-radius: 15px;
+          background-color: #fefefe;
+          // height: 100%;
+          box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.2);
+
+          h3 {
+            font-size: 1.5rem;
+          }
+
+          h2 {
+            font-size: 2rem;
+          }
+
+          .sub-feature-list {
+            padding-top: 15px;
+            .plan-highlight {
+              color: #888;
+              margin-right: 15px;
+            }
+            p {
+              padding-bottom: 5px;
+              font-size: 0.9rem;
+              color: #000;
+
+              .check-icon {
+                color: #4895ef;
+                margin-right: 5px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .confirm-button {
+      margin-top: 10px;
+      align-items: center;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 10px 15px;
+      font-size: 0.95rem;
+      width: 135px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
   }
   .subscription-cancel-container {
     display: flex;
@@ -549,22 +646,103 @@
     height: 60%;
     border-radius: 25px;
     padding-top: 20px;
-    
-    
+
     .cancel-sub-body {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-items: center;
 
-       P {
+      P {
         text-align: center;
         margin: 15px 50px 50px 50px;
         font-size: 0.85rem;
         color: #888;
-       }
+      }
+    }
+  }
+
+  .subscription-update-form-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    width: 85%;
+    height: 95%;
+    border-radius: 25px;
+    padding-top: 20px;
+  }
+}
+
+.starter {
+  color: #f72585;
+}
+
+.plus {
+  color: #4895ef;
+}
+
+.pro {
+  color: #480ca8;
+}
+
+.fa-arrow {
+  animation: bounceRight 1s infinite;
+}
+
+.successfully-subbed-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .successfully-subbed-alert-box {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    width: 30%;
+    height: 30%;
+    border-radius: 25px;
+    padding-top: 20px;
+    align-items: center;
+    text-align: center;
+
+    h3 {
+      padding: 10px;
+    }
+
+    .close-button {
+      margin-top: 10px;
+      align-items: center;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 10px 15px;
+      font-size: 0.95rem;
+      width: 135px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
   }
 }
 
-
+@keyframes bounceRight {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateX(0);
+  }
+  40% {
+    transform: translateX(20px); /* Adjust the distance of the bounce */
+  }
+  60% {
+    transform: translateX(10px); /* Adjust the distance of the bounce */
+  }
+}

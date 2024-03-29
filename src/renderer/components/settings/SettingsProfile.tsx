@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../../services/store';
 import { AccountProfile } from 'src/models/accountProfile';
+import { useUpdateProfileMutation } from '../../../services/profileAPI';
+import { updateProfileState } from '../../../services/accountSlice';
 
 const SettingsProfile: React.FC = () => {
   const accountState = useSelector((state: RootState) => state.accountReducer);
@@ -13,19 +15,38 @@ const SettingsProfile: React.FC = () => {
   );
   const [editingPersonal, setEditingPersonal] = useState(false);
   const [editingBusiness, setEditingBusiness] = useState(false);
+  const [editedLabel, setEditedlabel] = useState('');
+  const [editedValue, setEditedValue] = useState('');
+
+  const dispatch = useDispatch();
+  const [updateProfile] = useUpdateProfileMutation();
 
   const personalOnSubmit = () => {
+    if (editedValue != '' && editedLabel != '') {
+      if (accountProfile) {
+        dispatch(updateProfileState(accountProfile))
+        updateProfile(accountProfile)
+      }
+    }
+
     setEditingPersonal(!editingPersonal);
   };
 
   const businessOnSubmit = () => {
+    if (editedValue != '' && editedLabel != '') {
+      if (accountProfile) {
+        dispatch(updateProfileState(accountProfile))
+        updateProfile(accountProfile);
+      }
+    }
     setEditingBusiness(!editingBusiness);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-
     const { name, value } = event.target;
+    setEditedlabel(name);
+    setEditedValue(value);
     setAccountProfile((prevProfile) => ({ ...prevProfile!, [name]: value }));
   };
 

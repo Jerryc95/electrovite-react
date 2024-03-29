@@ -39,6 +39,10 @@
     background: linear-gradient(to right, #f72585, #480ca8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+
+    h2 {
+      margin-left: 8px;
+    }
   }
 
   .navbar-chevron-container {
