@@ -134,7 +134,7 @@ const Contacts: React.FC = () => {
       </div>
       <div className='contacts-top-container'>
         <div className='contacts-upcoming-events'>
-          <h3>Upcoming</h3>
+          <h3>Upcoming Events</h3>
           {upcomingEvents.length === 0 ? (
             <p>Next upcoming contact events will appear here</p>
           ) : (

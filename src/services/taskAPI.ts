@@ -15,6 +15,12 @@ export const taskAPI = createApi({
         method: 'GET',
       }),
     }),
+    fetchUpcomingTasks: builder.query<Task[], number | undefined>({
+      query: (accountID) => ({
+        url: `/upcoming/${accountID}`,
+        method: 'GET',
+      }),
+    }),
     addTask: builder.mutation<Task, object>({
       query: (body) => ({
         url: '/add',
@@ -22,14 +28,17 @@ export const taskAPI = createApi({
         body: body,
       }),
     }),
-    updateTask: builder.mutation<Task, {
+    updateTask: builder.mutation<
+      Task,
+      {
         taskID: number;
         taskStatus?: string;
         columnIndex?: number;
         name?: string | null;
         startDate?: Date | null | undefined;
         endDate?: Date | null | undefined;
-      } >({
+      }
+    >({
       query: (task) => ({
         url: `/update/${task.taskID}`,
         method: 'PUT',
@@ -47,6 +56,7 @@ export const taskAPI = createApi({
 
 export const {
   useFetchTasksQuery,
+  useFetchUpcomingTasksQuery,
   useAddTaskMutation,
   useUpdateTaskMutation,
   useRemoveTaskMutation,

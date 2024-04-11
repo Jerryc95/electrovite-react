@@ -53,7 +53,7 @@ export const authAPI = createApi({
       object,
       {
         id: number | undefined;
-        email: string| undefined;
+        email: string | undefined;
         password: string;
         newPassword: string;
       }
@@ -62,6 +62,19 @@ export const authAPI = createApi({
         url: `/update/password/${arg.id}`,
         method: 'PUT',
         body: arg,
+      }),
+    }),
+    forgotPassword: builder.mutation<
+      string,
+      {
+        email: string;
+        password: string;
+      }
+    >({
+      query: (email) => ({
+        url: '/forgot-password',
+        method: 'POST',
+        body: email,
       }),
     }),
   }),
@@ -74,4 +87,5 @@ export const {
   useDeleteAccountMutation,
   useUpdateEmailMutation,
   useUpdatePasswordMutation,
+  useForgotPasswordMutation,
 } = authAPI;

@@ -15,7 +15,7 @@ import {
 import { RootState } from '../../services/store';
 
 import '../styles/Home.scss';
-import { paseDate } from '../../helpers/ParseDate';
+import { parseDate } from '../../helpers/ParseDate';
 import { ContactEvent } from 'src/models/contactEvent';
 import { BKEntry } from 'src/models/BKEntry';
 import { Contact } from 'src/models/contact';
@@ -42,7 +42,7 @@ interface UpcomingTask {
   task_id: number;
   name: string;
   due_date: Date;
-  status: string;
+  task_status: string;
   completed: boolean;
   priority: string;
   subtasks: ISubtask[];
@@ -153,8 +153,8 @@ const Home: React.FC = () => {
       const entryDay = new Date(entry.date);
       for (let i = 0; entries.length > i; i++) {
         if (
-          paseDate(entries[i].entry_date).getDate() === entryDay.getDate() &&
-          paseDate(entries[i].entry_date).getMonth() === entryDay.getMonth()
+          parseDate(entries[i].entry_date).getDate() === entryDay.getDate() &&
+          parseDate(entries[i].entry_date).getMonth() === entryDay.getMonth()
         ) {
           entry.amount = parseFloat(entries[i].total_amount);
           previousHistoricRevenue += entry.amount;
@@ -179,8 +179,8 @@ const Home: React.FC = () => {
       const entryDay = new Date(entry.date);
       for (let i = 0; entries.length > i; i++) {
         if (
-          paseDate(entries[i].entry_date).getDate() === entryDay.getDate() &&
-          paseDate(entries[i].entry_date).getMonth() === entryDay.getMonth()
+          parseDate(entries[i].entry_date).getDate() === entryDay.getDate() &&
+          parseDate(entries[i].entry_date).getMonth() === entryDay.getMonth()
         ) {
           entry.amount = parseFloat(entries[i].total_amount);
           previousRecentRevenue += entry.amount;
@@ -224,7 +224,7 @@ const Home: React.FC = () => {
             data.contacts.forEach((contact) => {
               if (contact.events.length !== 0) {
                 contact.events.forEach((event) => {
-                  if (paseDate(event.event_date) > today) {
+                  if (parseDate(event.event_date) > today) {
                     const upcomingEvent: UpcomingEvent = {
                       contact: contact,
                       event: event,
@@ -237,8 +237,8 @@ const Home: React.FC = () => {
             setUpcomingEvents(
               upcomingEventsArray
                 .sort((a, b) => {
-                  const dateA = paseDate(a.event.event_date);
-                  const dateB = paseDate(b.event.event_date);
+                  const dateA = parseDate(a.event.event_date);
+                  const dateB = parseDate(b.event.event_date);
                   if (dateA.getTime() < dateB.getTime()) {
                     return -1;
                   }

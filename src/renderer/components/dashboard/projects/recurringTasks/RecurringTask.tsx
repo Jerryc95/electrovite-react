@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+
 import { RecurringTask } from 'src/models/recurringTask';
 import '../../../../styles/components/card.scss';
 import '../../../../styles/styledEffects.scss';
+import EditRecurringTask from './EditRecurringTask';
 
 interface RecurringTaskProps {
   recurringTask: RecurringTask;
@@ -10,6 +14,7 @@ interface RecurringTaskProps {
 const RecurringTaskView: React.FC<RecurringTaskProps> = ({ recurringTask }) => {
   const [isCompleted, setIsCompleted] = useState(recurringTask.is_completed);
   const [labelColor, setLabelColor] = useState('');
+  const [editingTask, setEditingTask] = useState(false);
 
   const handleCompletionChange = async (value: boolean) => {
     setIsCompleted(value);
@@ -85,25 +90,39 @@ const RecurringTaskView: React.FC<RecurringTaskProps> = ({ recurringTask }) => {
 
   return (
     <div
-      className='thin-card-container justify-content-center hoverable'
+      className='thin-card-container justify-content-center'
       style={{ height: '70px' }}
     >
-      <div className='card-row align-items-center'>
-        <label className='checkbox-container '>
-          <input
-            className='checkbox'
-            type='checkbox'
-            checked={isCompleted}
-            onChange={() => handleCompletionChange(!isCompleted)}
-          />
-          <span className='checkmark'></span>
-        </label>
-        <div className='card-column justify-content-start'>
-          <h5>{recurringTask.task}</h5>
-
-          <p className={`subtitle ${labelColor}`}>{recurringTask.frequency}</p>
+      <div className='card-row align-items-center justify-content-between'>
+        <div className='card-row align-items-center'>
+          <label className='checkbox-container '>
+            <input
+              className='checkbox'
+              type='checkbox'
+              checked={isCompleted}
+              onChange={() => handleCompletionChange(!isCompleted)}
+            />
+            <span className='checkmark'></span>
+          </label>
+          <div className='card-column justify-content-start'>
+            <h5>{recurringTask.task}</h5>
+            <p className={`subtitle ${labelColor}`}>
+              {recurringTask.frequency}
+            </p>
+          </div>
         </div>
+        <FontAwesomeIcon
+          onClick={() => setEditingTask(true)}
+          icon={faPenToSquare}
+          className='card-edit-icon'
+        />
       </div>
+      {editingTask && (
+        <EditRecurringTask
+          setEditRecurringTask={setEditingTask}
+          recurringTask={recurringTask}
+        />
+      )}
     </div>
   );
 };

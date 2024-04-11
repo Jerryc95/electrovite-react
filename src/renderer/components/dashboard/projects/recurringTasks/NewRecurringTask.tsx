@@ -7,8 +7,6 @@ interface NewRecurringTaskProps {
   setRecurringTasks: React.Dispatch<React.SetStateAction<RecurringTask[]>>;
 }
 
-
-
 const NewRecurringTask: React.FC<NewRecurringTaskProps> = ({ setAddingTask, accountID, setRecurringTasks }) => {
 const [task, setTask] = useState("")
 const [frequency, setFrequency] = useState("Daily")
@@ -89,7 +87,6 @@ const frequencies = ['Daily', 'Weekly', "Monthly"]
           </div>
         </div>
         </div>
-        
       </div>
     </div>
   );

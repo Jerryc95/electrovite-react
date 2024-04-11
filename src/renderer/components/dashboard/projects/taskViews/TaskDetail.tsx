@@ -90,9 +90,9 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
 
   useEffect(() => {
     let completed = 0;
-    setSubtasks(task.subTasks);
-    setTotalSubtasks(task.subTasks.length);
-    task.subTasks.forEach((subtask) => {
+    setSubtasks(task.subtasks);
+    setTotalSubtasks(task.subtasks.length);
+    task.subtasks.forEach((subtask) => {
       if (subtask.subtask_status === taskStatus.Completed) {
         completed += 1;
       }
@@ -131,7 +131,7 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
     });
     setCompletedSubtasks(completed);
     setTotalSubtasks(uncompleted + completed);
-  }, [subtasks, task.name, task.subTasks.length]);
+  }, [subtasks, task.name, task.subtasks.length]);
 
   useEffect(() => {
     if (subtaskView === 'Board') {

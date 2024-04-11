@@ -10,12 +10,14 @@ import { taskAPI } from './taskAPI';
 import { subtaskAPI } from './subtaskAPI';
 
 interface taskState {
+  upcomingTasks: Task[];
   tasks: Task[];
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: Error | string | null;
 }
 
 const initialTaskState: taskState = {
+  upcomingTasks: [],
   tasks: [],
   loading: 'idle',
   error: null,
@@ -28,7 +30,7 @@ export const taskSlice = createSlice({
     clearTaskState: () => initialTaskState,
   },
   extraReducers: (builder) => {
-    // PROJECTS API
+    // TASKS API
     builder.addMatcher(taskAPI.endpoints.fetchTasks.matchPending, (state) => {
       state.loading = 'pending';
     });
@@ -38,7 +40,22 @@ export const taskSlice = createSlice({
       (state, action: PayloadAction<Task[]>) => {
         state.loading = 'fulfilled';
         state.tasks = action.payload;
-        console.log("payload", action.payload)
+        // console.log('payload', action.payload);
+      },
+    );
+    builder.addMatcher(
+      taskAPI.endpoints.fetchUpcomingTasks.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
+
+    builder.addMatcher(
+      taskAPI.endpoints.fetchUpcomingTasks.matchFulfilled,
+      (state, action: PayloadAction<Task[]>) => {
+        state.loading = 'fulfilled';
+        state.upcomingTasks = action.payload;
+        console.log('upcoming Tasks:', action.payload)
       },
     );
 
@@ -49,7 +66,7 @@ export const taskSlice = createSlice({
       taskAPI.endpoints.addTask.matchFulfilled,
       (state, action: PayloadAction<Task>) => {
         state.loading = 'fulfilled';
-        console.log(action.payload)
+        console.log(action.payload);
         state.tasks.push(action.payload);
       },
     );
@@ -62,7 +79,7 @@ export const taskSlice = createSlice({
       taskAPI.endpoints.updateTask.matchFulfilled,
       (state, action: PayloadAction<Task>) => {
         state.loading = 'fulfilled';
-        console.log(action.payload)
+        console.log(action.payload);
         const updatedTask = action.payload;
 
         const i = state.tasks.findIndex(
@@ -107,7 +124,7 @@ export const taskSlice = createSlice({
         );
 
         if (index !== -1) {
-          state.tasks[index].subTasks.push(action.payload);
+          state.tasks[index].subtasks.push(action.payload);
         }
       },
     );
@@ -129,11 +146,11 @@ export const taskSlice = createSlice({
         );
 
         if (taskIndex !== -1) {
-          const subtaskIndex = state.tasks[taskIndex].subTasks.findIndex(
+          const subtaskIndex = state.tasks[taskIndex].subtasks.findIndex(
             (subtask) => subtask.subtask_id === action.payload.subtask_id,
           );
           if (subtaskIndex != -1) {
-            state.tasks[taskIndex].subTasks[subtaskIndex] = action.payload;
+            state.tasks[taskIndex].subtasks[subtaskIndex] = action.payload;
           }
         }
       },
@@ -156,10 +173,10 @@ export const taskSlice = createSlice({
         );
 
         if (taskIndex != -1) {
-          const updatedSubtasks = state.tasks[taskIndex].subTasks.filter(
+          const updatedSubtasks = state.tasks[taskIndex].subtasks.filter(
             (subtask) => subtask.subtask_id != action.payload.subtask_id,
           );
-          state.tasks[taskIndex].subTasks = updatedSubtasks;
+          state.tasks[taskIndex].subtasks = updatedSubtasks;
         }
       },
     );

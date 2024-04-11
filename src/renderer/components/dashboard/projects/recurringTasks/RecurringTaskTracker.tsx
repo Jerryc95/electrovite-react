@@ -18,7 +18,7 @@ const RecurringTaskTracker: React.FC<RecurringTaskTrackerProps> = ({
     let filteredTasks = [];
     let filteredCompletedTasks = [];
     switch (label) {
-      case 'Daily Tasks Complete': {
+      case 'Daily Tasks': {
         filteredTasks = recurringTasks.filter(
           (task) => task.frequency === 'Daily',
         );
@@ -27,6 +27,29 @@ const RecurringTaskTracker: React.FC<RecurringTaskTrackerProps> = ({
         );
         setTasks(filteredTasks);
         setCompletedTasks(filteredCompletedTasks);
+        break;
+      }
+      case 'Weekly Tasks': {
+        filteredTasks = recurringTasks.filter(
+          (task) => task.frequency === 'Daily',
+        );
+        filteredCompletedTasks = recurringTasks.filter(
+          (task) => task.frequency === 'Daily' && task.is_completed === true,
+        );
+        setTasks(filteredTasks);
+        setCompletedTasks(filteredCompletedTasks);
+        break;
+      }
+      case 'Monthly Tasks': {
+        filteredTasks = recurringTasks.filter(
+          (task) => task.frequency === 'Daily',
+        );
+        filteredCompletedTasks = recurringTasks.filter(
+          (task) => task.frequency === 'Daily' && task.is_completed === true,
+        );
+        setTasks(filteredTasks);
+        setCompletedTasks(filteredCompletedTasks);
+        break;
       }
     }
   }, [recurringTasks, label]);
@@ -34,11 +57,11 @@ const RecurringTaskTracker: React.FC<RecurringTaskTrackerProps> = ({
   return (
     <div
       className='small-card-container justify-content-between'
-      style={{ height: '120px' }}
+      style={{ width: '250px', height: '65px' }}
       onClick={() => console.log(completedTasks, tasks)}
     >
       <div className='card-row'>
-        <h4>{label}</h4>
+        <h5>{label}</h5>
       </div>
       <div className='card-row align-items-center'>
         <ProgressBar height={10} total={tasks.length} current={completedTasks.length} />

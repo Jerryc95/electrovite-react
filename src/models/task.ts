@@ -13,5 +13,5 @@ export type Task = {
     completed: Date;
     priority: string;
     column_index: number;
-    subTasks: Subtask[];
+    subtasks: Subtask[];
 }

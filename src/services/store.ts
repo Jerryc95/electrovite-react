@@ -8,6 +8,7 @@ import accountSlice from './accountSlice';
 import subscriptionSlice from './subscriptionSlice';
 import paymentSlice from './paymentSlice';
 import projectSlice from './projectSlice';
+import recurringTaskSlice from './recurringTaskSlice';
 import taskSlice from './taskSlice';
 import { authAPI } from './authAPI';
 import { profileAPI } from './profileAPI';
@@ -16,6 +17,7 @@ import { paymentAPI } from './paymentAPI';
 import { projectAPI } from './projectAPI';
 import { taskAPI } from './taskAPI';
 import { subtaskAPI } from './subtaskAPI';
+import { recurringTaskAPI } from './recurringTaskAPI';
 
 export type RootState = ReturnType<typeof rootReducer>;
 
@@ -25,6 +27,7 @@ export const rootReducer = combineReducers({
   paymentReducer: paymentSlice,
   projectReducer: projectSlice,
   taskReducer: taskSlice,
+  recurringTaskReducer: recurringTaskSlice,
   [authAPI.reducerPath]: authAPI.reducer,
   [profileAPI.reducerPath]: profileAPI.reducer,
   [subscriptionAPI.reducerPath]: subscriptionAPI.reducer,
@@ -32,6 +35,7 @@ export const rootReducer = combineReducers({
   [projectAPI.reducerPath]: projectAPI.reducer,
   [taskAPI.reducerPath]: taskAPI.reducer,
   [subtaskAPI.reducerPath]: subtaskAPI.reducer,
+  [recurringTaskAPI.reducerPath]: recurringTaskAPI.reducer,
 });
 
 const persistConfig = {
@@ -45,6 +49,7 @@ const persistConfig = {
     projectAPI.reducerPath,
     taskAPI.reducerPath,
     subtaskAPI.reducerPath,
+    recurringTaskAPI.reducerPath
   ],
 };
 
@@ -61,6 +66,7 @@ const store = configureStore({
     projectAPI.middleware,
     taskAPI.middleware,
     subtaskAPI.middleware,
+    recurringTaskAPI.middleware
   ],
 });
 

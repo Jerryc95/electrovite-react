@@ -16,7 +16,7 @@ interface UpcomingTask {
   task_id: number;
   name: string;
   due_date: Date;
-  status: string;
+  task_status: string;
   completed: boolean;
   priority: string;
   subtasks: ISubtask[];

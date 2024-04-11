@@ -9,7 +9,7 @@ import { useSignInAccountMutation } from '../../../services/authAPI';
 // import { useFetchProfileMutation } from '../../../services/profileAPI';
 
 const SignInPage: React.FC = () => {
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  // const accountState = useSelector((state: RootState) => state.accountReducer);
   const [signInUser] = useSignInAccountMutation();
   // const [fetchProfile] = useFetchProfileMutation();
   const navigate = useNavigate();

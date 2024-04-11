@@ -15,6 +15,7 @@ import {
   faCircleInfo,
 } from '@fortawesome/free-solid-svg-icons';
 
+import flowplanrIcon from '../../../assets/flowplanrIcon.png';
 import { RootState } from '../../services/store';
 import Home from '$renderer/pages/Home';
 import Projects from '$renderer/pages/Projects';
@@ -31,13 +32,12 @@ import { clearSubscriptionInfo } from '../../services/subscriptionSlice';
 import { clearPaymentState } from '../..//services/paymentSlice';
 import '../styles/navbar.scss';
 
-
 interface NavbarProps {
   setComponent: React.Dispatch<React.SetStateAction<JSX.Element>>;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
-  const {toggleComponent, activeMenuItem} = usePagePicker(<Home />, 'home')
+  const { toggleComponent, activeMenuItem } = usePagePicker(<Home />, 'home');
   const [collapsed, setCollapsed] = useState(false);
   const [showingSettings, setShowingSettings] = useState(false);
 
@@ -54,7 +54,7 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
 
   const setPage = (component: JSX.Element, menuItem: string) => {
     setComponent(component);
-    toggleComponent(component, menuItem)
+    toggleComponent(component, menuItem);
   };
 
   const toggleSettings = () => {
@@ -68,8 +68,8 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
 
   const handleSignOut = () => {
     signOutAccount(accountState);
-    dispatch(clearSubscriptionInfo())
-    dispatch(clearPaymentState())
+    dispatch(clearSubscriptionInfo());
+    dispatch(clearPaymentState());
     navigate('/');
   };
 
@@ -79,12 +79,12 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
     }
   };
 
-
   return (
     <nav className={`navbar ${collapsed ? 'collapsed-nav' : ''}`}>
       <ul className='navbar-top'>
         <div className='navbar-heading'>
-          <h2>{collapsed ? 'FP' : 'Flowplanr'}</h2>
+          {collapsed ? <img src={flowplanrIcon} /> : <h2>Flowplanr</h2>}
+          {/* <h2>{collapsed ? 'FP' : 'Flowplanr'}</h2> */}
           <div
             className={`navbar-chevron-container ${
               collapsed ? 'collapsed-chevron-container' : ''

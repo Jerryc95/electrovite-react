@@ -5,15 +5,18 @@ import ProjectCard from '../components/dashboard/projects/ProjectCard';
 import NewProject from '$renderer/components/dashboard/projects/NewProject';
 import ProjectDetail from '$renderer/components/dashboard/projects/ProjectDetail';
 import { Project } from '../../models/project';
+import { Task } from 'src/models/task';
 import { RootState } from '../../services/store';
 import { selectedProjects } from '../../services/projectSlice';
 import { useFetchProjectsQuery } from '../../services/projectAPI';
+import { useFetchUpcomingTasksQuery } from '../../services/taskAPI';
 import { RecurringTask } from 'src/models/recurringTask';
 import '../styles/projects.scss';
-import '../styles/detailPage.scss';
+// import '../styles/detailPage.scss';
 import NewRecurringTask from '$renderer/components/dashboard/projects/recurringTasks/NewRecurringTask';
 import RecurringTaskView from '$renderer/components/dashboard/projects/recurringTasks/RecurringTask';
 import RecurringTaskTracker from '$renderer/components/dashboard/projects/recurringTasks/RecurringTaskTracker';
+import UpcomingTaskView from '$renderer/components/dashboard/home/UpcomingTaskView';
 
 interface IProjectData {
   projects: Project[];
@@ -23,6 +26,9 @@ interface IProjectData {
 const Projects: React.FC = () => {
   const accountState = useSelector((state: RootState) => state.accountReducer);
   const projects = useSelector(selectedProjects);
+  const upcomingTasks = useSelector(
+    (state: RootState) => state.taskReducer.upcomingTasks,
+  );
   // const recurringTasks = useSelector(selectedRecurringTasks)
 
   // const memoizedProjects = useMemo(() => projects, [projects]);
@@ -32,15 +38,21 @@ const Projects: React.FC = () => {
   const [addingRecurringTask, setAddingRecurringTask] = useState(false);
   const [recurringTasks, setRecurringTasks] = useState<RecurringTask[]>([]);
   const [showingProject, setShowingProject] = useState(false);
-  // const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project>(projects[0]);
 
   useFetchProjectsQuery(accountState.account?.id);
-  //add fetch recurring maybe here
+  useFetchUpcomingTasksQuery(accountState.account?.id);
 
   const toggleProject = (project: Project) => {
     setSelectedProject(project);
     setShowingProject(!showingProject);
+  };
+
+  const timeDifference = (date: Date) => {
+    const today = new Date();
+    return Math.ceil(
+      (today.getTime() - new Date(date).getTime()) / (1000 * 60 * 60 * 24),
+    );
   };
 
   const projectFilters = [
@@ -83,9 +95,17 @@ const Projects: React.FC = () => {
     }
   });
 
-useEffect(()=>{
-  console.log(projects)
-},[])
+  // const setUpcomingTasks = () => {
+
+  // fetch for tasks here need to make new api get request for it
+  // const daysRemaining = Math.ceil(
+  //   timeDifference(upcomingTask.due_date) / (1000 * 60 * 60 * 24),
+  // );
+  // };
+
+  useEffect(() => {
+    console.log(upcomingTasks);
+  }, []);
 
   return (
     <div className='projects-container'>
@@ -95,18 +115,21 @@ useEffect(()=>{
           Add New Project
         </button>
       </div>
-      <h3>Overview</h3>
+      <h3>Upcoming Tasks</h3>
       <div className='projects-overview'>
-        {projects.length === 0 || recurringTasks.length === 0 ? (
+        {upcomingTasks.length === 0 ? (
           <p>
-            Details across projects will appear here once projects are added
+            Upcoming tasks across projects will appear here once tasks are
+            added.
           </p>
         ) : (
           <div>
-            <RecurringTaskTracker
-              label='Daily Tasks Complete'
-              recurringTasks={recurringTasks}
-            />
+            {
+              upcomingTasks.map((upcomingTask) => (
+                // <UpcomingTaskView upcomingTask={upcomingTask}/>
+                <p>1</p>
+              ))
+            }
           </div>
         )}
       </div>
@@ -147,19 +170,30 @@ useEffect(()=>{
 
         <div className='projects-task-view'>
           <h3>Recurring Tasks</h3>
+          <button onClick={() => setAddingRecurringTask(true)}>Add Task</button>
           {recurringTasks.length === 0 ? (
             <p className='info-text'>
               Add recurring tasks that are part of your normal workflow.
             </p>
           ) : (
             <div className='task-list'>
+              <RecurringTaskTracker
+                label='Daily Tasks'
+                recurringTasks={recurringTasks}
+              />
+              <RecurringTaskTracker
+                label='Weekly Tasks'
+                recurringTasks={recurringTasks}
+              />
+              <RecurringTaskTracker
+                label='Monthly Tasks'
+                recurringTasks={recurringTasks}
+              />
               {recurringTasks.map((task) => (
                 <RecurringTaskView key={task.rt_id} recurringTask={task} />
               ))}
             </div>
           )}
-
-          <button onClick={() => setAddingRecurringTask(true)}>Add Task</button>
         </div>
       </div>
       {addingProject && (
