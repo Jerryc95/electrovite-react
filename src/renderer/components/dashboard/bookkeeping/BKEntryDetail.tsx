@@ -17,6 +17,8 @@ import CurrencyField from '$renderer/components/CurrencyField';
 import CalendarField from '$renderer/components/CalendarField';
 import DeleteModal from '$renderer/components/DeleteModal';
 import UpdateModal from '$renderer/components/UpdateModal';
+import "../../../styles/detailPage.scss"
+
 
 interface BKEntryDetailProps {
   entry: BKEntry;

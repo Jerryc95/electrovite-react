@@ -1,8 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-
-import { RootState } from '../../../services/store';
 
 import AuthForm from '$renderer/components/AuthForm';
 import { useSignInAccountMutation } from '../../../services/authAPI';
@@ -20,7 +17,7 @@ const SignInPage: React.FC = () => {
   }) => {
     signInUser(formData).then((data) => {
       if ('error' in data) {
-        alert('No account found.');
+        alert('No account found. Email or password are incorrect.');
       } else {
         navigate('/loading-account');
       }

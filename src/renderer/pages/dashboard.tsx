@@ -12,6 +12,7 @@ const Dashboard: React.FC = () => {
     <div className='dashboard-container'>
       <Navbar setComponent={setComponent} />
       {component}
+      {/* maybe put hte paywall here */}
     </div>
   );
 };

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import '../styles/authForm.scss';
+import { checkPassword } from '../../helpers/CheckPassword';
+import { checkEmail } from '../../helpers/CheckEmail';
 
 interface AuthFormProps {
   type: 'signin' | 'signup' | 'forgot';
@@ -43,6 +45,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
     if (type === 'signup' && password !== confirmPassword) {
       return alert('Passwords do not match.');
     }
+    if (type === 'signup' && !checkEmail(email)) {
+      return alert('Email is not a valid Email address.');
+    }
+    if (type === 'signup' && !checkPassword(password)) {
+      return alert(
+        'Password must be at least 8 characters long, have a number, and one uppercase letter.',
+      );
+    }
+
     onSubmit({ email, password });
   };
 
@@ -115,7 +126,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             </p>
             <p className='auth-form-callout'>
               Forget your password?{' '}
-              <Link to='/reset-password'>
+              <Link to='/forgot-password'>
                 <span className='auth-form-link'>Reset it here.</span>
               </Link>
             </p>

@@ -51,6 +51,7 @@ const Bookkeeping: React.FC = () => {
   };
 
   const toggleEntry = (entry: BKEntry) => {
+    console.log(entry)
     setSelectedEntry(entry);
     setShowingEntry(!showingEntry);
   };
@@ -288,6 +289,7 @@ const Bookkeeping: React.FC = () => {
             <div>
               {recurringExpenses.map((expense) => (
                 <RecurringExpense
+                key={expense.re_id}
                   expense={expense}
                   expenses={recurringExpenses}
                   setExpenses={setRecurringExpenses}

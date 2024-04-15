@@ -58,6 +58,12 @@ h1 {
   color: #4cc9f0;
 }
 
+.flowplanr-header {
+  background: linear-gradient(to right, #f72585, #480ca8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 //brand-buttons {
   .button-brand-pink {
     background-color: #f72585;

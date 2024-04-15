@@ -1,0 +1,13 @@
+.documents-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 80%;
+    height: 100vh;
+    flex-grow: 1;
+    transition: margin-left 0.3s ease-in-out;
+    transition: min-width 0.3s ease-in-out;
+    margin-left: 225px;
+    margin-top: 35px;
+    margin-right: 35px;
+    overflow-y: auto;
+}

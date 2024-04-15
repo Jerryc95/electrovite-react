@@ -17,7 +17,6 @@ import '$styles/app.scss';
 const persistedStore = persistStore(store);
 // dotenv.config();
 
-
 // Render application
 createRoot(document.getElementById('app') as HTMLElement).render(
   <StrictMode>

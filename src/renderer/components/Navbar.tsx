@@ -20,7 +20,7 @@ import { RootState } from '../../services/store';
 import Home from '$renderer/pages/Home';
 import Projects from '$renderer/pages/Projects';
 import Contacts from '../pages/Contacts';
-import Documents from './dashboard/Documents';
+import Documents from './dashboard/documents/Documents';
 import Bookkeeping from '$renderer/pages/Bookkeeping';
 import AboutPage from '$renderer/pages/AboutPage';
 import Settings from '../pages/Settings';
@@ -84,7 +84,6 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
       <ul className='navbar-top'>
         <div className='navbar-heading'>
           {collapsed ? <img src={flowplanrIcon} /> : <h2>Flowplanr</h2>}
-          {/* <h2>{collapsed ? 'FP' : 'Flowplanr'}</h2> */}
           <div
             className={`navbar-chevron-container ${
               collapsed ? 'collapsed-chevron-container' : ''

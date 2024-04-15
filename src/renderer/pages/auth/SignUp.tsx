@@ -32,6 +32,7 @@ const SignUpPage: React.FC = () => {
     email: string;
     password: string;
   }) => {
+    
     setEmail(formData.email);
     setPassword(formData.password);
     setCreationStep(1);
