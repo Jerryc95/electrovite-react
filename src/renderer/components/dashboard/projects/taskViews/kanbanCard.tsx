@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { Draggable } from 'react-beautiful-dnd';
 
+import { selectTask } from '../../../../../services/taskSlice';
 import ProgressBar from '$renderer/components/ProgressBar';
 import { Task } from 'src/models/task';
 import { taskStatus } from '../../../../../statuses/taskStatus';
@@ -12,25 +15,36 @@ interface KanbanCardProps {
   task: Task;
   tasks: Task[];
   //   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  setSelectedTask: React.Dispatch<React.SetStateAction<Task>>;
-  setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
+  // setSelectedTask: React.Dispatch<React.SetStateAction<Task>>;
+  // setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const KanbanCard: React.FC<KanbanCardProps> = ({
   index,
   task,
-  setSelectedTask,
-  setShowingTask,
+  // setSelectedTask,
+  // setShowingTask,
 }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { projectName } = useParams();
+
   const [uncompletedSubTasks, setUncompletedSubTasks] = useState(0);
   const [completedSubTask, setCompletedSubTasks] = useState(0);
   const [totalSubTasks, setTotalSubTasks] = useState(
     uncompletedSubTasks + completedSubTask,
   );
 
-  const handleSetTask = (task: Task) => {
-    setSelectedTask(task);
-    setShowingTask(true);
+  const toggleTask = (task: Task) => {
+    // setSelectedTask(task);
+    // setShowingTask(true);
+    dispatch(selectTask(task));
+    navigate(
+      `/projects/${projectName?.replaceAll(' ', '-')}/${task.name.replaceAll(
+        ' ',
+        '-',
+      )}`,
+    );
   };
 
   const dateParser = (date: Date) => {
@@ -65,11 +79,11 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
   };
 
   useEffect(() => {
-    if (task.subTasks) {
+    if (task.subtasks) {
       let uncompleted = 0;
       let completed = 0;
-      setTotalSubTasks(task.subTasks.length);
-      task.subTasks.forEach((subtask) => {
+      setTotalSubTasks(task.subtasks.length);
+      task.subtasks.forEach((subtask) => {
         if (subtask.subtask_status === taskStatus.Completed) {
           completed += 1;
         } else {
@@ -79,7 +93,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
       setUncompletedSubTasks(uncompleted);
       setCompletedSubTasks(completed);
     }
-  }, [task.subTasks]);
+  }, [task.subtasks]);
   return (
     <Draggable draggableId={task.task_id.toString()} index={index}>
       {(provided) => (
@@ -88,7 +102,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          onClick={() => handleSetTask(task)}
+          onClick={() => toggleTask(task)}
         >
           <div>
             <div className='row space-between'>

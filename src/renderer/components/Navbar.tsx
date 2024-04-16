@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
@@ -32,11 +32,11 @@ import { clearSubscriptionInfo } from '../../services/subscriptionSlice';
 import { clearPaymentState } from '../..//services/paymentSlice';
 import '../styles/navbar.scss';
 
-interface NavbarProps {
-  setComponent: React.Dispatch<React.SetStateAction<JSX.Element>>;
-}
+// interface NavbarProps {
+//   setComponent: React.Dispatch<React.SetStateAction<JSX.Element>>;
+// }
 
-const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
+const Navbar: React.FC = () => {
   const { toggleComponent, activeMenuItem } = usePagePicker(<Home />, 'home');
   const [collapsed, setCollapsed] = useState(false);
   const [showingSettings, setShowingSettings] = useState(false);
@@ -53,7 +53,7 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
   };
 
   const setPage = (component: JSX.Element, menuItem: string) => {
-    setComponent(component);
+    // setComponent(component);
     toggleComponent(component, menuItem);
   };
 
@@ -99,59 +99,75 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
             />
           </div>
         </div>
-        <li
-          onClick={() => setPage(<Home />, 'home')}
-          className={`${activeMenuItem == 'home' ? 'active-menu-item' : ''}`}
-        >
-          <FontAwesomeIcon icon={faHome} className='navbar-li-icon' />
-          <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
-            Dashboard
-          </span>
-        </li>
-        <li
-          onClick={() => setPage(<Projects />, 'projects')}
-          className={`${
-            activeMenuItem == 'projects' ? 'active-menu-item' : ''
-          }`}
-        >
-          <FontAwesomeIcon icon={faGrip} size='lg' className='navbar-li-icon' />
-          <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
-            Projects
-          </span>
-        </li>
-        <li
-          onClick={() => setPage(<Contacts />, 'contacts')}
-          className={`${
-            activeMenuItem == 'contacts' ? 'active-menu-item' : ''
-          }`}
-        >
-          <FontAwesomeIcon icon={faAddressCard} className='navbar-li-icon' />
-          <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
-            Contacts
-          </span>
-        </li>
-        <li
-          onClick={() => setPage(<Documents />, 'documents')}
-          className={`${
-            activeMenuItem == 'documents' ? 'active-menu-item' : ''
-          }`}
-        >
-          <FontAwesomeIcon icon={faFile} className='navbar-li-icon' />
-          <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
-            Documents
-          </span>
-        </li>
-        <li
-          onClick={() => setPage(<Bookkeeping />, 'bookkeeping')}
-          className={`${
-            activeMenuItem == 'bookkeeping' ? 'active-menu-item' : ''
-          }`}
-        >
-          <FontAwesomeIcon icon={faCoins} className='navbar-li-icon' />
-          <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
-            Bookkeeping
-          </span>
-        </li>
+        <Link to='/home'>
+          <li
+            onClick={() => setPage(<Home />, 'home')}
+            className={`${activeMenuItem == 'home' ? 'active-menu-item' : ''}`}
+          >
+            <FontAwesomeIcon icon={faHome} className='navbar-li-icon' />
+            <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
+              Dashboard
+            </span>
+          </li>
+        </Link>
+
+        <Link to='/projects'>
+          <li
+            onClick={() => setPage(<Projects />, 'projects')}
+            className={`${
+              activeMenuItem == 'projects' ? 'active-menu-item' : ''
+            }`}
+          >
+            <FontAwesomeIcon
+              icon={faGrip}
+              size='lg'
+              className='navbar-li-icon'
+            />
+            <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
+              Projects
+            </span>
+          </li>
+        </Link>
+
+        <Link to='/contacts'>
+          <li
+            onClick={() => setPage(<Contacts />, 'contacts')}
+            className={`${
+              activeMenuItem == 'contacts' ? 'active-menu-item' : ''
+            }`}
+          >
+            <FontAwesomeIcon icon={faAddressCard} className='navbar-li-icon' />
+            <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
+              Contacts
+            </span>
+          </li>
+        </Link>
+        <Link to='/documents'>
+          <li
+            onClick={() => setPage(<Documents />, 'documents')}
+            className={`${
+              activeMenuItem == 'documents' ? 'active-menu-item' : ''
+            }`}
+          >
+            <FontAwesomeIcon icon={faFile} className='navbar-li-icon' />
+            <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
+              Documents
+            </span>
+          </li>
+        </Link>
+        <Link to='/bookkeeping'>
+          <li
+            onClick={() => setPage(<Bookkeeping />, 'bookkeeping')}
+            className={`${
+              activeMenuItem == 'bookkeeping' ? 'active-menu-item' : ''
+            }`}
+          >
+            <FontAwesomeIcon icon={faCoins} className='navbar-li-icon' />
+            <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
+              Bookkeeping
+            </span>
+          </li>
+        </Link>
       </ul>
       <ul className='navbar-bottom'>
         <li onClick={toggleSettings}>
@@ -190,24 +206,31 @@ const Navbar: React.FC<NavbarProps> = ({ setComponent }) => {
                 Sign Out
               </span>
             </li>
-            <li
-              onClick={() => handleSettingsClick(<AboutPage />, 'about')}
-              className={`${showingSettings ? '' : 'hidden'}`}
-            >
-              <FontAwesomeIcon icon={faCircleInfo} className='navbar-li-icon' />
-              <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
-                About
-              </span>
-            </li>
-            <li
-              onClick={() => handleSettingsClick(<Settings />, 'settings')}
-              className={`${showingSettings ? '' : 'hidden'}`}
-            >
-              <FontAwesomeIcon icon={faGear} className='navbar-li-icon' />
-              <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
-                Settings
-              </span>
-            </li>
+            <Link to='/about'>
+              <li
+                onClick={() => handleSettingsClick(<AboutPage />, 'about')}
+                className={`${showingSettings ? '' : 'hidden'}`}
+              >
+                <FontAwesomeIcon
+                  icon={faCircleInfo}
+                  className='navbar-li-icon'
+                />
+                <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
+                  About
+                </span>
+              </li>
+            </Link>
+            <Link to='settings'>
+              <li
+                onClick={() => handleSettingsClick(<Settings />, 'settings')}
+                className={`${showingSettings ? '' : 'hidden'}`}
+              >
+                <FontAwesomeIcon icon={faGear} className='navbar-li-icon' />
+                <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
+                  Settings
+                </span>
+              </li>
+            </Link>
           </div>
         </div>
       </ul>

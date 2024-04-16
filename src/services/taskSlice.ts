@@ -12,6 +12,7 @@ import { subtaskAPI } from './subtaskAPI';
 interface taskState {
   upcomingTasks: Task[];
   tasks: Task[];
+  selectedTask: Task | null;
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: Error | string | null;
 }
@@ -19,6 +20,7 @@ interface taskState {
 const initialTaskState: taskState = {
   upcomingTasks: [],
   tasks: [],
+  selectedTask: null,
   loading: 'idle',
   error: null,
 };
@@ -28,6 +30,9 @@ export const taskSlice = createSlice({
   initialState: initialTaskState,
   reducers: {
     clearTaskState: () => initialTaskState,
+    selectTask: (state, action: PayloadAction<Task>) => {
+      state.selectedTask = action.payload;
+    },
   },
   extraReducers: (builder) => {
     // TASKS API
@@ -55,7 +60,7 @@ export const taskSlice = createSlice({
       (state, action: PayloadAction<Task[]>) => {
         state.loading = 'fulfilled';
         state.upcomingTasks = action.payload;
-        console.log('upcoming Tasks:', action.payload)
+        console.log('upcoming Tasks:', action.payload);
       },
     );
 
@@ -185,5 +190,5 @@ export const taskSlice = createSlice({
 
 export const selectedTasks = (state: RootState) => state.taskReducer.tasks;
 
-export const { clearTaskState } = taskSlice.actions;
+export const { clearTaskState, selectTask } = taskSlice.actions;
 export default taskSlice.reducer;

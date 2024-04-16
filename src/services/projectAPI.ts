@@ -15,6 +15,12 @@ export const projectAPI = createApi({
         method: 'GET',
       }),
     }),
+    // fetchProjectDetails: builder.query<Project,{accountID: number; projectID: number}>({
+    //   query: (args) => ({
+    //     url: `/${args.accountID}/${args.projectID}`,
+    //     method: 'GET',
+    //   }),
+    // }),
     addProject: builder.mutation<Project, object>({
       query: (body) => ({
         url: '/add',

@@ -8,31 +8,30 @@ import {
 
 import { clearTaskState, selectedTasks } from '../../../../services/taskSlice';
 import { useFetchTasksQuery } from '../../../../services/taskAPI';
-
 import { Project } from '../../../../models/project';
 import NewProjectTask from './taskViews/NewProjectTask';
 import TaskList from './taskViews/TaskList';
 import KanbanBoard from './taskViews/KanbanBoard';
-// import RoadmapView from './taskViews/RoadmapView';
 import DropdownField from '$renderer/components/DropdownField';
 import { projectStatus } from '../../../../statuses/projectStatus';
 import EditField from '$renderer/components/EditField';
 import { Task } from 'src/models/task';
-import TaskDetail from './taskViews/TaskDetail';
+// import TaskDetail from './taskViews/TaskDetail';
 import EditProject from './EditProject';
+import useBackClick from '../../../../hooks/useBackClick';
 
 interface ProjectDetailProps {
   project: Project;
-  setShowingProject: React.Dispatch<React.SetStateAction<boolean>>;
-  accountID: number | undefined;
+  // setShowingProject: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProjectDetail: React.FC<ProjectDetailProps> = ({
   project,
-  setShowingProject,
-  accountID,
+  // setShowingProject,
 }) => {
   const tasks = useSelector(selectedTasks);
+  const goBack = useBackClick();
+
   const [addingTask, setAddingTask] = useState(false);
   const [showingTask, setShowingTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task>(tasks[0]);
@@ -43,15 +42,17 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const [componentView, setComponentView] = useState<JSX.Element>(
     <KanbanBoard
       tasks={tasks}
-      setSelectedTask={setSelectedTask}
-      setShowingTask={setShowingTask}
+      // setSelectedTask={setSelectedTask}
+      // setShowingTask={setShowingTask}
     />,
   );
-  // clearTaskState();
+
   const fetchTasks = useFetchTasksQuery(project.id);
 
   const toggleProject = () => {
-    setShowingProject(false);
+    clearTaskState();
+    goBack();
+    // setShowingProject(false);
   };
 
   const toggleProjectEdit = () => {
@@ -66,8 +67,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
           setComponentView(
             <KanbanBoard
               tasks={tasks}
-              setSelectedTask={setSelectedTask}
-              setShowingTask={setShowingTask}
+              // setSelectedTask={setSelectedTask}
+              // setShowingTask={setShowingTask}
             />,
           );
           break;
@@ -94,7 +95,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
     <div className='project-detail-container'>
       <div className='project-detail-header'>
         <div className='project-detail-header-leading'>
-          <div className='project-detail-back' onClick={toggleProject}>
+          <div className='project-detail-back' onClick={()=> toggleProject()}>
             <FontAwesomeIcon icon={faChevronLeft} />
             <p>Projects</p>
           </div>
@@ -175,20 +176,20 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
           tasks={tasks}
         />
       )}
-      {showingTask && (
+      {/* {showingTask && (
         <TaskDetail
           task={selectedTask}
           setShowingTask={setShowingTask}
-          accountID={accountID}
+          accountID={project.account_id}
           // tasks={tasks}
           project={project}
         />
-      )}
+      )} */}
       {editingProject && (
         <EditProject
           project={project}
           setEditingProject={setEditingProject}
-          setShowingProject={setShowingProject}
+          // setShowingProject={setShowingProject}
         />
       )}
     </div>

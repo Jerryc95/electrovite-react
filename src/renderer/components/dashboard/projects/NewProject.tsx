@@ -46,9 +46,7 @@ const NewProject: React.FC<NewProjectProps> = ({ setAddingProject, id }) => {
       <div className='new-project-form'>
         <div className='new-project-heading'>
           <h2>Creating new project</h2>
-          <button onClick={() => setAddingProject(false)}>
-            Cancel
-          </button>
+          <button onClick={() => setAddingProject(false)}>Cancel</button>
         </div>
         <div className='new-project-details'>
           <div className='new-project-info'>

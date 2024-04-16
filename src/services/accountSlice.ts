@@ -4,6 +4,7 @@
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
+import { RootState } from './store';
 import { authAPI } from './authAPI';
 import { profileAPI } from './profileAPI';
 import { AccountProfile } from 'src/models/accountProfile';
@@ -104,6 +105,8 @@ export const accountSlice = createSlice({
     );
   },
 });
+
+export const selectedAccount = (state: RootState) => state.accountReducer
 
 export const { resetAccountState, updateProfileState, updateEmailState } =
   accountSlice.actions;

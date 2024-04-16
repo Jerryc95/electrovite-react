@@ -12,15 +12,15 @@ import { useUpdateTaskMutation } from '../../../../../services/taskAPI';
 interface KanbanProps {
   tasks: Task[];
   // setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  setSelectedTask: React.Dispatch<React.SetStateAction<Task>>;
-  setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
+  // setSelectedTask: React.Dispatch<React.SetStateAction<Task>>;
+  // setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const KanbanBoard: React.FC<KanbanProps> = ({
   tasks,
   // setTasks,
-  setSelectedTask,
-  setShowingTask,
+  // setSelectedTask,
+  // setShowingTask,
 }) => {
   const [notStartedTasks, setNotStartedTasks] = useState<Task[]>(tasks);
   const [inProgTasks, setInProgTasks] = useState<Task[]>([]);
@@ -199,8 +199,8 @@ const KanbanBoard: React.FC<KanbanProps> = ({
                     index={index}
                     task={task}
                     tasks={notStartedTasks}
-                    setSelectedTask={setSelectedTask}
-                    setShowingTask={setShowingTask}
+                    // setSelectedTask={setSelectedTask}
+                    // setShowingTask={setShowingTask}
                     key={task.task_id}
                   />
                 ))}
@@ -228,8 +228,8 @@ const KanbanBoard: React.FC<KanbanProps> = ({
                     index={index}
                     task={task}
                     tasks={inProgTasks}
-                    setSelectedTask={setSelectedTask}
-                    setShowingTask={setShowingTask}
+                    // setSelectedTask={setSelectedTask}
+                    // setShowingTask={setShowingTask}
                     key={task.task_id}
                   />
                 ))}
@@ -257,8 +257,8 @@ const KanbanBoard: React.FC<KanbanProps> = ({
                     index={index}
                     task={task}
                     tasks={completedTasks}
-                    setSelectedTask={setSelectedTask}
-                    setShowingTask={setShowingTask}
+                    // setSelectedTask={setSelectedTask}
+                    // setShowingTask={setShowingTask}
                     key={task.task_id}
                   />
                 ))}

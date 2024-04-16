@@ -1,59 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import ProjectCard from '../components/dashboard/projects/ProjectCard';
 import NewProject from '$renderer/components/dashboard/projects/NewProject';
-import ProjectDetail from '$renderer/components/dashboard/projects/ProjectDetail';
+// import ProjectDetail from '$renderer/components/dashboard/projects/ProjectDetail';
 import { Project } from '../../models/project';
-import { Task } from 'src/models/task';
-import { RootState } from '../../services/store';
-import { selectedProjects } from '../../services/projectSlice';
+import { selectedProjects, selectProject } from '../../services/projectSlice';
 import { useFetchProjectsQuery } from '../../services/projectAPI';
 import { useFetchUpcomingTasksQuery } from '../../services/taskAPI';
 import { RecurringTask } from 'src/models/recurringTask';
 import '../styles/projects.scss';
-// import '../styles/detailPage.scss';
 import NewRecurringTask from '$renderer/components/dashboard/projects/recurringTasks/NewRecurringTask';
 import RecurringTaskView from '$renderer/components/dashboard/projects/recurringTasks/RecurringTask';
 import RecurringTaskTracker from '$renderer/components/dashboard/projects/recurringTasks/RecurringTaskTracker';
-import UpcomingTaskView from '$renderer/components/dashboard/home/UpcomingTaskView';
-
-interface IProjectData {
-  projects: Project[];
-  recurringTasks: RecurringTask[];
-}
+import { selectedAccount } from '../../services/accountSlice';
+// import UpcomingTaskView from '$renderer/components/dashboard/home/UpcomingTaskView';
 
 const Projects: React.FC = () => {
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector(selectedAccount);
   const projects = useSelector(selectedProjects);
-  const upcomingTasks = useSelector(
-    (state: RootState) => state.taskReducer.upcomingTasks,
-  );
-  // const recurringTasks = useSelector(selectedRecurringTasks)
 
-  // const memoizedProjects = useMemo(() => projects, [projects]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [addingProject, setAddingProject] = useState(false);
   const [addingRecurringTask, setAddingRecurringTask] = useState(false);
   const [recurringTasks, setRecurringTasks] = useState<RecurringTask[]>([]);
-  const [showingProject, setShowingProject] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<Project>(projects[0]);
+  // const [showingProject, setShowingProject] = useState(false);
+  // const [selectedProject, setSelectedProject] = useState<Project>(projects[0]);
 
-  useFetchProjectsQuery(accountState.account?.id);
-  useFetchUpcomingTasksQuery(accountState.account?.id);
+  useFetchProjectsQuery(user.account?.id);
+  useFetchUpcomingTasksQuery(user.account?.id);
+  
 
   const toggleProject = (project: Project) => {
-    setSelectedProject(project);
-    setShowingProject(!showingProject);
+    dispatch(selectProject(project));
+    navigate(`/projects/${project.name.replaceAll(" ", "-")}`);
+    // setSelectedProject(project);
+    // setShowingProject(!showingProject);
   };
 
-  const timeDifference = (date: Date) => {
-    const today = new Date();
-    return Math.ceil(
-      (today.getTime() - new Date(date).getTime()) / (1000 * 60 * 60 * 24),
-    );
-  };
+  // const timeDifference = (date: Date) => {
+  //   const today = new Date();
+  //   return Math.ceil(
+  //     (today.getTime() - new Date(date).getTime()) / (1000 * 60 * 60 * 24),
+  //   );
+  // };
 
   const projectFilters = [
     { name: 'All', cName: 'filter-capsule all' },
@@ -103,21 +96,19 @@ const Projects: React.FC = () => {
   // );
   // };
 
-  useEffect(() => {
-    console.log(upcomingTasks);
-  }, []);
+  // useEffect(() => {
+  //   console.log(upcomingTasks);
+  // }, []);
 
   return (
     <div className='projects-container'>
       <div className='projects-header'>
         <h2>Projects</h2>
-        <button onClick={() => setAddingProject(!addingProject)}>
-          Add New Project
-        </button>
+        <button onClick={() => setAddingProject(true)}>Add New Project</button>
       </div>
       <h3>Upcoming Tasks</h3>
       <div className='projects-overview'>
-        {upcomingTasks.length === 0 ? (
+        {/* {upcomingTasks.length === 0 ? (
           <p>
             Upcoming tasks across projects will appear here once tasks are
             added.
@@ -131,7 +122,7 @@ const Projects: React.FC = () => {
               ))
             }
           </div>
-        )}
+        )} */}
       </div>
       <div className='projects-bottom-container'>
         <div className='projects-view'>
@@ -170,7 +161,9 @@ const Projects: React.FC = () => {
 
         <div className='projects-task-view'>
           <h3>Recurring Tasks</h3>
-          <button onClick={() => setAddingRecurringTask(true)}>Add Task</button>
+          <button onClick={()=> setAddingRecurringTask(true)}>
+            Add Task
+          </button>
           {recurringTasks.length === 0 ? (
             <p className='info-text'>
               Add recurring tasks that are part of your normal workflow.
@@ -197,27 +190,22 @@ const Projects: React.FC = () => {
         </div>
       </div>
       {addingProject && (
-        <NewProject
-          setAddingProject={setAddingProject}
-          id={accountState.account?.id}
-        />
+        <NewProject setAddingProject={setAddingProject} id={user.account?.id} />
       )}
 
-      {showingProject && (
+      {/* {showingProject && (
         <ProjectDetail
           project={selectedProject}
           setShowingProject={setShowingProject}
-          accountID={accountState.account?.id}
         />
-      )}
+      )} */}
       {addingRecurringTask && (
         <NewRecurringTask
           setAddingTask={setAddingRecurringTask}
-          accountID={accountState.account?.id}
-          setRecurringTasks={setRecurringTasks}
+          id={user.account?.id}
+          // setRecurringTasks={setRecurringTasks}
         />
       )}
-      {}
     </div>
   );
 };

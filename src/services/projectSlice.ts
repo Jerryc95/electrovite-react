@@ -9,12 +9,14 @@ import { projectAPI } from './projectAPI';
 
 interface projectState {
   projects: Project[];
+  selectedProject: Project | null
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
 }
 
 const initialProjectState: projectState = {
   projects: [],
+  selectedProject: null,
   loading: 'idle',
   error: null,
 };
@@ -24,6 +26,10 @@ export const projectSlice = createSlice({
   initialState: initialProjectState,
   reducers: {
     clearProjectState: () => initialProjectState,
+    selectProject: (state, action: PayloadAction<Project>) => { 
+      state.selectedProject = action.payload
+    }
+
   },
   extraReducers: (builder) => {
     // PROJECTS API
@@ -113,5 +119,5 @@ export const projectSlice = createSlice({
 export const selectedProjects = (state: RootState) =>
   state.projectReducer.projects;
 
-export const { clearProjectState } = projectSlice.actions;
+export const { clearProjectState, selectProject } = projectSlice.actions;
 export default projectSlice.reducer;

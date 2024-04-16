@@ -76,13 +76,13 @@ const EditField: React.FC<EditFieldProps> = ({
           </button>
         </div>
       ) : (
-        <p
+        <div
           className={`edit-field-content ${field}`}
           onClick={handleEditClick}
           style={{ cursor: 'pointer' }}
         >
           {displayLineBreaks(editedValue) || `Add ${label.slice(0, -1)}`}
-        </p>
+        </div>
       )}
     </div>
   );

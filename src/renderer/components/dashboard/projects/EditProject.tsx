@@ -11,13 +11,13 @@ import { Project } from 'src/models/project';
 interface EditProjectProps {
   project: Project;
   setEditingProject: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowingProject: React.Dispatch<React.SetStateAction<boolean>>;
+  // setShowingProject: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const EditProject: React.FC<EditProjectProps> = ({
   project,
   setEditingProject,
-  setShowingProject,
+  // setShowingProject,
 }) => {
   const [name, setName] = useState(project.name);
   const [startDate, setStartDate] = useState<Date | null>();
@@ -33,7 +33,7 @@ const EditProject: React.FC<EditProjectProps> = ({
 
   const handleDeleteProject = () => {
     removeProject(project.id)
-    setShowingProject(false)
+    // setShowingProject(false)
     setShowingDeleteAlert(false);
   };
 

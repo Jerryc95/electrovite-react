@@ -19,22 +19,24 @@ import NewSubtask from './NewSubTask';
 import STKanbanBoard from './subtaskViews/STKanbanBoard';
 import SubtaskList from './subtaskViews/SubtaskList';
 import EditTask from './EditTask';
+import useBackClick from '../../../../../hooks/useBackClick';
 
 interface TaskDetailProps {
   task: Task;
-  setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
-  accountID: number | undefined;
+  // setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
+  id: number | undefined;
   // tasks: Task[];
   project: Project;
 }
 
 const TaskDetail: React.FC<TaskDetailProps> = ({
   task,
-  setShowingTask,
-  accountID,
+  // setShowingTask,
+  id,
   // tasks,
   project,
 }) => {
+  const goBack = useBackClick();
   // remove subtasks and setsubtasks and replace with passed task.subtasks
   const [addingSubtask, setAddingSubtask] = useState(false);
   const [editingTask, setEditingTask] = useState(false);
@@ -53,16 +55,8 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
     />,
   );
 
-  const toggleTask = (id: number) => {
-    // const updatedTasks = tasks.map((t) => {
-    //   if (id === t.task_id) {
-    //     return task;
-    //   } else {
-    //     return t;
-    //   }
-    // });
-    // setTasks(updatedTasks);
-    setShowingTask(false);
+  const toggleTask = () => {
+    goBack();
   };
 
   const toggleEditTask = () => {
@@ -88,17 +82,17 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
     }
   };
 
-  useEffect(() => {
-    let completed = 0;
-    setSubtasks(task.subtasks);
-    setTotalSubtasks(task.subtasks.length);
-    task.subtasks.forEach((subtask) => {
-      if (subtask.subtask_status === taskStatus.Completed) {
-        completed += 1;
-      }
-    });
-    setCompletedSubtasks(completed);
-  }, []);
+  // useEffect(() => {
+  //   let completed = 0;
+  //   setSubtasks(task.subtasks);
+  //   // setTotalSubtasks(task.subtasks.length);
+  //   task.subtasks.forEach((subtask) => {
+  //     if (subtask.subtask_status === taskStatus.Completed) {
+  //       completed += 1;
+  //     }
+  //   });
+  //   setCompletedSubtasks(completed);
+  // }, []);
 
   // useEffect(() => {
   //   let completed = 0;
@@ -117,21 +111,20 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
   //     });
   // }, []);
 
-  useEffect(() => {
-    console.log('rendered');
-    let uncompleted = 0;
-    let completed = 0;
-    setTaskName(task.name);
-    subtasks.forEach((subtask) => {
-      if (subtask.subtask_status === taskStatus.Completed) {
-        completed += 1;
-      } else {
-        uncompleted += 1;
-      }
-    });
-    setCompletedSubtasks(completed);
-    setTotalSubtasks(uncompleted + completed);
-  }, [subtasks, task.name, task.subtasks.length]);
+  // useEffect(() => {
+  //   let uncompleted = 0;
+  //   let completed = 0;
+  //   setTaskName(task.name);
+  //   subtasks.forEach((subtask) => {
+  //     if (subtask.subtask_status === taskStatus.Completed) {
+  //       completed += 1;
+  //     } else {
+  //       uncompleted += 1;
+  //     }
+  //   });
+  //   setCompletedSubtasks(completed);
+  //   setTotalSubtasks(uncompleted + completed);
+  // }, [subtasks, task.name, task.subtasks.length]);
 
   useEffect(() => {
     if (subtaskView === 'Board') {
@@ -161,7 +154,7 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
         <div className='task-detail-leading'>
           <div
             className='task-detail-back'
-            onClick={() => toggleTask(task.task_id)}
+            onClick={() => toggleTask()}
           >
             <FontAwesomeIcon icon={faChevronLeft} />
             <p>{project.name}</p>
@@ -286,23 +279,23 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
       {addingSubtask && (
         <NewSubtask
           setAddingSubtask={setAddingSubtask}
-          accountID={accountID}
+          accountID={id}
           taskID={task.task_id}
           // setSubtasks={setSubtasks}
           // subTasks={subtasks}
           // add task here
         />
       )}
-      {editingTask && (
+      {/* {editingTask && (
         <EditTask
           task={task}
           setEditingTask={setEditingTask}
           // setTasks={setTasks}
           // tasks={tasks}
-          setShowingTask={setShowingTask}
+          // setShowingTask={setShowingTask}
           setTaskName={setTaskName}
         />
-      )}
+      )} */}
     </div>
   );
 };
