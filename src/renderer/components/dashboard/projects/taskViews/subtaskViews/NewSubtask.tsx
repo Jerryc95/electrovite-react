@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-import { Subtask } from 'src/models/subtask';
+import { Subtask } from '../../../../../../models/subTask';
 import { taskStatus } from '../../../../../../statuses/taskStatus';
 import { useAddSubtaskMutation } from '../../../../../../services/subtaskAPI';
 
