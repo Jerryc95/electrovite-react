@@ -41,7 +41,6 @@
     padding-bottom: 15px;
     border-bottom: 1px solid #e2e2e2;
     p {
-      // color: #090909;
       font-size: 0.85rem;
     }
 
@@ -51,6 +50,11 @@
       padding-right: 20px;
       padding-left: 20px;
       // width: 35%;
+
+      .info-text {
+        color: #909090;
+        font-size: 0.85rem;
+      }
 
       .contacts-upcoming-event {
         display: flex;
@@ -494,9 +498,9 @@
       align-items: center;
       align-content: center;
       border-left: 1px solid #e2e2e2;
-      p {
+      .info-text {
         font-size: 0.85rem;
-        // color: #ccc;
+        color: #909090;
       }
 
       .contact-detail-activity-column {
@@ -600,15 +604,13 @@
   .edit-event-icon-container {
     display: flex;
     justify-content: flex-end;
-   
 
     .edit-event-icon {
       color: #a5a5a5;
       &:hover {
-        color:#480ca8
+        color: #480ca8;
       }
     }
-   
   }
 
   .contact-event-type {
@@ -632,4 +634,10 @@
   .Other {
     color: #560bad;
   }
+}
+
+.bk-contacts-empty {
+  text-align: center;
+  color: #909090;
+  font-size: 0.85rem;
 }

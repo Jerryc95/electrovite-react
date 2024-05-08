@@ -105,7 +105,7 @@ const NewProjectTask: React.FC<NewProjectTaskProps> = ({
           </div>
         </div>
         <div className='new-project-create-button'>
-          <button onClick={handleCreateNewTask}>Add Task</button>
+          <button className='button-brand-blue' onClick={handleCreateNewTask}>Add Task</button>
         </div>
       </div>
     </div>

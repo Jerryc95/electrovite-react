@@ -8,28 +8,39 @@ export const useDatePicker = (initialValue: Date | null) => {
     setIsEditing(!isEditing);
   };
 
-  const handleSaveClick = async (id: number, field: string, baseURL: string) => {
-    const url = `${baseURL}${id}`;
-
-    const data = {
-      [field]: editedValue,
-    };
-    console.log(url);
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      console.log(response);
-      if (!response.ok) {
-        throw new Error('Failed to update value');
+  const handleSaveClick = async (
+    field: string,
+    item: any,
+    onEdit: (data: any) => Promise<void>,
+  ) => {
+    const updatedItem = { ...item };
+    for (const key in updatedItem) {
+      if (key == field) {
+        updatedItem[field] = editedValue;
+        
       }
-    } catch (error) {
-      console.log(error);
     }
+    onEdit(updatedItem);
+
+    // const data = {
+    //   [field]: editedValue,
+    // };
+
+    // try {
+    //   const response = await fetch(url, {
+    //     method: 'PUT',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(data),
+    //   });
+    //   console.log(response);
+    //   if (!response.ok) {
+    //     throw new Error('Failed to update value');
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
     setIsEditing(false);
   };
 

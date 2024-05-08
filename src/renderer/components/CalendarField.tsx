@@ -6,16 +6,20 @@ interface CalendarFieldProps {
   label: string;
   field: string;
   value: Date | null;
-  id: number;
-  baseURL: string;
+  item: any;
+  onEdit: (data: any) => Promise<void>;
+  // id: number;
+  // baseURL: string;
 }
 
 const CalendarField: React.FC<CalendarFieldProps> = ({
   label,
   field,
   value,
-  id,
-  baseURL,
+  item,
+  onEdit,
+  // id,
+  // baseURL,
 }) => {
   const {
     isEditing,
@@ -44,7 +48,7 @@ const CalendarField: React.FC<CalendarFieldProps> = ({
           <button
             className='edit-field-button'
             onClick={() => {
-              handleSaveClick(id, field, baseURL);
+              handleSaveClick(field, item, onEdit);
             }}
           >
             Save

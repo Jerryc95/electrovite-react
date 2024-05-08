@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux/es/hooks/useSelector';
 
 import '../styles/profileEditForm.scss';
 import AvatarPicker from './AvatarPicker';
+import EmojiPicker from './EmojiPicker';
 
 import { RootState } from '../../services/store';
 import PhotoUploader from './PhotoUploader';
@@ -49,8 +50,9 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     <div>
       <form className='profile-edit-form' onSubmit={handleSubmit}>
         <div className='profile-edit-form-avatar'>
-          <p>Profile Picture:</p>
-          <AvatarPicker setSelectedProfilePic={setProfilePic} />
+          <p>Profile Emoji:</p>
+          {/* <AvatarPicker setSelectedProfilePic={setProfilePic} /> */}
+          <EmojiPicker setSelectedProfilePic={setProfilePic}/>
         </div>
         <label className='profile-edit-form-label'>
           First Name

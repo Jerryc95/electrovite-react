@@ -20,29 +20,39 @@ export const useCurrencyField = (
   };
 
   const handleSaveClick = async (
-    id: number,
+    // id: number,
     field: string,
-    baseURL: string,
+    // baseURL: string,
+    item: any,
+    onEdit: (data: any) => Promise<void>,
   ) => {
-    const url = `${baseURL}${id}`;
-    const data = {
-      [field]: editedValue,
-    };
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      console.log(response);
-      if (!response.ok) {
-        throw new Error('Failed to update value');
+    // const url = `${baseURL}${id}`;
+    // const data = {
+    //   [field]: editedValue,
+    // };
+    // try {
+    //   const response = await fetch(url, {
+    //     method: 'PUT',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(data),
+    //   });
+    //   console.log(response);
+    //   if (!response.ok) {
+    //     throw new Error('Failed to update value');
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
+    const updatedItem = { ...item };
+    for (const key in updatedItem) {
+      if (key == field) {
+        updatedItem[field] = editedValue;
+        
       }
-    } catch (error) {
-      console.log(error);
     }
+    onEdit(updatedItem);
     if(typeof editedValue === 'number') {
         setPaidAmount(editedValue.toString())
         const updatedOutstandingValue = parseFloat(totalAmount) - editedValue

@@ -12,18 +12,18 @@ interface EditFieldProps {
   label: string;
   field: string;
   value: string | null;
-  id: number;
   isInput: boolean;
-  baseURL: string
+  item: any;
+  onEdit: (data: any) => Promise<void>;
 }
 
 const EditField: React.FC<EditFieldProps> = ({
   label,
   field,
   value,
-  id,
   isInput,
-  baseURL,
+  item,
+  onEdit,
 }) => {
   const {
     isEditing,
@@ -35,10 +35,10 @@ const EditField: React.FC<EditFieldProps> = ({
 
   const displayLineBreaks = (text: string | null) => {
     if (text) {
-      const lineBreakText = text.replace(/\n/g, '<br />')
-      return <p dangerouslySetInnerHTML={{ __html: lineBreakText }} />
+      const lineBreakText = text.replace(/\n/g, '<br />');
+      return <p dangerouslySetInnerHTML={{ __html: lineBreakText }} />;
     }
-  }
+  };
 
   return (
     <div className='edit-field-section'>
@@ -54,16 +54,16 @@ const EditField: React.FC<EditFieldProps> = ({
             />
           ) : (
             <textarea
-            className='edit-field-textarea'
-            value={editedValue ? editedValue : ''}
-            onChange={handleInputChange}
+              className='edit-field-textarea'
+              value={editedValue ? editedValue : ''}
+              onChange={handleInputChange}
             />
           )}
 
           <button
             className='edit-field-button'
             onClick={() => {
-              handleSaveClick(id, field, baseURL);
+              handleSaveClick(field, item, onEdit);
             }}
           >
             Save

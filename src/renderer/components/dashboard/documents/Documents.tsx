@@ -8,7 +8,7 @@ const Documents: React.FC = () => {
   return (
     <div className='documents-container'>
       <div>Documents</div>
-      <Paywall content='documents' plan='Pro' />
+      {/* <Paywall content='documents' plan='Pro' /> */}
     </div>
   );
 };

@@ -15,12 +15,7 @@ export const projectAPI = createApi({
         method: 'GET',
       }),
     }),
-    // fetchProjectDetails: builder.query<Project,{accountID: number; projectID: number}>({
-    //   query: (args) => ({
-    //     url: `/${args.accountID}/${args.projectID}`,
-    //     method: 'GET',
-    //   }),
-    // }),
+
     addProject: builder.mutation<Project, object>({
       query: (body) => ({
         url: '/add',
@@ -28,15 +23,7 @@ export const projectAPI = createApi({
         body: body,
       }),
     }),
-    updateProject: builder.mutation<
-      Project,
-      {
-        id: number;
-        name: string;
-        startDate: Date | null | undefined;
-        endDate: Date | null | undefined;
-      }
-    >({
+    updateProject: builder.mutation<Project, Project>({
       query: (project) => ({
         url: `/update/${project.id}`,
         method: 'PUT',
@@ -49,6 +36,15 @@ export const projectAPI = createApi({
         method: 'DELETE',
       }),
     }),
+    fetchContactProjects: builder.mutation<
+      Project[],
+      { accountID: number; contactID: number }
+    >({
+      query: (body) => ({
+        url: `/contacts?accountID=${body.accountID}&contactID=${body.contactID}`,
+        method: 'get',
+      }),
+    }),
   }),
 });
 
@@ -57,4 +53,5 @@ export const {
   useAddProjectMutation,
   useUpdateProjectMutation,
   useRemoveProjectMutation,
+  useFetchContactProjectsMutation,
 } = projectAPI;

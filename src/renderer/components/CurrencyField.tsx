@@ -14,8 +14,10 @@ interface CurrencyFieldProps {
   label: string;
   field: string;
   value: string | null;
-  id: number;
-  baseURL: string;
+  // id: number;
+  // baseURL: string;
+  item: any;
+  onEdit: (data: any) => Promise<void>;
   totalAmount: string;
   outstandingAmount: string;
   setPaidAmount: React.Dispatch<React.SetStateAction<string>>;
@@ -26,8 +28,10 @@ const CurrencyField: React.FC<CurrencyFieldProps> = ({
   label,
   field,
   value,
-  id,
-  baseURL,
+  // id,
+  // baseURL,
+  item,
+  onEdit,
   totalAmount,
   setPaidAmount,
   setOutstandingAmount,
@@ -67,7 +71,7 @@ const CurrencyField: React.FC<CurrencyFieldProps> = ({
           <button
             className='edit-field-button'
             onClick={() => {
-              handleSaveClick(id, field, baseURL);
+              handleSaveClick(field, item, onEdit);
             }}
           >
             Save

@@ -2,22 +2,22 @@
 
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import type { Subtask } from 'src/models/subTask';
+import type { Subtask } from 'src/models/subtask';
 
 export const subtaskAPI = createApi({
   reducerPath: 'subtaskAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/tasks' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/subtasks' }),
 
   endpoints: (builder) => ({
     fetchSubtasks: builder.query<Subtask[], number>({
-      query: (projectID) => ({
-        url: `/${projectID}`,
+      query: (subtaskID) => ({
+        url: `/${subtaskID}`,
         method: 'GET',
       }),
     }),
     addSubtask: builder.mutation<Subtask, object>({
       query: (body) => ({
-        url: '/tasks/add',
+        url: '/add',
         method: 'POST',
         body: body,
       }),
@@ -29,7 +29,7 @@ export const subtaskAPI = createApi({
         body: subtask,
       }),
     }),
-    removeSubtask: builder.mutation<Subtask, number>({
+    removeSubtask: builder.mutation<number, number>({
       query: (subtaskID) => ({
         url: `/delete/${subtaskID}`,
         method: 'DELETE',

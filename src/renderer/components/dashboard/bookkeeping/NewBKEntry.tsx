@@ -5,15 +5,11 @@ import {
   CurrencyInputOnChangeValues,
 } from 'react-currency-input-field/dist/components/CurrencyInputProps';
 
-import { BKEntry } from 'src/models/BKEntry';
+import { useAddEntryMutation } from '../../../../services/bookkeepingAPI';
 
 interface NewBKEntryProps {
   setAddingEntry: React.Dispatch<React.SetStateAction<boolean>>;
-  addingEntry: boolean;
   id: number | undefined;
-  setEntries: React.Dispatch<React.SetStateAction<BKEntry[]>>;
-  setRevenueEntries: React.Dispatch<React.SetStateAction<BKEntry[]>>;
-  setExpenseEntries: React.Dispatch<React.SetStateAction<BKEntry[]>>;
 }
 
 interface BKClient {
@@ -22,20 +18,22 @@ interface BKClient {
   last_name: string;
 }
 
-const NewBKEntry: React.FC<NewBKEntryProps> = ({
-  setAddingEntry,
-  addingEntry,
-  id,
-  setEntries,
-  setRevenueEntries,
-  setExpenseEntries,
-}) => {
+interface BKProject {
+  id: number;
+  name: string;
+}
+
+const NewBKEntry: React.FC<NewBKEntryProps> = ({ setAddingEntry, id }) => {
+  const [addEntry] = useAddEntryMutation();
+
   const [isIncome, setIsIncome] = useState(true);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState<number | null>(0);
-  const [clientID, setClientID] = useState<number>(0);
-  const [clients, setClients] = useState<BKClient[]>([]);
+  const [contactID, setContacttID] = useState<number>(0);
+  const [contacts, setContacts] = useState<BKClient[]>([]);
+  const [projects, setProjects] = useState<BKProject[]>([]);
+  const [projectID, setProjectID] = useState<number>(0);
   const [category, setCategory] = useState('None');
   const [currencyValues, setCurrencyValues] =
     useState<CurrencyInputOnChangeValues>();
@@ -77,26 +75,34 @@ const NewBKEntry: React.FC<NewBKEntryProps> = ({
   };
 
   const getClients = () => {
-    const url = `http://localhost:3000/contacts/names?id=${id}`;
+    const url = `http://localhost:3000/contacts/names/${id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: BKClient[]) => {
-        setClients(data);
+        setContacts(data);
       });
   };
 
-  const handleClientSelection = (e: ChangeEvent<HTMLSelectElement>) => {
-    const clientIDString = e.target.value;
-    const parsedID = parseInt(clientIDString);
+  const getProjects = () => {
+    const url = `http://localhost:3000/projects/names/${id}`;
+    fetch(url)
+      .then((response) => response.json())
+      .then((data: BKProject[]) => {
+        setProjects(data);
+      });
+  };
+
+  const handleContacttSelection = (e: ChangeEvent<HTMLSelectElement>) => {
+    const contactIDString = e.target.value;
+    const parsedID = parseInt(contactIDString);
     if (isNaN(parsedID)) {
-      setClientID(0);
+      setContacttID(0);
     } else {
-      setClientID(parsedID);
+      setContacttID(parsedID);
     }
   };
 
   const handleCreateNewEntry = async () => {
-    const url = 'http://localhost:3000/bookkeeping/add';
     const today = new Date();
     let firstName = '';
     let lastName = '';
@@ -106,15 +112,17 @@ const NewBKEntry: React.FC<NewBKEntryProps> = ({
       transactionType = 'Expense';
     }
 
-    const selectedClient = clients.find((client) => client.id === clientID);
-    if (selectedClient) {
-      firstName = selectedClient.first_name;
-      lastName = selectedClient.last_name;
+    const selectedContact = contacts.find(
+      (contact) => contact.id === contactID,
+    );
+    if (selectedContact) {
+      firstName = selectedContact.first_name;
+      lastName = selectedContact.last_name;
     }
 
     const newEntry = {
       accountID: id,
-      contactID: clientID,
+      contactID: contactID,
       totalAmount: amount,
       paidAmount: 0,
       entryName: name,
@@ -122,49 +130,17 @@ const NewBKEntry: React.FC<NewBKEntryProps> = ({
       description: description,
       entryDate: today,
       category: category,
+      projectID: projectID,
     };
 
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newEntry),
-      });
-      const responseData = await response.json();
+    addEntry({ newEntry: newEntry, firstName: firstName, lastName: lastName });
 
-      const newBKEntry: BKEntry = {
-        entry_name: responseData.entry_name,
-        bookkeeping_id: responseData.bookkeeping_id,
-        contact_id: responseData.contact_id,
-        account_id: responseData.account_id,
-        total_amount: responseData.total_amount,
-        paid_amount: responseData.paid_amount,
-        outstanding_amount: responseData.outstanding_amount,
-        category: responseData.category,
-        transaction_type: responseData.transaction_type,
-        description: responseData.description,
-        entry_date: responseData.entry_date,
-        paid: responseData.paid,
-        next_payment_date: responseData.next_payment_date,
-        first_name: firstName,
-        last_name: lastName,
-      };
-      setEntries((entries) => [...entries, newBKEntry]);
-
-      isIncome
-        ? setRevenueEntries((entries) => [...entries, newBKEntry])
-        : setExpenseEntries((entries) => [...entries, newBKEntry]);
-
-      setAddingEntry(!addingEntry);
-    } catch (error) {
-      console.log(error);
-    }
+    setAddingEntry(false);
   };
 
   useEffect(() => {
     getClients();
+    getProjects();
   }, []);
 
   return (
@@ -172,7 +148,7 @@ const NewBKEntry: React.FC<NewBKEntryProps> = ({
       <div className='new-bookkeeping-form'>
         <div className='new-bookkeeping-heading'>
           <h2>Adding New Entry</h2>
-          <button onClick={() => setAddingEntry(!addingEntry)}>Cancel</button>
+          <button onClick={() => setAddingEntry(false)}>Cancel</button>
         </div>
         <div className='new-bookkeeping-details-container'>
           <label
@@ -260,12 +236,26 @@ const NewBKEntry: React.FC<NewBKEntryProps> = ({
                 Client
                 <select
                   className='new-bookkeeping-amount-input'
-                  onChange={handleClientSelection}
+                  onChange={handleContacttSelection}
                 >
                   <option>None</option>
-                  {clients.map((client, index) => (
+                  {contacts.map((client, index) => (
                     <option key={index} value={client.id || 0}>
                       {client.first_name} {client.last_name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className='new-bookkeeping-label'>
+                Project
+                <select
+                  className='new-bookkeeping-amount-input'
+                  onChange={handleContacttSelection}
+                >
+                  <option>None</option>
+                  {projects.map((project, index) => (
+                    <option key={index} value={project.id || 0}>
+                      {project.name}
                     </option>
                   ))}
                 </select>

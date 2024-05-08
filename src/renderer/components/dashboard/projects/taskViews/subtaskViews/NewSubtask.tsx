@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-import { Subtask } from 'src/models/subTask';
-import { taskStatus } from '../../../../../statuses/taskStatus';
+import { Subtask } from 'src/models/subtask';
+import { taskStatus } from '../../../../../../statuses/taskStatus';
+import { useAddSubtaskMutation } from '../../../../../../services/subtaskAPI';
 
 interface NewSubtaskProps {
   setAddingSubtask: React.Dispatch<React.SetStateAction<boolean>>;
   accountID: number | undefined;
   taskID: number;
-  // setSubtasks: React.Dispatch<React.SetStateAction<Subtask[]>>;
-  // subTasks: Subtask[];
+  subtasks: Subtask[];
 }
 
 const NewSubtask: React.FC<NewSubtaskProps> = ({
   setAddingSubtask,
   accountID,
   taskID,
-  // setSubtasks,
-  // subTasks,
+  subtasks,
 }) => {
-    const today = new Date();
+  const today = new Date();
   const nextMonth = new Date(
     today.getFullYear(),
     today.getMonth() + 1,
@@ -29,10 +28,17 @@ const NewSubtask: React.FC<NewSubtaskProps> = ({
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(today);
   const [endDate, setEndDate] = useState<Date | null>(nextMonth);
-  
+
+  const [addSubtask] = useAddSubtaskMutation();
 
   const handleCreateNewSubtask = async () => {
-    const url = 'http://localhost:3000/subtasks/add';
+    const index = subtasks
+      .filter((t) => t.subtask_status === taskStatus.NotStarted)
+      .reduce(
+        (acc, subtask) =>
+          acc > subtask.column_index ? acc : subtask.column_index + 1,
+        0,
+      );
     const newSubtask = {
       name: name,
       accountID: accountID,
@@ -40,38 +46,10 @@ const NewSubtask: React.FC<NewSubtaskProps> = ({
       description: description,
       startDate: startDate,
       dueDate: endDate,
+      columnIndex: index,
     };
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newSubtask),
-      });
-      const responseData = await response.json();
-      const responseSubtask: Subtask = {
-        subtask_id: responseData.subtask_id,
-        task_id: responseData.task_id,
-        name: responseData.name,
-        description: responseData.description,
-        notes: responseData.notes,
-        creation_date: responseData.creation_date,
-        start_date: responseData.start_date,
-        due_date: responseData.due_date,
-        subtask_status: responseData.subtask_status,
-        completed: responseData.completed,
-        priority: responseData.priority, 
-        column_index: responseData.column_index,
-      }
-
-      console.log(responseData)
-      // setSubtasks((t) => [...t, responseSubtask]);
-      setAddingSubtask(false);
-    } catch (error) {
-      console.log(error);
-    }
-    
+    addSubtask(newSubtask);
+    setAddingSubtask(false);
   };
 
   return (
@@ -125,7 +103,7 @@ const NewSubtask: React.FC<NewSubtaskProps> = ({
           </div>
         </div>
         <div className='new-project-create-button'>
-          <button onClick={handleCreateNewSubtask}>Add Subtask</button>
+          <button className='button-brand-blue' onClick={handleCreateNewSubtask}>Add Subtask</button>
         </div>
       </div>
     </div>

@@ -7,18 +7,21 @@ import {
 
 import { BKExpense } from 'src/models/BKExpense';
 import '../../../../styles/newItem.scss';
+import { useAddRecurringExpenseMutation } from '../../../../../services/bookkeepingAPI';
 
 interface NewExpenseProps {
   setAddingExpense: React.Dispatch<React.SetStateAction<boolean>>;
   accountID: number | undefined;
-  setRecurringExpenses: React.Dispatch<React.SetStateAction<BKExpense[]>>;
+  // setRecurringExpenses: React.Dispatch<React.SetStateAction<BKExpense[]>>;
 }
 
 const NewExpense: React.FC<NewExpenseProps> = ({
   setAddingExpense,
   accountID,
-  setRecurringExpenses,
+  // setRecurringExpenses,
 }) => {
+  const [addRecurringExpense] = useAddRecurringExpenseMutation()
+
   const [reDescription, setReDescription] = useState('');
   const [amount, setAmount] = useState<number | null>(0);
   const [frequency, setFrequency] = useState('Monthly');
@@ -48,8 +51,6 @@ const NewExpense: React.FC<NewExpenseProps> = ({
   };
 
   const createExpense = async () => {
-    const url = 'http://localhost:3000/bookkeeping/add/expense';
-
     const newExpense = {
       id: accountID,
       reDescription: reDescription,
@@ -57,30 +58,8 @@ const NewExpense: React.FC<NewExpenseProps> = ({
       frequency: frequency,
     };
 
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newExpense),
-      });
-      const responseData = await response.json();
-
-      const newBKExpense: BKExpense = {
-        re_id: responseData.re_id,
-        account_id: responseData.account_id,
-        re_description: responseData.re_description,
-        amount: responseData.amount,
-        frequency: responseData.frequency,
-        is_active: responseData.is_active,
-        created_at: responseData.created_at,
-      };
-      setRecurringExpenses((expense) => [...expense, newBKExpense]);
-      setAddingExpense(false);
-    } catch (error) {
-      console.log(error);
-    }
+    addRecurringExpense(newExpense)
+    setAddingExpense(false);
   };
 
   return (

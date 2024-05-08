@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import EditField from '$renderer/components/EditField';
 import { Contact } from 'src/models/contact';
+import { useUpdateContactMutation } from '../../../../../services/contactAPI';
 
 interface ContactNotesProp {
   contact: Contact;
 }
 
 const ContactNotes: React.FC<ContactNotesProp> = ({ contact }) => {
-  const [notes, setNotes] = useState(contact.notes);
+  const [updateContact] = useUpdateContactMutation();
 
-  useEffect(() => {
-    const url = `http://localhost:3000/contacts/${contact.id}`;
-
-    fetch(url)
-      .then((response) => response.json())
-      .then(async (data: Contact) => {
-        await Promise.all([setNotes(data.notes)]);
-      });
-  });
+  const handleUpdateContact = async (data: any) => {
+    updateContact(data);
+    console.log(contact)
+  };
 
   return (
     <div>
@@ -25,10 +21,10 @@ const ContactNotes: React.FC<ContactNotesProp> = ({ contact }) => {
         <EditField
           label=''
           field='notes'
-          value={notes}
-          id={contact.id}
+          value={contact.notes}
           isInput={false}
-          baseURL='http://localhost:3000/contacts/update/'
+          item={contact}
+          onEdit={handleUpdateContact}
         />
       </div>
     </div>

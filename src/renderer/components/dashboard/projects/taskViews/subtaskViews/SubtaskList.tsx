@@ -1,5 +1,5 @@
 import React from 'react';
-import { Subtask } from 'src/models/subTask';
+import { Subtask } from 'src/models/subtask';
 import SubtaskListLabel from './SubtaskListLabel';
 import SubtaskListItem from './SubtaskListItem';
 

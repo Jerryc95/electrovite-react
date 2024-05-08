@@ -13,6 +13,7 @@ import { Account } from 'src/models/account';
 interface accountState {
   account: Account | null;
   accountProfile: AccountProfile | null;
+  selectedPage: string;
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
 }
@@ -20,6 +21,7 @@ interface accountState {
 const initialAccountState: accountState = {
   account: null,
   accountProfile: null,
+  selectedPage: 'home',
   loading: 'idle',
   error: null,
 };
@@ -36,6 +38,9 @@ export const accountSlice = createSlice({
       if (state.account != null) {
         state.account.email = action.payload;
       }
+    },
+    selectPage: (state, action: PayloadAction<string>) => {
+      state.selectedPage = action.payload;
     },
   },
 
@@ -87,6 +92,21 @@ export const accountSlice = createSlice({
         state.error = initialAccountState.error;
       },
     );
+    builder.addMatcher(
+      authAPI.endpoints.deleteAccount.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
+    builder.addMatcher(
+      authAPI.endpoints.deleteAccount.matchFulfilled,
+      (state) => {
+        state.loading = initialAccountState.loading;
+        state.account = initialAccountState.account;
+        state.accountProfile = initialAccountState.accountProfile;
+        state.error = initialAccountState.error;
+      },
+    );
 
     //PROFILE API
     builder.addMatcher(
@@ -106,8 +126,12 @@ export const accountSlice = createSlice({
   },
 });
 
-export const selectedAccount = (state: RootState) => state.accountReducer
+export const selectedAccount = (state: RootState) => state.accountReducer;
 
-export const { resetAccountState, updateProfileState, updateEmailState } =
-  accountSlice.actions;
+export const {
+  resetAccountState,
+  updateProfileState,
+  updateEmailState,
+  selectPage,
+} = accountSlice.actions;
 export default accountSlice.reducer;

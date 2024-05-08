@@ -92,7 +92,7 @@ const NewProject: React.FC<NewProjectProps> = ({ setAddingProject, id }) => {
           </div>
         </div>
         <div className='new-project-create-button'>
-          <button onClick={handleCreateProject}>Create Project</button>
+          <button className='button-brand-blue' onClick={handleCreateProject}>Create Project</button>
         </div>
       </div>
     </div>

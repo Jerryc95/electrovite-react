@@ -44,7 +44,6 @@ export const projectSlice = createSlice({
       projectAPI.endpoints.fetchProjects.matchFulfilled,
         (state, action: PayloadAction<Project[]>) => {
         state.loading = 'fulfilled';
-        console.log(action.payload)
         const projects = action.payload;
         state.projects = projects.sort((a, b) => {
           if (a.id < b.id) {
@@ -89,7 +88,7 @@ export const projectSlice = createSlice({
         );
         if (index !== -1) {
           state.projects[index] = action.payload;
-          console.log(action.payload);
+          state.selectedProject = action.payload
         }
       },
     );
@@ -111,6 +110,26 @@ export const projectSlice = createSlice({
           (project) => project.id !== payloadNumber,
         );
         state.projects = updatedProjects;
+      },
+    );
+    builder.addMatcher(
+      projectAPI.endpoints.fetchContactProjects.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
+
+    builder.addMatcher(
+      projectAPI.endpoints.fetchContactProjects.matchFulfilled,
+        (state, action: PayloadAction<Project[]>) => {
+        state.loading = 'fulfilled';
+        const projects = action.payload;
+        state.projects = projects.sort((a, b) => {
+          if (a.id < b.id) {
+            return -1;
+          }
+          return 0;
+        });
       },
     );
   },

@@ -8,7 +8,8 @@ export type Subtask = {
   start_date: Date;
   due_date: Date;
   subtask_status: string;
-  completed: Date;
+  // completed: Date;
   priority: string;
   column_index: number;
+  // account_id: number;
 };

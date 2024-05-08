@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-import { Contact } from 'src/models/contact';
-import { ContactEvent } from 'src/models/contactEvent';
+// import { Contact } from 'src/models/contact';
+// import { ContactEvent } from 'src/models/contactEvent';
+import { useAddContactEventMutation } from '../../../../../services/contactAPI';
 
 interface NewContactActivityProps {
   setAddingEvent: React.Dispatch<React.SetStateAction<boolean>>;
-  addingEvent: boolean;
-  contact: Contact;
-  setSortedEvents: React.Dispatch<React.SetStateAction<ContactEvent[]>>
+  id: number;
 }
 
 const NewContactEvent: React.FC<NewContactActivityProps> = ({
   setAddingEvent,
-  addingEvent,
-  contact,
-  setSortedEvents
-  
+  id,
 }) => {
   const today = new Date();
   const nextWeek = new Date(
@@ -26,6 +22,8 @@ const NewContactEvent: React.FC<NewContactActivityProps> = ({
   );
 
   const eventTypes = ['Meeting', 'Email', 'Call', 'Follow Up', 'Other'];
+
+  const [addContactEvent] = useAddContactEventMutation();
 
   const [title, setTitle] = useState('');
   const [eventType, setEventType] = useState(eventTypes[0]);
@@ -39,33 +37,16 @@ const NewContactEvent: React.FC<NewContactActivityProps> = ({
     setEventType(selectedType);
   };
 
-
   const handleCreateContactEvent = async () => {
-    const url = 'http://localhost:3000/contacts/add/event';
     const newEvent = {
       title: title,
-      id: contact.id,
+      id: id,
       eventDate: eventDate,
       eventType: eventType,
       description: description,
     };
-    console.log(newEvent)
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newEvent),
-      });
-      const responseData: ContactEvent = await response.json();
-
-      setSortedEvents((events) => [...events, responseData])
-      setAddingEvent(!addingEvent)
-      console.log('response data:',responseData)
-    } catch (error) {
-      console.log(error)
-    }
+    addContactEvent(newEvent);
+    setAddingEvent(false);
   };
 
   return (
@@ -73,7 +54,7 @@ const NewContactEvent: React.FC<NewContactActivityProps> = ({
       <div className='new-project-form'>
         <div className='new-project-heading'>
           <h2>Adding New Event</h2>
-          <button onClick={() => setAddingEvent(!addingEvent)}>Cancel</button>
+          <button onClick={() => setAddingEvent(false)}>Cancel</button>
         </div>
         <div className='new-project-details'>
           <div className='new-project-info'>
@@ -104,7 +85,7 @@ const NewContactEvent: React.FC<NewContactActivityProps> = ({
               onChange={(date) => setEventDate(date)}
               timeInputLabel='Time:'
               showTimeInput
-              dateFormat="MM/dd/yyyy h:mm aa"
+              dateFormat='MM/dd/yyyy h:mm aa'
               className='new-project-date-input'
               startDate={eventDate}
             />
@@ -123,7 +104,7 @@ const NewContactEvent: React.FC<NewContactActivityProps> = ({
           </div>
         </div>
         <div className='new-project-create-button'>
-          <button onClick={handleCreateContactEvent}>Add Event</button>
+          <button className='button-brand-blue' onClick={handleCreateContactEvent}>Add Event</button>
         </div>
       </div>
     </div>

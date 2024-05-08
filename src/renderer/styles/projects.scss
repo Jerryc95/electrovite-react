@@ -57,95 +57,95 @@
     padding-bottom: 20px;
     // justify-content: space-between;
 
-    .projects-view {
-      width: 75%;
-      height: 100vh;
+    // .projects-view {
+    //   width: 75%;
+    //   height: 100vh;
 
-      .projects-filters {
-        display: flex;
+    //   .projects-filters {
+    //     display: flex;
 
-        .filter-capsule {
-          font-size: 0.65rem;
-          font-weight: 600;
-          text-align: center;
-          padding: 6px 8px;
-          width: 85px;
-          margin-top: 20px;
-          margin-left: 8px;
-          margin-right: 8px;
-          border-radius: 20px;
-          cursor: pointer;
-          transition: background-color 0.3s ease-in-out;
+    //     .filter-capsule {
+    //       font-size: 0.65rem;
+    //       font-weight: 600;
+    //       text-align: center;
+    //       padding: 6px 8px;
+    //       width: 85px;
+    //       margin-top: 20px;
+    //       margin-left: 8px;
+    //       margin-right: 8px;
+    //       border-radius: 20px;
+    //       cursor: pointer;
+    //       transition: background-color 0.3s ease-in-out;
 
-          &:hover {
-            scale: (1.1);
-          }
-        }
+    //       &:hover {
+    //         scale: (1.1);
+    //       }
+    //     }
 
-        .all {
-          background-color: #c9dcf1;
-        }
-        .all.selected {
-          color: white;
-          background-color: #4895ef;
-        }
+    //     .all {
+    //       background-color: #c9dcf1;
+    //     }
+    //     .all.selected {
+    //       color: white;
+    //       background-color: #4895ef;
+    //     }
 
-        .not-started {
-          background-color: #f6d6e4;
-        }
+    //     .not-started {
+    //       background-color: #f6d6e4;
+    //     }
 
-        .not-started.selected {
-          color: white;
-          background-color: #f72585;
-        }
+    //     .not-started.selected {
+    //       color: white;
+    //       background-color: #f72585;
+    //     }
 
-        .in-progress {
-          background-color: #cbd1ee;
-        }
+    //     .in-progress {
+    //       background-color: #cbd1ee;
+    //     }
 
-        .in-progress.selected {
-          color: white;
-          background-color: #4361ee;
-        }
+    //     .in-progress.selected {
+    //       color: white;
+    //       background-color: #4361ee;
+    //     }
 
-        .live {
-          background-color: #d9f0f8;
-        }
+    //     .live {
+    //       background-color: #d9f0f8;
+    //     }
 
-        .live.selected {
-          color: white;
-          background-color: #4cc9f0;
-        }
+    //     .live.selected {
+    //       color: white;
+    //       background-color: #4cc9f0;
+    //     }
 
-        .completed {
-          background-color: #c9bbe0;
-        }
-        .completed.selected {
-          color: white;
-          background-color: #480ca8;
-        }
-      }
+    //     .completed {
+    //       background-color: #c9bbe0;
+    //     }
+    //     .completed.selected {
+    //       color: white;
+    //       background-color: #480ca8;
+    //     }
+    //   }
 
-      .empty-projects-grid {
-        display: flex;
-        justify-content: center;
+    //   .empty-projects-grid {
+    //     display: flex;
+    //     justify-content: center;
 
-        p {
-          color: #ccc;
-          text-align: center;
-          margin-top: 50px;
-        }
-      }
+    //     p {
+    //       color: #ccc;
+    //       text-align: center;
+    //       margin-top: 50px;
+    //     }
+    //   }
 
-      .projects-grid {
-        display: grid;
-        width: 75%;
-        grid-template-columns: repeat(3, 2fr);
-        gap: 20px;
-        padding: 15px;
-        transition: grid-template-columns 0.3s ease;
-      }
-    }
+    //   .projects-grid {
+    //     display: grid;
+    //     width: 75%;
+    //     grid-template-columns: repeat(3, 2fr);
+    //     gap: 20px;
+    //     padding: 15px;
+    //     transition: grid-template-columns 0.3s ease;
+    //   }
+    // }
 
     .projects-task-view {
       display: flex;
@@ -229,6 +229,97 @@
       padding-left: 10px;
       padding-right: 10px;
     }
+  }
+}
+
+.projects-view {
+  width: 75%;
+  height: 100vh;
+
+  .projects-filters {
+    display: flex;
+
+    .filter-capsule {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 6px 8px;
+      width: 85px;
+      margin-top: 20px;
+      margin-left: 8px;
+      margin-right: 8px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease-in-out;
+
+      &:hover {
+        scale: (1.1);
+      }
+    }
+
+    .all {
+      background-color: #c9dcf1;
+    }
+    .all.selected {
+      color: white;
+      background-color: #4895ef;
+    }
+
+    .not-started {
+      background-color: #f6d6e4;
+    }
+
+    .not-started.selected {
+      color: white;
+      background-color: #f72585;
+    }
+
+    .in-progress {
+      background-color: #cbd1ee;
+    }
+
+    .in-progress.selected {
+      color: white;
+      background-color: #4361ee;
+    }
+
+    .live {
+      background-color: #d9f0f8;
+    }
+
+    .live.selected {
+      color: white;
+      background-color: #4cc9f0;
+    }
+
+    .completed {
+      background-color: #c9bbe0;
+    }
+    .completed.selected {
+      color: white;
+      background-color: #480ca8;
+    }
+  }
+
+  .empty-projects-grid {
+    display: flex;
+    justify-content: center;
+
+    p {
+      color: #909090;
+      text-align: center;
+      margin-top: 50px;
+      font-size: 0.85rem;
+    }
+  }
+
+  .projects-grid {
+    display: grid;
+    width: 75%;
+    grid-template-columns: repeat(3, 2fr);
+    gap: 20px;
+    padding: 15px;
+    transition: grid-template-columns 0.3s ease;
   }
 }
 
@@ -335,7 +426,7 @@
         margin-right: 15px;
         margin-top: 25px;
         align-items: center;
-        background-color: #4361ee;
+        // background-color: #4361ee;
         color: #fff;
         border: none;
         border-radius: 15px;
@@ -344,12 +435,12 @@
         width: 155px;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        box-shadow: 0px 0px 5px rgba(67, 97, 238, 0.6);
+        // box-shadow: 0px 0px 5px rgba(67, 97, 238, 0.6);
 
-        &:hover {
-          background-color: #1c38b7;
-          box-shadow: 0px 0px 5px rgba(28, 56, 183, 0.6);
-        }
+        // &:hover {
+        //   background-color: #1c38b7;
+        //   box-shadow: 0px 0px 5px rgba(28, 56, 183, 0.6);
+        // }
       }
     }
   }
@@ -403,7 +494,7 @@
           color: #ccc;
           font-size: 0.75rem;
           font-weight: normal;
-          margin-left: 77%;
+          margin-left: 75%;
           margin-bottom: 15px;
         }
       }
@@ -538,6 +629,7 @@
         }
       }
     }
+    
   }
   .project-detail-top-container {
     display: flex;
@@ -606,6 +698,12 @@
       height: 100vh;
       padding-top: 20px;
       // justify-content: space-evenly;
+
+      p {
+        color: #909090;
+        text-align: center;
+        font-size: 0.85rem;
+      }
     }
 
     .project-detail-list {
@@ -670,8 +768,8 @@
     display: flex;
     flex-direction: column;
     background-color: #fff;
-    width: 40%;
-    height: 65%;
+    width: 45%;
+    height: 70%;
     border-radius: 25px;
     justify-content: flex-start;
     padding-top: 25px;
@@ -734,6 +832,10 @@
             margin-bottom: 15px;
           }
         }
+        .dropdown-edit {
+          width: 100%;
+          margin-left: 70px;
+        }
 
         .edit-project-name-input {
           width: 100%;
@@ -771,6 +873,7 @@
           }
         }
 
+  
         .edit-buttons {
           display: flex;
           justify-content: space-between;

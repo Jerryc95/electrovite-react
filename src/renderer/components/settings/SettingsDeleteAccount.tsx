@@ -16,7 +16,6 @@ const SettingsDeleteAccount: React.FC = () => {
 
   const [deleteAccount] = useDeleteAccountMutation();
   
-
   const toggleDeleteAccount = () => {
     setShowDeleteAccount(!showDeleteAccount);
   };

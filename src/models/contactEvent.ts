@@ -4,6 +4,5 @@ export type ContactEvent = {
     title: string;
     event_date: Date;
     event_type: string;
-    event_time: Date;
     description: string;
 }

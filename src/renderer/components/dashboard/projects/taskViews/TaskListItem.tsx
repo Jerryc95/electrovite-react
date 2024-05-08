@@ -1,20 +1,23 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { selectTask } from '../../../../../services/taskSlice';
 import ProgressBar from '$renderer/components/ProgressBar';
 import { Task } from 'src/models/task';
 import { taskStatus } from '../../../../../statuses/taskStatus';
+import { useUpdateTaskMutation } from '../../../../../services/taskAPI';
 
 interface TaskListItemProps {
   task: Task;
-  setSelectedTask: React.Dispatch<React.SetStateAction<Task>>;
-  setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const TaskListItem: React.FC<TaskListItemProps> = ({
-  task,
-  setSelectedTask,
-  setShowingTask,
-}) => {
+const TaskListItem: React.FC<TaskListItemProps> = ({ task }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { projectName } = useParams();
+  const [updateTask] = useUpdateTaskMutation();
+
   const [isEditing, setIsEditing] = useState(false);
   const [status, setStatus] = useState(task.task_status);
   const [uncompletedSubTasks, setUncompletedSubTasks] = useState(0);
@@ -27,9 +30,14 @@ const TaskListItem: React.FC<TaskListItemProps> = ({
     return new Date(date);
   };
 
-  const handleSetTask = (task: Task) => {
-    setSelectedTask(task);
-    setShowingTask(true);
+  const toggleTask = (task: Task) => {
+    dispatch(selectTask(task));
+    navigate(
+      `/projects/${projectName?.replaceAll(' ', '-')}/${task.name.replaceAll(
+        ' ',
+        '-',
+      )}`,
+    );
   };
 
   const handleEditClick = () => {
@@ -42,26 +50,23 @@ const TaskListItem: React.FC<TaskListItemProps> = ({
   };
 
   const handleSaveClick = async () => {
-    task.task_status = status;
-    setIsEditing(false);
-    const data = {
-      status: task.task_status,
+    const updatedTask: Task = {
+      task_id: task.task_id,
+      project_id: task.project_id,
+      name: task.name,
+      description: task.description,
+      notes: task.notes,
+      creation_date: task.creation_date,
+      start_date: task.start_date,
+      due_date: task.due_date,
+      task_status: status,
+      priority: task.priority,
+      column_index: task.column_index,
+      subtasks: task.subtasks,
     };
-    const url = `http://localhost:3000/tasks/update/${task.task_id}`;
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update value');
-      }
-    } catch (error) {
-      console.log(error);
-    }
+
+    updateTask(updatedTask);
+    setIsEditing(false);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -69,11 +74,11 @@ const TaskListItem: React.FC<TaskListItemProps> = ({
   };
 
   useEffect(() => {
-    if (task.subTasks) {
+    if (task.subtasks) {
       let uncompleted = 0;
       let completed = 0;
-      setTotalSubTasks(task.subTasks.length);
-      task.subTasks.forEach((subtask) => {
+      setTotalSubTasks(task.subtasks.length);
+      task.subtasks.forEach((subtask) => {
         if (subtask.subtask_status === taskStatus.Completed) {
           completed += 1;
         } else {
@@ -86,10 +91,7 @@ const TaskListItem: React.FC<TaskListItemProps> = ({
   }, []);
 
   return (
-    <div
-      className='task-list-item-container'
-      onClick={() => handleSetTask(task)}
-    >
+    <div className='task-list-item-container' onClick={() => toggleTask(task)}>
       <p className='task-name'>{task.name}</p>
       <div className='task-progress'>
         {/* <ProgressBar height={15} current={completedSubTask} total={totalSubTasks} /> */}
@@ -104,7 +106,7 @@ const TaskListItem: React.FC<TaskListItemProps> = ({
         )}
       </div>
       <p className={`task-priority ${task.priority}`}>{task.priority}</p>
-      <p className='task-status' onClick={preventTaskOpening}>
+      <div className='task-status' onClick={preventTaskOpening}>
         <div className='edit-field-section'>
           {isEditing ? (
             <div className='edit-field-container'>
@@ -139,7 +141,7 @@ const TaskListItem: React.FC<TaskListItemProps> = ({
             </p>
           )}
         </div>
-      </p>
+      </div>
       <p className='task-due-date'>
         {dateParser(task.due_date).toLocaleDateString()}
       </p>

@@ -14,30 +14,20 @@ interface KanbanCardProps {
   index: number;
   task: Task;
   tasks: Task[];
-  //   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  // setSelectedTask: React.Dispatch<React.SetStateAction<Task>>;
-  // setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const KanbanCard: React.FC<KanbanCardProps> = ({
-  index,
-  task,
-  // setSelectedTask,
-  // setShowingTask,
-}) => {
+const KanbanCard: React.FC<KanbanCardProps> = ({ index, task }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { projectName } = useParams();
 
-  const [uncompletedSubTasks, setUncompletedSubTasks] = useState(0);
+  const [uncompletedSubtasks, setUncompletedSubtasks] = useState(0);
   const [completedSubTask, setCompletedSubTasks] = useState(0);
-  const [totalSubTasks, setTotalSubTasks] = useState(
-    uncompletedSubTasks + completedSubTask,
+  const [totalSubtasks, setTotalSubtasks] = useState(
+    uncompletedSubtasks + completedSubTask,
   );
 
   const toggleTask = (task: Task) => {
-    // setSelectedTask(task);
-    // setShowingTask(true);
     dispatch(selectTask(task));
     navigate(
       `/projects/${projectName?.replaceAll(' ', '-')}/${task.name.replaceAll(
@@ -79,10 +69,9 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
   };
 
   useEffect(() => {
-    if (task.subtasks) {
       let uncompleted = 0;
       let completed = 0;
-      setTotalSubTasks(task.subtasks.length);
+      setTotalSubtasks(task.subtasks.length);
       task.subtasks.forEach((subtask) => {
         if (subtask.subtask_status === taskStatus.Completed) {
           completed += 1;
@@ -90,9 +79,8 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
           uncompleted += 1;
         }
       });
-      setUncompletedSubTasks(uncompleted);
+      setUncompletedSubtasks(uncompleted);
       setCompletedSubTasks(completed);
-    }
   }, [task.subtasks]);
   return (
     <Draggable draggableId={task.task_id.toString()} index={index}>
@@ -119,15 +107,15 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
               <p className='task-due-date'>{getDaysRemaining(task.due_date)}</p>
             </div>
           </div>
-          {totalSubTasks !== 0 ? (
+          {totalSubtasks !== 0 ? (
             <div className='row'>
               <ProgressBar
                 current={completedSubTask}
-                total={totalSubTasks}
+                total={totalSubtasks}
                 height={15}
               />
               <span className='progress-count'>
-                {completedSubTask}/{totalSubTasks}
+                {completedSubTask}/{totalSubtasks}
               </span>
             </div>
           ) : (

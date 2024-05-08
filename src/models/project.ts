@@ -9,4 +9,5 @@ export type Project = {
   end_date: Date;
   status: string;
   completed: boolean;
+  contact_id: number | null;
 };

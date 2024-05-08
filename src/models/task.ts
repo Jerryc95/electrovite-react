@@ -1,4 +1,4 @@
-import { Subtask } from "./subTask";
+import { SubtaskSummary } from "./subtaskSummary";
 
 export type Task = {
     task_id: number;
@@ -10,8 +10,7 @@ export type Task = {
     start_date: Date;
     due_date: Date;
     task_status: string;
-    completed: Date;
     priority: string;
     column_index: number;
-    subtasks: Subtask[];
+    subtasks: SubtaskSummary[];
 }

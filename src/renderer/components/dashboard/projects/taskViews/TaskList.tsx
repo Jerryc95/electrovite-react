@@ -5,25 +5,14 @@ import TaskListLabel from './TaskListLabel';
 
 interface TaskListProps {
   tasks: Task[];
-  setSelectedTask: React.Dispatch<React.SetStateAction<Task>>;
-  setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const TaskList: React.FC<TaskListProps> = ({
-  tasks,
-  setSelectedTask,
-  setShowingTask,
-}) => {
-
+const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
   return (
     <div className='task-list-container'>
       <TaskListLabel />
-      {tasks.map((task) => (
-        <TaskListItem
-          task={task}
-          setSelectedTask={setSelectedTask}
-          setShowingTask={setShowingTask}
-        />
+      {tasks.map((task, index) => (
+        <TaskListItem key={index} task={task} />
       ))}
     </div>
   );

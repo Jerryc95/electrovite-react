@@ -1,16 +1,14 @@
 // the task slice includes all references to the user's
-// tasks and subtasks.
+// tasks.
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { RootState } from './store';
 import { Task } from 'src/models/task';
-import { Subtask } from 'src/models/subTask';
 import { taskAPI } from './taskAPI';
-import { subtaskAPI } from './subtaskAPI';
+import { SubtaskSummary } from 'src/models/subtaskSummary';
 
 interface taskState {
-  upcomingTasks: Task[];
   tasks: Task[];
   selectedTask: Task | null;
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
@@ -18,7 +16,6 @@ interface taskState {
 }
 
 const initialTaskState: taskState = {
-  upcomingTasks: [],
   tasks: [],
   selectedTask: null,
   loading: 'idle',
@@ -26,7 +23,7 @@ const initialTaskState: taskState = {
 };
 
 export const taskSlice = createSlice({
-  name: 'project',
+  name: 'task',
   initialState: initialTaskState,
   reducers: {
     clearTaskState: () => initialTaskState,
@@ -38,6 +35,7 @@ export const taskSlice = createSlice({
     // TASKS API
     builder.addMatcher(taskAPI.endpoints.fetchTasks.matchPending, (state) => {
       state.loading = 'pending';
+      state.tasks = [];
     });
 
     builder.addMatcher(
@@ -45,34 +43,21 @@ export const taskSlice = createSlice({
       (state, action: PayloadAction<Task[]>) => {
         state.loading = 'fulfilled';
         state.tasks = action.payload;
-        // console.log('payload', action.payload);
-      },
-    );
-    builder.addMatcher(
-      taskAPI.endpoints.fetchUpcomingTasks.matchPending,
-      (state) => {
-        state.loading = 'pending';
-      },
-    );
-
-    builder.addMatcher(
-      taskAPI.endpoints.fetchUpcomingTasks.matchFulfilled,
-      (state, action: PayloadAction<Task[]>) => {
-        state.loading = 'fulfilled';
-        state.upcomingTasks = action.payload;
-        console.log('upcoming Tasks:', action.payload);
       },
     );
 
     builder.addMatcher(taskAPI.endpoints.addTask.matchPending, (state) => {
       state.loading = 'pending';
+      console.log("fetching")
     });
     builder.addMatcher(
       taskAPI.endpoints.addTask.matchFulfilled,
       (state, action: PayloadAction<Task>) => {
         state.loading = 'fulfilled';
-        console.log(action.payload);
-        state.tasks.push(action.payload);
+        console.log("fetched")
+        const newTask: Task = action.payload;
+        newTask.subtasks = [];
+        state.tasks.push(newTask);
       },
     );
 
@@ -82,16 +67,20 @@ export const taskSlice = createSlice({
 
     builder.addMatcher(
       taskAPI.endpoints.updateTask.matchFulfilled,
-      (state, action: PayloadAction<Task>) => {
+      (
+        state,
+        action: PayloadAction<{ task: Task; subtasks: SubtaskSummary[] }>,
+      ) => {
         state.loading = 'fulfilled';
-        console.log(action.payload);
-        const updatedTask = action.payload;
-
+        const updatedTask = action.payload.task;
+        const subtaskSummary = action.payload.subtasks;
+        updatedTask.subtasks = subtaskSummary;
         const i = state.tasks.findIndex(
           (task) => task.task_id === updatedTask.task_id,
         );
         if (i !== -1) {
           state.tasks[i] = updatedTask;
+          state.selectedTask = updatedTask;
         }
       },
     );
@@ -102,87 +91,13 @@ export const taskSlice = createSlice({
 
     builder.addMatcher(
       taskAPI.endpoints.removeTask.matchFulfilled,
-      (state, action: PayloadAction<Task>) => {
+      (state, action: PayloadAction<number>) => {
         state.loading = 'fulfilled';
-        const taskToRemove = action.payload;
+        const removedTaskId = action.payload;
+        console.log(removedTaskId);
         state.tasks = state.tasks.filter(
-          (task) => task.task_id != taskToRemove.task_id,
+          (task) => task.task_id != removedTaskId,
         );
-      },
-    );
-
-    // SUBTASK API
-    builder.addMatcher(
-      subtaskAPI.endpoints.addSubtask.matchPending,
-      (state) => {
-        state.loading = 'pending';
-      },
-    );
-
-    builder.addMatcher(
-      subtaskAPI.endpoints.addSubtask.matchFulfilled,
-      (state, action: PayloadAction<Subtask>) => {
-        state.loading = 'fulfilled';
-
-        const index = state.tasks.findIndex(
-          (task) => task.task_id === action.payload.task_id,
-        );
-
-        if (index !== -1) {
-          state.tasks[index].subtasks.push(action.payload);
-        }
-      },
-    );
-
-    builder.addMatcher(
-      subtaskAPI.endpoints.updateSubtask.matchPending,
-      (state) => {
-        state.loading = 'pending';
-      },
-    );
-
-    builder.addMatcher(
-      subtaskAPI.endpoints.updateSubtask.matchFulfilled,
-      (state, action: PayloadAction<Subtask>) => {
-        state.loading = 'fulfilled';
-
-        const taskIndex = state.tasks.findIndex(
-          (task) => task.task_id === action.payload.task_id,
-        );
-
-        if (taskIndex !== -1) {
-          const subtaskIndex = state.tasks[taskIndex].subtasks.findIndex(
-            (subtask) => subtask.subtask_id === action.payload.subtask_id,
-          );
-          if (subtaskIndex != -1) {
-            state.tasks[taskIndex].subtasks[subtaskIndex] = action.payload;
-          }
-        }
-      },
-    );
-
-    builder.addMatcher(
-      subtaskAPI.endpoints.removeSubtask.matchPending,
-      (state) => {
-        state.loading = 'pending';
-      },
-    );
-
-    builder.addMatcher(
-      subtaskAPI.endpoints.removeSubtask.matchFulfilled,
-      (state, action: PayloadAction<Subtask>) => {
-        state.loading = 'fulfilled';
-
-        const taskIndex = state.tasks.findIndex(
-          (task) => task.task_id === action.payload.task_id,
-        );
-
-        if (taskIndex != -1) {
-          const updatedSubtasks = state.tasks[taskIndex].subtasks.filter(
-            (subtask) => subtask.subtask_id != action.payload.subtask_id,
-          );
-          state.tasks[taskIndex].subtasks = updatedSubtasks;
-        }
       },
     );
   },

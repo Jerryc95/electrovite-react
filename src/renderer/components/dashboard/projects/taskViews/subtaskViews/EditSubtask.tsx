@@ -2,83 +2,90 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 
 import DeleteModal from '$renderer/components/DeleteModal';
-import { Subtask } from 'src/models/subTask';
-import { Task } from 'src/models/task';
+import { Subtask } from 'src/models/subtask';
+import {
+  useRemoveSubtaskMutation,
+  useUpdateSubtaskMutation,
+} from '../../../../../../services/subtaskAPI';
+import DropdownField from '$renderer/components/DropdownField';
+import { priorityStatus } from '../../../../../../statuses/priorityStatus';
 
 interface EditSubtaskProps {
   subtask: Subtask;
   setEditingSubtask: React.Dispatch<React.SetStateAction<boolean>>;
-  setSubtasks: React.Dispatch<React.SetStateAction<Subtask[]>>;
-  subtasks: Subtask[];
-  // setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  // tasks: Task[];
-  // setSubtaskName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const EditSubtask: React.FC<EditSubtaskProps> = ({
   subtask,
   setEditingSubtask,
-  setSubtasks,
-  subtasks,
-  // setTasks,
-  // tasks,
-  // setSubtaskName,
 }) => {
   const [name, setName] = useState(subtask.name);
   const [startDate, setStartDate] = useState<Date | null>();
   const [endDate, setEndDate] = useState<Date | null>();
   const [showingDeleteAlert, setShowingDeleteAlert] = useState(false);
 
+  const [removeSubtask] = useRemoveSubtaskMutation();
+  const [updateSubtask] = useUpdateSubtaskMutation();
+
   const toggleDeleteSubtask = () => {
     setShowingDeleteAlert(!showingDeleteAlert);
   };
 
   const handleDeleteSubtask = () => {
-    console.log('clicked');
-    const url = `http://localhost:3000/subtasks/delete/${subtask.subtask_id}`;
-    try {
-      fetch(url, {
-        method: 'DELETE',
-      });
-      setSubtasks(subtasks.filter((st) => st.subtask_id != subtask.subtask_id));
-    } catch (error) {
-      console.log(error);
-    }
+    removeSubtask(subtask.subtask_id);
+    setEditingSubtask(false);
     setShowingDeleteAlert(false);
   };
 
   const handleUpdateSubtask = async () => {
-    const url = `http://localhost:3000/subtasks/update/${subtask.subtask_id}`;
-    const data = {
-      name: name,
-      startDate: startDate,
-      endDate: endDate,
-    };
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update project');
-      }
-    } catch (error) {
-      console.log(error);
+    console.log(subtask);
+    if (startDate !== null && startDate !== undefined) {
+      const data: Subtask = {
+        subtask_id: subtask.subtask_id,
+        task_id: subtask.task_id,
+        name: name,
+        description: subtask.description,
+        notes: subtask.notes,
+        creation_date: subtask.creation_date,
+        start_date: startDate,
+        due_date: subtask.due_date,
+        subtask_status: subtask.subtask_status,
+        priority: subtask.priority,
+        column_index: subtask.column_index,
+      };
+      updateSubtask(data);
+    } else if (endDate !== null && endDate !== undefined) {
+      const data: Subtask = {
+        subtask_id: subtask.subtask_id,
+        task_id: subtask.task_id,
+        name: name,
+        description: subtask.description,
+        notes: subtask.notes,
+        creation_date: subtask.creation_date,
+        start_date: subtask.start_date,
+        due_date: endDate,
+        subtask_status: subtask.subtask_status,
+        priority: subtask.priority,
+        column_index: subtask.column_index,
+      };
+      updateSubtask(data);
+    } else {
+      const data: Subtask = {
+        subtask_id: subtask.subtask_id,
+        task_id: subtask.task_id,
+        name: name,
+        description: subtask.description,
+        notes: subtask.notes,
+        creation_date: subtask.creation_date,
+        start_date: subtask.start_date,
+        due_date: subtask.due_date,
+        subtask_status: subtask.subtask_status,
+        priority: subtask.priority,
+        column_index: subtask.column_index,
+      };
+      updateSubtask(data);
     }
-    const updatedSubtasks = subtasks.map((st, i) => {
-      if (i === subtask.subtask_id) {
-        return subtask;
-      } else {
-        return st;
-      }
-    });
-   
-    // setSubtaskName(name)
-    setSubtasks(updatedSubtasks);
-    // setTasks(updatedSubtasksTest)
+
     setEditingSubtask(false);
   };
 
@@ -93,13 +100,14 @@ const EditSubtask: React.FC<EditSubtaskProps> = ({
     <div className='edit-project-container'>
       <div className='edit-project-form'>
         <div className='edit-project-heading'>
-          <h2>Edit Task</h2>
+          <h2>Edit Subtask</h2>
           <button onClick={() => setEditingSubtask(false)}>Cancel</button>
         </div>
         <div className='edit-project-details'>
           <div className='edit-project-info'>
+            {/* <div className='row space-between'> */}
             <label className='edit-project-label'>
-              Edit Task Name
+              Edit Subtask Name
               <input
                 className='edit-project-name-input'
                 type='text'
@@ -107,6 +115,16 @@ const EditSubtask: React.FC<EditSubtaskProps> = ({
                 onChange={(e) => setName(e.target.value)}
               />
             </label>
+            <div className='dropdown-edit'>
+            <DropdownField
+                label='Priority:'
+                field='priority'
+                value={subtask.priority}
+                item={subtask}
+                options={priorityStatus}
+                onEdit={handleUpdateSubtask}
+              />
+            </div>
             <div className='edit-dates'>
               <div className='edit-project-date-picker'>
                 <h3>Start Date</h3>
@@ -132,6 +150,7 @@ const EditSubtask: React.FC<EditSubtaskProps> = ({
                 />
               </div>
             </div>
+
             <div className='edit-buttons'>
               <button
                 className='button-brand-lighter-blue'

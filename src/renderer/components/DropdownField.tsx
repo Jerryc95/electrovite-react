@@ -11,7 +11,7 @@ interface DropdownFieldProps {
   label: string;
   field: string;
   value: string;
-  id: number;
+  item: any;
   options:
     | typeof contactStatus
     | typeof contractStatus
@@ -20,16 +20,16 @@ interface DropdownFieldProps {
     | typeof taskStatus
     | typeof priorityStatus
     | string;
-  baseURL: string;
+  onEdit: (data: any) => Promise<void>;
 }
 
 const DropdownField: React.FC<DropdownFieldProps> = ({
   label,
   field,
   value,
-  id,
+  item,
   options,
-  baseURL,
+  onEdit,
 }) => {
   const {
     isEditing,
@@ -59,7 +59,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
           <button
             className='edit-field-button'
             onClick={() => {
-              handleSaveClick(id, field, baseURL);
+              handleSaveClick(field, item, onEdit);
             }}
           >
             Save

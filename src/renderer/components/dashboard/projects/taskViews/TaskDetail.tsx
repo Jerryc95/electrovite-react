@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
   faPenToSquare,
 } from '@fortawesome/free-solid-svg-icons';
 
-import { Subtask } from 'src/models/subTask';
 import { Task } from 'src/models/task';
 import { Project } from 'src/models/project';
 
@@ -15,47 +15,42 @@ import DropdownField from '$renderer/components/DropdownField';
 import EditField from '$renderer/components/EditField';
 import { taskStatus } from '../../../../../statuses/taskStatus';
 import { priorityStatus } from '../../../../../statuses/priorityStatus';
-import NewSubtask from './NewSubTask';
+import NewSubtask from './subtaskViews/NewSubtask';
 import STKanbanBoard from './subtaskViews/STKanbanBoard';
 import SubtaskList from './subtaskViews/SubtaskList';
 import EditTask from './EditTask';
 import useBackClick from '../../../../../hooks/useBackClick';
+import { useFetchSubtasksQuery } from '../../../../../services/subtaskAPI';
+import {
+  clearSubtaskState,
+  selectedSubtasks,
+} from '../../../../../services/subtaskSlice';
+import { useUpdateTaskMutation } from '../../../../../services/taskAPI';
 
 interface TaskDetailProps {
   task: Task;
-  // setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
   id: number | undefined;
-  // tasks: Task[];
   project: Project;
 }
 
-const TaskDetail: React.FC<TaskDetailProps> = ({
-  task,
-  // setShowingTask,
-  id,
-  // tasks,
-  project,
-}) => {
+const TaskDetail: React.FC<TaskDetailProps> = ({ task, id, project }) => {
+  const subtasks = useSelector(selectedSubtasks);
   const goBack = useBackClick();
-  // remove subtasks and setsubtasks and replace with passed task.subtasks
+
   const [addingSubtask, setAddingSubtask] = useState(false);
   const [editingTask, setEditingTask] = useState(false);
-  const [subtasks, setSubtasks] = useState<Subtask[]>([]);
   const [completedSubtasks, setCompletedSubtasks] = useState(0);
   const [totalSubtasks, setTotalSubtasks] = useState(0);
   const [subtaskView, setSubtaskView] = useState('Board');
   const viewOptions = ['Board', 'List'];
-  const [taskName, setTaskName] = useState('');
-  const [componentView, setComponentView] = useState<JSX.Element>(
-    <STKanbanBoard
-      subtasks={subtasks}
-      setSubtasks={setSubtasks}
-      // setTasks={setTasks}
-      task={task}
-    />,
-  );
+ 
+  const fetchSubtasks = useFetchSubtasksQuery(task.task_id, {
+    refetchOnMountOrArgChange: true,
+  });
+  const [updateTask] = useUpdateTaskMutation();
 
   const toggleTask = () => {
+    clearSubtaskState();
     goBack();
   };
 
@@ -63,103 +58,47 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
     setEditingTask(!editingTask);
   };
 
-  const toggleView = (view: string) => {
-    setSubtaskView(view);
-
-    switch (view) {
-      case 'Board':
-        setComponentView(
-          <STKanbanBoard
-            subtasks={subtasks}
-            setSubtasks={setSubtasks}
-            // setTasks={setTasks}
-            task={task}
-          />,
-        );
-        break;
-      case 'List':
-        setComponentView(<SubtaskList subtasks={subtasks} />);
-    }
+  const handleUpdateTask = async (data: any) => {
+    updateTask(data);
   };
 
-  // useEffect(() => {
-  //   let completed = 0;
-  //   setSubtasks(task.subtasks);
-  //   // setTotalSubtasks(task.subtasks.length);
-  //   task.subtasks.forEach((subtask) => {
-  //     if (subtask.subtask_status === taskStatus.Completed) {
-  //       completed += 1;
-  //     }
-  //   });
-  //   setCompletedSubtasks(completed);
-  // }, []);
+  const toggleView = useCallback((view: string) => {
+    setSubtaskView(view);
+  }, []);
 
-  // useEffect(() => {
-  //   let completed = 0;
-  //   const url = `http://localhost:3000/subtasks?id=${task.task_id}`;
-  //   fetch(url)
-  //     .then((response) => response.json())
-  //     .then((data: Subtask[]) => {
-  //       setSubtasks(data);
-  //       setTotalSubtasks(data.length);
-  //       data.forEach((subtask) => {
-  //         if (subtask.subtask_status === taskStatus.Completed) {
-  //           completed += 1;
-  //         }
-  //       });
-  //       setCompletedSubtasks(completed);
-  //     });
-  // }, []);
-
-  // useEffect(() => {
-  //   let uncompleted = 0;
-  //   let completed = 0;
-  //   setTaskName(task.name);
-  //   subtasks.forEach((subtask) => {
-  //     if (subtask.subtask_status === taskStatus.Completed) {
-  //       completed += 1;
-  //     } else {
-  //       uncompleted += 1;
-  //     }
-  //   });
-  //   setCompletedSubtasks(completed);
-  //   setTotalSubtasks(uncompleted + completed);
-  // }, [subtasks, task.name, task.subtasks.length]);
 
   useEffect(() => {
-    if (subtaskView === 'Board') {
-      setComponentView(
-        <STKanbanBoard
-          subtasks={subtasks}
-          setSubtasks={setSubtasks}
-          // setTasks={setTasks}
-          task={task}
-        />,
-      );
-    } else {
-      setComponentView(
-        <STKanbanBoard
-          subtasks={subtasks}
-          setSubtasks={setSubtasks}
-          // setTasks={setTasks}
-          task={task}
-        />,
-      );
-    }
+    let uncompleted = 0;
+    let completed = 0;
+    subtasks.forEach((subtask) => {
+      if (subtask.subtask_status === taskStatus.Completed) {
+        completed += 1;
+      } else {
+        uncompleted += 1;
+      }
+    });
+    setCompletedSubtasks(completed);
+    setTotalSubtasks(uncompleted + completed);
   }, [subtasks]);
+
+  useEffect(() => {
+    clearSubtaskState();
+    fetchSubtasks;
+  }, [fetchSubtasks]);
+
+  useEffect(() => {
+    toggleView('Board');
+  }, [toggleView]);
 
   return (
     <div className='task-detail-container'>
       <div className='task-detail-header'>
         <div className='task-detail-leading'>
-          <div
-            className='task-detail-back'
-            onClick={() => toggleTask()}
-          >
+          <div className='task-detail-back' onClick={() => toggleTask()}>
             <FontAwesomeIcon icon={faChevronLeft} />
             <p>{project.name}</p>
           </div>
-          <h2>{taskName}</h2>
+          <h2>{task.name}</h2>
         </div>
 
         <div className='task-detail-trailing'>
@@ -187,9 +126,9 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
               </div>
             ) : (
               <div>
-                {subtasks.length != 0 ? (
+                {totalSubtasks == 0 ? (
                   <div>
-                    <p>{`Task Progress: No subtasks started.`}</p>
+                    <p>{`Task Progress: No subtasks added.`}</p>
                     <ProgressBar
                       current={completedSubtasks}
                       total={1}
@@ -198,7 +137,7 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
                   </div>
                 ) : (
                   <div>
-                    <p>{`Task Progress: No subtasks added`}</p>
+                    <p>{`Task Progress: No subtasks completed.`}</p>
                     <ProgressBar
                       current={completedSubtasks}
                       total={1}
@@ -210,14 +149,13 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
             )}
           </div>
           <div>
-            {/* these need to be swapped out so the code is in the file */}
             <DropdownField
               label='Task Status:'
               field='taskStatus'
               value={task.task_status}
-              id={task.task_id}
+              item={task}
               options={taskStatus}
-              baseURL='http://localhost:3000/tasks/update/'
+              onEdit={handleUpdateTask}
             />
           </div>
           <div>
@@ -225,21 +163,20 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
               label='Priority:'
               field='priority'
               value={task.priority}
-              id={task.task_id}
+              item={task}
               options={priorityStatus}
-              baseURL='http://localhost:3000/tasks/update/'
+              onEdit={handleUpdateTask}
             />
           </div>
         </div>
         <div style={{ width: `60%` }}>
-          {/* this needs to be fixed so the state also updates */}
           <EditField
             label='Description:'
             field='description'
             value={task.description}
-            id={task.task_id}
+            item={task}
             isInput={false}
-            baseURL='http://localhost:3000/tasks/update/'
+            onEdit={handleUpdateTask}
           />
         </div>
       </div>
@@ -260,42 +197,32 @@ const TaskDetail: React.FC<TaskDetailProps> = ({
         </div>
         <div className='task-detail-board'>
           {subtasks.length === 0 ? (
-            <p>Subtasks will appear here once added.</p>
+            <p className='info-text'>Subtasks will appear here once added.</p>
           ) : (
-            // <div>{componentView}</div>
+            // <div> {componentView}</div>
             <div>
-              {' '}
-              <STKanbanBoard
-                subtasks={subtasks}
-                setSubtasks={setSubtasks}
-                // setTasks={setTasks}
-                task={task}
-              />
-            </div>
+            {subtaskView == 'Board' ? (
+              <>
+                <STKanbanBoard subtasks={subtasks} />
+              </>
+            ) : (
+              <>
+                <SubtaskList subtasks={subtasks} />
+              </>
+            )}
+          </div>
           )}
         </div>
       </div>
-      {/* prob need to add set tasks here too  */}
       {addingSubtask && (
         <NewSubtask
           setAddingSubtask={setAddingSubtask}
           accountID={id}
           taskID={task.task_id}
-          // setSubtasks={setSubtasks}
-          // subTasks={subtasks}
-          // add task here
+          subtasks={subtasks}
         />
       )}
-      {/* {editingTask && (
-        <EditTask
-          task={task}
-          setEditingTask={setEditingTask}
-          // setTasks={setTasks}
-          // tasks={tasks}
-          // setShowingTask={setShowingTask}
-          setTaskName={setTaskName}
-        />
-      )} */}
+      {editingTask && <EditTask task={task} setEditingTask={setEditingTask} />}
     </div>
   );
 };

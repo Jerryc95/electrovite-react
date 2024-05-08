@@ -1,37 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { RootState } from '../../services/store';
 import { BKEntry } from 'src/models/BKEntry';
+import { selectedAccount } from '../../services/accountSlice';
 import '../styles/bookkeeping.scss';
 import BKHighlight from '$renderer/components/dashboard/bookkeeping/BKHighlight';
 import NewBKEntry from '$renderer/components/dashboard/bookkeeping/NewBKEntry';
 import BKEntryRow from '$renderer/components/dashboard/bookkeeping/BKEntryRow';
 import BKEntryRowLabel from '$renderer/components/dashboard/bookkeeping/BKEntryRowLabel';
-import BKEntryDetail from '$renderer/components/dashboard/bookkeeping/BKEntryDetail';
 import NewExpense from '$renderer/components/dashboard/bookkeeping/Expenses/NewExpense';
-import { BKExpense } from 'src/models/BKExpense';
+// import { BKExpense } from 'src/models/BKExpense';
 import RecurringExpense from '$renderer/components/dashboard/bookkeeping/Expenses/RecurringExpense';
+import {
+  selectedEntries,
+  selectedExpenseEntries,
+  selectedRecurringExpenses,
+  selectedRevenueEntries,
+  setSelectedEntry,
+} from '../../services/bookkeepingSlice';
+import { useFetchEntriesQuery } from '../../services/bookkeepingAPI';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-interface IBK {
-  entries: BKEntry[];
-  recurringExpenses: BKExpense[];
-}
+// interface IBK {
+//   entries: BKEntry[];
+//   recurringExpenses: BKExpense[];
+// }
 
 const Bookkeeping: React.FC = () => {
+  const user = useSelector(selectedAccount);
+  const entries = useSelector(selectedEntries);
+  const revenueEntries = useSelector(selectedRevenueEntries);
+  const expenseEntries = useSelector(selectedExpenseEntries);
+  const recurringExpenses = useSelector(selectedRecurringExpenses);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const fetchEntries = useFetchEntriesQuery(user.account?.id, {refetchOnMountOrArgChange: true});
+
   const [addingEntry, setAddingEntry] = useState(false);
   const [addingExpense, setAddingExpense] = useState(false);
-  const [recurringExpenses, setRecurringExpenses] = useState<BKExpense[]>([]);
-  const [entries, setEntries] = useState<BKEntry[]>([]);
-  const [revenueEntries, setRevenueEntries] = useState<BKEntry[]>([]);
-  const [expenseEntries, setExpenseEntries] = useState<BKEntry[]>([]);
-  const [selectedEntry, setSelectedEntry] = useState<BKEntry>(entries[0]);
-  const [showingEntry, setShowingEntry] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [selectedSort, setSelectedSort] = useState('Date');
   const [selectedDate, setSelectedDate] = useState('All Time');
-
-  const accountState = useSelector((state: RootState) => state.accountReducer);
 
   const filterOptions = ['All', 'Income', 'Expenses'];
   const sortOptions = ['Date', 'Contact', 'Type', 'Category', 'Total'];
@@ -51,9 +63,8 @@ const Bookkeeping: React.FC = () => {
   };
 
   const toggleEntry = (entry: BKEntry) => {
-    console.log(entry)
-    setSelectedEntry(entry);
-    setShowingEntry(!showingEntry);
+    dispatch(setSelectedEntry(entry));
+    navigate(`/bookkeeping/${entry.entry_name.replaceAll(' ', '-')}`);
   };
 
   const dateFilter = (entries: BKEntry[]) => {
@@ -151,39 +162,43 @@ const Bookkeeping: React.FC = () => {
     }
   });
 
+  // useEffect(() => {
+  // if (accountState) {
+  //   const url = `http://localhost:3000/bookkeeping?id=${accountState.account?.id}`;
+  //   fetch(url)
+  //     .then((response) => response.json())
+  //     .then(async (data: IBK) => {
+  //       await Promise.all([
+  //         setRecurringExpenses(data.recurringExpenses),
+  //         setEntries(data.entries),
+  //         ...BKHighlights.map(async (highlight) => {
+  //           switch (highlight) {
+  //             case 'Revenue': {
+  //               setRevenueEntries(
+  //                 data.entries.filter(
+  //                   (entry) => entry.transaction_type === 'Income',
+  //                 ),
+  //               );
+  //               break;
+  //             }
+  //             case 'Expenses': {
+  //               setExpenseEntries(
+  //                 data.entries.filter(
+  //                   (entry) => entry.transaction_type === 'Expense',
+  //                 ),
+  //               );
+  //               break;
+  //             }
+  //           }
+  //         }),
+  //       ]);
+  //     });
+  // }
+  // }, []);
+
   useEffect(() => {
-    if (accountState) {
-      const url = `http://localhost:3000/bookkeeping?id=${accountState.account?.id}`;
-      fetch(url)
-        .then((response) => response.json())
-        .then(async (data: IBK) => {
-          await Promise.all([
-            setRecurringExpenses(data.recurringExpenses),
-            setEntries(data.entries),
-            ...BKHighlights.map(async (highlight) => {
-              switch (highlight) {
-                case 'Revenue': {
-                  setRevenueEntries(
-                    data.entries.filter(
-                      (entry) => entry.transaction_type === 'Income',
-                    ),
-                  );
-                  break;
-                }
-                case 'Expenses': {
-                  setExpenseEntries(
-                    data.entries.filter(
-                      (entry) => entry.transaction_type === 'Expense',
-                    ),
-                  );
-                  break;
-                }
-              }
-            }),
-          ]);
-        });
-    }
-  }, []);
+    fetchEntries;
+  }, [fetchEntries]);
 
   return (
     <div className='bookkeeping-container'>
@@ -281,23 +296,6 @@ const Bookkeeping: React.FC = () => {
         </div>
         <div className='bookkeeping-right-column'>
           <h3>Recurring Expenses</h3>
-          {recurringExpenses.length === 0 ? (
-            <p className='no-entries-info'>
-              Recurring Expenses will appear here once added.
-            </p>
-          ) : (
-            <div>
-              {recurringExpenses.map((expense) => (
-                <RecurringExpense
-                key={expense.re_id}
-                  expense={expense}
-                  expenses={recurringExpenses}
-                  setExpenses={setRecurringExpenses}
-                />
-              ))}
-            </div>
-          )}
-
           <button
             className='add-expense'
             onClick={() => {
@@ -306,35 +304,28 @@ const Bookkeeping: React.FC = () => {
           >
             Add
           </button>
+          {recurringExpenses.length === 0 ? (
+            <p className='no-entries-info'>
+              Recurring Expenses will appear here once added.
+            </p>
+          ) : (
+            <div>
+              {recurringExpenses.map((expense) => (
+                <RecurringExpense key={expense.re_id} expense={expense} />
+              ))}
+            </div>
+          )}
+
+     
         </div>
       </div>
       {addingEntry && (
-        <NewBKEntry
-          setAddingEntry={setAddingEntry}
-          addingEntry={addingEntry}
-          id={accountState.account?.id}
-          setEntries={setEntries}
-          setRevenueEntries={setRevenueEntries}
-          setExpenseEntries={setExpenseEntries}
-        />
-      )}
-      {showingEntry && (
-        <BKEntryDetail
-          entry={selectedEntry}
-          entries={entries}
-          setEntries={setEntries}
-          setShowingEntry={setShowingEntry}
-          setRevenueEntries={setRevenueEntries}
-          setExpenseEntries={setExpenseEntries}
-          setRecurringExpenses={setRecurringExpenses}
-          BKHighlights={BKHighlights}
-        />
+        <NewBKEntry setAddingEntry={setAddingEntry} id={user.account?.id} />
       )}
       {addingExpense && (
         <NewExpense
           setAddingExpense={setAddingExpense}
-          accountID={accountState.account?.id}
-          setRecurringExpenses={setRecurringExpenses}
+          accountID={user.account?.id}
         />
       )}
     </div>

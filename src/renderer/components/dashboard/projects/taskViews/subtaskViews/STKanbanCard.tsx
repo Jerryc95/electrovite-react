@@ -1,38 +1,23 @@
-import React, { useState, useEffect, SetStateAction } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { Draggable } from 'react-beautiful-dnd';
 
-import { Subtask } from 'src/models/subTask';
-import { Task } from 'src/models/task';
+import { Subtask } from 'src/models/subtask';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import EditSubtask from './EditSubtask';
-// import { taskStatus } from '../../../../../../statuses/taskStatus';
 
 interface KanbanCardProps {
   index: number;
   subtask: Subtask;
-  setSubtasks: React.Dispatch<SetStateAction<Subtask[]>>
-  subtasks: Subtask[];
-  // tasks: Task[];
-  // setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
-const STKanbanCard: React.FC<KanbanCardProps> = ({
-  index,
-  subtask,
-  setSubtasks,
-  subtasks,
-  // tasks,
-  // setTasks,
-}) => {
+const STKanbanCard: React.FC<KanbanCardProps> = ({ index, subtask }) => {
+  const [editingSubtask, setEditingSubtask] = useState(false);
 
-const [editingSubtask, setEditingSubtask] = useState(false)
-// const [subtaskName, setSubtaskName] = useState("")
-
-const toggleEditSubtask = () => {
-  setEditingSubtask(!editingSubtask)
-}
+  const toggleEditSubtask = () => {
+    setEditingSubtask(!editingSubtask);
+  };
 
   const dateParser = (date: Date) => {
     return new Date(date);
@@ -68,7 +53,7 @@ const toggleEditSubtask = () => {
   useEffect(() => {
     // if(subtask.subTasks) {
     //     let uncompleted = 0
-    //     let completed = 0 
+    //     let completed = 0
     //     setTotalSubTasks(task.subTasks.length)
     //     task.subTasks.forEach((subtask) => {
     //         if (subtask.subtask_status === taskStatus.Completed) {
@@ -99,11 +84,13 @@ const toggleEditSubtask = () => {
             </div>
             <div className='row space-between'>
               <div className='row'>
-              <FontAwesomeIcon
-                icon={faCalendar}
-                className='task-due-date-icon'
-              />
-              <p className='task-due-date'>{getDaysRemaining(subtask.due_date)}</p>
+                <FontAwesomeIcon
+                  icon={faCalendar}
+                  className='task-due-date-icon'
+                />
+                <p className='task-due-date'>
+                  {getDaysRemaining(subtask.due_date)}
+                </p>
               </div>
               <FontAwesomeIcon
                 icon={faPenToSquare}
@@ -113,14 +100,9 @@ const toggleEditSubtask = () => {
             </div>
           </div>
           {editingSubtask && (
-            <EditSubtask 
-            subtask={subtask}
-            setEditingSubtask={setEditingSubtask}
-            setSubtasks={setSubtasks}
-            subtasks={subtasks}
-            // setTasks={setTasks}
-            // tasks={tasks}
-            // setSubtaskName={setSubtaskName}
+            <EditSubtask
+              subtask={subtask}
+              setEditingSubtask={setEditingSubtask}
             />
           )}
         </div>

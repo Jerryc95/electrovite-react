@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ProjectCard from '../components/dashboard/projects/ProjectCard';
 import NewProject from '$renderer/components/dashboard/projects/NewProject';
-// import ProjectDetail from '$renderer/components/dashboard/projects/ProjectDetail';
 import { Project } from '../../models/project';
 import { selectedProjects, selectProject } from '../../services/projectSlice';
 import { useFetchProjectsQuery } from '../../services/projectAPI';
@@ -27,18 +26,14 @@ const Projects: React.FC = () => {
   const [addingProject, setAddingProject] = useState(false);
   const [addingRecurringTask, setAddingRecurringTask] = useState(false);
   const [recurringTasks, setRecurringTasks] = useState<RecurringTask[]>([]);
-  // const [showingProject, setShowingProject] = useState(false);
-  // const [selectedProject, setSelectedProject] = useState<Project>(projects[0]);
 
   useFetchProjectsQuery(user.account?.id);
-  useFetchUpcomingTasksQuery(user.account?.id);
+  // useFetchUpcomingTasksQuery(user.account?.id);
   
 
   const toggleProject = (project: Project) => {
     dispatch(selectProject(project));
     navigate(`/projects/${project.name.replaceAll(" ", "-")}`);
-    // setSelectedProject(project);
-    // setShowingProject(!showingProject);
   };
 
   // const timeDifference = (date: Date) => {
@@ -193,17 +188,10 @@ const Projects: React.FC = () => {
         <NewProject setAddingProject={setAddingProject} id={user.account?.id} />
       )}
 
-      {/* {showingProject && (
-        <ProjectDetail
-          project={selectedProject}
-          setShowingProject={setShowingProject}
-        />
-      )} */}
       {addingRecurringTask && (
         <NewRecurringTask
           setAddingTask={setAddingRecurringTask}
           id={user.account?.id}
-          // setRecurringTasks={setRecurringTasks}
         />
       )}
     </div>

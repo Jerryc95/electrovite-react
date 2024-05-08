@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { BKEntry } from 'src/models/BKEntry';
 import { Contact } from 'src/models/contact';
 import BKEntryRowLabel from '../../bookkeeping/BKEntryRowLabel';
@@ -17,15 +18,23 @@ const ContactBK: React.FC<ContactBKProps> = ({ contact }) => {
       .then((data: BKEntry[]) => {
         setEntries(data);
       });
-  }, []);
+  }, [contact.account_id, contact.id]);
 
   return (
     <div>
       <BKEntryRowLabel />
       <div>
-        {entries.map((entry) => (
-          <BKEntryRow entry={entry}/>
-        ))}
+        {entries.length === 0 ? (
+          <div className='bk-contacts-empty'>
+            <p>Connected Entries will appear here.</p>
+          </div>
+        ) : (
+          <div>
+            {entries.map((entry, index) => (
+              <BKEntryRow key={index} entry={entry} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

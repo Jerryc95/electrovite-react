@@ -3,16 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 import { ContactEvent } from 'src/models/contactEvent';
+import EditContactEvent from './EditContactEvent';
+import { parseDate } from '../../../../../helpers/ParseDate';
 
 interface ContactEventProps {
   event: ContactEvent;
 }
 
 const ContactEventView: React.FC<ContactEventProps> = ({ event }) => {
-  const [showingEditEvent, setShowingEditEvent] = useState(false);
-  const dateParser = (date: Date) => {
-    return new Date(date);
-  };
+  const [editingContactEvent, setEditingContactEvent] = useState(false);
+ 
+
 
   return (
     <div className='contact-event-container'>
@@ -30,10 +31,10 @@ const ContactEventView: React.FC<ContactEventProps> = ({ event }) => {
         </div>
         <div className='contact-event-info'>
           <p className='contact-event-date'>
-            {dateParser(event.event_date).toLocaleDateString()}
+            {parseDate(event.event_date).toLocaleDateString()}
           </p>
           <p className='contact-event-time'>
-            {dateParser(event.event_date).toLocaleTimeString([], {
+            {parseDate(event.event_date).toLocaleTimeString([], {
               hour12: true,
               hour: 'numeric',
               minute: '2-digit',
@@ -42,10 +43,18 @@ const ContactEventView: React.FC<ContactEventProps> = ({ event }) => {
         </div>
         <p className='contact-event-desciption'>{event.description}</p>
       </div>
-      <div className='edit-event-icon-container' >
-      <FontAwesomeIcon className='edit-event-icon' icon={faPenToSquare}/>
+      <div
+        className='edit-event-icon-container'
+        onClick={() => setEditingContactEvent(true)}
+      >
+        <FontAwesomeIcon className='edit-event-icon' icon={faPenToSquare} />
       </div>
-      
+      {editingContactEvent && (
+        <EditContactEvent
+          contactEvent={event}
+          setEditingContactEvent={setEditingContactEvent}
+        />
+      )}
     </div>
   );
 };

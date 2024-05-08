@@ -26,7 +26,7 @@ const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
           console.log("3")
           fetchSubscriptionInfo(accountState.account.id).then(() => {
             console.log("4")
-            navigate('/home');
+            navigate('/');
           });
         }
       });

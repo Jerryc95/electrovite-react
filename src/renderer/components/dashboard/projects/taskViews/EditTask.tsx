@@ -3,75 +3,88 @@ import DatePicker from 'react-datepicker';
 
 import DeleteModal from '$renderer/components/DeleteModal';
 import { Task } from 'src/models/task';
+import useBackClick from '../../../../../hooks/useBackClick';
+import {
+  useRemoveTaskMutation,
+  useUpdateTaskMutation,
+} from '../../../../../services/taskAPI';
 
 interface EditTaskProps {
   task: Task;
   setEditingTask: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
-  setTaskName: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const EditTask: React.FC<EditTaskProps> = ({
-  task,
-  setEditingTask,
-  setShowingTask,
-  setTaskName,
-}) => {
+const EditTask: React.FC<EditTaskProps> = ({ task, setEditingTask }) => {
+  const goBack = useBackClick();
   const [name, setName] = useState(task.name);
   const [startDate, setStartDate] = useState<Date | null>();
-  const [endDate, setEndDate] = useState<Date | null>();
+  const [dueDate, setDueDate] = useState<Date | null>();
   const [showingDeleteAlert, setShowingDeleteAlert] = useState(false);
+
+  const [removeTask] = useRemoveTaskMutation();
+  const [updateTask] = useUpdateTaskMutation();
 
   const toggleDeleteTask = () => {
     setShowingDeleteAlert(!showingDeleteAlert);
   };
 
   const handleDeleteTask = () => {
-    // const url = `http://localhost:3000/tasks/delete/${task.task_id}`;
-    // try {
-    //   fetch(url, {
-    //     method: 'DELETE',
-    //   });
-    //   setTasks(
-    //     tasks.filter((t) => t.task_id != task.task_id),
-    //   );
-    //   setShowingTask(false);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    // setShowingDeleteAlert(false);
+    goBack();
+    removeTask(task.task_id);
+    setShowingDeleteAlert(false);
   };
 
   const handleUpdateTask = async () => {
-    const url = `http://localhost:3000/tasks/update/${task.task_id}`;
-    const data = {
-      name: name,
-      startDate: startDate,
-      endDate: endDate,
-    };
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update project');
+    if ( startDate !== null && startDate !== undefined) {
+      const data: Task = {
+        task_id: task.task_id,
+        project_id: task.project_id,
+        name: name,
+        description: task.description,
+        notes: task.notes,
+        creation_date: task.creation_date,
+        start_date: startDate,
+        due_date: task.due_date,
+        task_status: task.task_status,
+        priority: task.priority,
+        column_index: task.column_index,
+        subtasks: task.subtasks,
       }
-    } catch (error) {
-      console.log(error);
+      updateTask(data)
+    } else if (dueDate !== null && dueDate !== undefined ) {
+      const data: Task = {
+        task_id: task.task_id,
+        project_id: task.project_id,
+        name: name,
+        description: task.description,
+        notes: task.notes,
+        creation_date: task.creation_date,
+        start_date: task.start_date,
+        due_date: dueDate,
+        task_status: task.task_status,
+        priority: task.priority,
+        column_index: task.column_index,
+        subtasks: task.subtasks,
+      }
+      updateTask(data)
+    } else {
+      const data: Task = {
+        task_id: task.task_id,
+        project_id: task.project_id,
+        name: name,
+        description: task.description,
+        notes: task.notes,
+        creation_date: task.creation_date,
+        start_date: task.start_date,
+        due_date: task.due_date,
+        task_status: task.task_status,
+        priority: task.priority,
+        column_index: task.column_index,
+        subtasks: task.subtasks,
+      }
+      updateTask(data)
     }
-    // const updatedTasks = tasks.map((t, i) => {
-    //   if (i === task.task_id) {
-    //     return task;
-    //   } else {
-    //     return t;
-    //   }
-    // });
-    setTaskName(name)
-    // setTasks(updatedTasks);
+   
     setEditingTask(false);
   };
 
@@ -79,7 +92,7 @@ const EditTask: React.FC<EditTaskProps> = ({
     const currentStartDate = new Date(task.start_date);
     const currentEndDate = new Date(task.due_date);
     setStartDate(currentStartDate);
-    setEndDate(currentEndDate);
+    setDueDate(currentEndDate);
   }, [task.due_date, task.start_date]);
 
   return (
@@ -109,18 +122,18 @@ const EditTask: React.FC<EditTaskProps> = ({
                   onChange={(date) => setStartDate(date)}
                   className='edit-project-date-input'
                   startDate={startDate}
-                  endDate={endDate}
+                  endDate={dueDate}
                 />
               </div>
               <div className='edit-project-date-picker'>
                 <h3>End Date</h3>
                 <DatePicker
                   showIcon
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
+                  selected={dueDate}
+                  onChange={(date) => setDueDate(date)}
                   className='edit-project-date-input'
                   startDate={task.start_date}
-                  endDate={endDate}
+                  endDate={dueDate}
                   minDate={task.start_date}
                 />
               </div>
@@ -132,10 +145,7 @@ const EditTask: React.FC<EditTaskProps> = ({
               >
                 Update
               </button>
-              <button
-                className='button-brand-pink'
-                onClick={toggleDeleteTask}
-              >
+              <button className='button-brand-pink' onClick={toggleDeleteTask}>
                 Delete
               </button>
             </div>

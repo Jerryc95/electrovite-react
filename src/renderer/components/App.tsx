@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import SignInPage from '$renderer/pages/auth/SignIn';
@@ -19,6 +19,9 @@ import Navbar from './Navbar';
 import Home from '$renderer/pages/Home';
 import AboutPage from '$renderer/pages/AboutPage';
 import TaskDetail from './dashboard/projects/taskViews/TaskDetail';
+import ContactDetail from './dashboard/contacts/ContactDetail';
+import BKEntryDetail from './dashboard/bookkeeping/BKEntryDetail';
+import React from 'react';
 
 const App = () => {
   const account = useSelector(
@@ -30,14 +33,34 @@ const App = () => {
   const task = useSelector(
     (state: RootState) => state.taskReducer.selectedTask,
   );
+  const contact = useSelector(
+    (state: RootState) => state.contactReducer.selectedContact,
+  );
+
+  const entry = useSelector(
+    (state: RootState) => state.bookkeepingReducer.selectedEntry,
+  );
+  const entries = useSelector(
+    (state: RootState) => state.bookkeepingReducer.entries,
+  );
+
+  const navigate = useNavigate()
+
+React.useEffect(()=> {
+  console.log("hi")
+  if (account == null) {
+    navigate("/sign-in")
+  }
+},[account])
 
   return (
     <div>
+      {/* {account != null && <Navigate to="/home" />} */}
       {account != null && <Navbar />}
       <Routes>
         <Route path='/forgot-password' element={<ForgotPasswordPage />} />
         <Route path='/register' element={<SignUpPage />} />
-        <Route path='/' element={<SignInPage />} />
+        <Route path='/sign-in' element={<SignInPage />} />
         <Route
           path='/creating-account'
           element={<CreatingAccountPage creating={true} />}
@@ -71,10 +94,27 @@ const App = () => {
             )}
 
             <Route path='/contacts' element={<Contacts />} />
+            {contact != null && (
+              <>
+                <Route
+                  path='/contacts/:name'
+                  element={<ContactDetail contact={contact} />}
+                />
+              </>
+            )}
             <Route path='/bookkeeping' element={<Bookkeeping />} />
+            {entry != null && (
+              <>
+                <Route
+                  path='/bookkeeping/:entryName'
+                  element={<BKEntryDetail entry={entry} entries={entries} />}
+                />
+              </>
+            )}
+
             <Route path='/settings' element={<Settings />} />
             <Route path='/documents' element={<Documents />} />
-            <Route path='/home' element={<Home />} />
+            <Route path='/' element={<Home />} />
             <Route path='/about' element={<AboutPage />} />
           </>
         )}

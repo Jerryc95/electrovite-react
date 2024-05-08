@@ -7,18 +7,18 @@ import {
 } from '../../../../services/projectAPI';
 import DeleteModal from '$renderer/components/DeleteModal';
 import { Project } from 'src/models/project';
+import useBackClick from '../../../../hooks/useBackClick';
 
 interface EditProjectProps {
   project: Project;
   setEditingProject: React.Dispatch<React.SetStateAction<boolean>>;
-  // setShowingProject: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const EditProject: React.FC<EditProjectProps> = ({
   project,
   setEditingProject,
-  // setShowingProject,
 }) => {
+  const goBack = useBackClick();
   const [name, setName] = useState(project.name);
   const [startDate, setStartDate] = useState<Date | null>();
   const [endDate, setEndDate] = useState<Date | null>();
@@ -32,19 +32,58 @@ const EditProject: React.FC<EditProjectProps> = ({
   };
 
   const handleDeleteProject = () => {
-    removeProject(project.id)
-    // setShowingProject(false)
+    goBack();
+    removeProject(project.id);
     setShowingDeleteAlert(false);
   };
 
-  const handleUpdateProject = async () => {
-    const data = {
-      id: project.id,
-      name: name,
-      startDate: startDate,
-      endDate: endDate,
-    };
-    updateProject(data);
+  const handleUpdateProject = () => {
+    if (startDate !== null && startDate !== undefined) {
+      const data: Project = {
+        id: project.id,
+        account_id: project.account_id,
+        name: name,
+        description: project.description,
+        notes: project.notes,
+        creation_date: project.creation_date,
+        start_date: startDate,
+        end_date: project.end_date,
+        status: project.status,
+        completed: project.completed,
+        contact_id: project.contact_id,
+      };
+      updateProject(data);
+    } else if (endDate !== null && endDate !== undefined) {
+      const data: Project = {
+        id: project.id,
+        account_id: project.account_id,
+        name: name,
+        description: project.description,
+        notes: project.notes,
+        creation_date: project.creation_date,
+        start_date: project.start_date,
+        end_date: endDate,
+        status: project.status,
+        completed: project.completed,
+        contact_id: project.contact_id,
+      };
+      updateProject(data);
+    } else {
+      const data: Project = {
+        id: project.id,
+        account_id: project.account_id,
+        name: name,
+        description: project.description,
+        notes: project.notes,
+        creation_date: project.creation_date,
+        start_date: project.start_date,
+        end_date: project.end_date,
+        status: project.status,
+        completed: project.completed,
+        contact_id: project.contact_id,
+      };
+      updateProject(data);
+    }
     setEditingProject(false);
   };
 

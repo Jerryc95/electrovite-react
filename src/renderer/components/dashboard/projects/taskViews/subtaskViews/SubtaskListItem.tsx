@@ -1,8 +1,8 @@
 import React, { useState, ChangeEvent } from 'react';
 
-import ProgressBar from '$renderer/components/ProgressBar';
 import { taskStatus } from '../../../../../../statuses/taskStatus';
-import { Subtask } from 'src/models/subTask';
+import { Subtask } from 'src/models/subtask';
+import { useUpdateSubtaskMutation } from '../../../../../../services/subtaskAPI';
 
 interface SubtaskListItemProps {
   subtask: Subtask;
@@ -11,6 +11,8 @@ interface SubtaskListItemProps {
 const SubtaskListItem: React.FC<SubtaskListItemProps> = ({ subtask }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [status, setStatus] = useState(subtask.subtask_status);
+
+  const [updateSubtask] = useUpdateSubtaskMutation();
 
   const dateParser = (date: Date) => {
     return new Date(date);
@@ -22,26 +24,21 @@ const SubtaskListItem: React.FC<SubtaskListItemProps> = ({ subtask }) => {
   };
 
   const handleSaveClick = async () => {
-    subtask.subtask_status = status;
-    setIsEditing(false);
-    const data = {
-      status: subtask.subtask_status,
+    const updatedSubtask: Subtask = {
+      subtask_id: subtask.subtask_id,
+      task_id: subtask.task_id,
+      name: subtask.name,
+      description: subtask.description,
+      notes: subtask.notes,
+      creation_date: subtask.creation_date,
+      start_date: subtask.start_date,
+      due_date: subtask.due_date,
+      subtask_status: status,
+      priority: subtask.priority,
+      column_index: subtask.column_index,
     };
-    const url = `http://localhost:3000/subtasks/update/${subtask.subtask_id}`;
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update value');
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    updateSubtask(updatedSubtask);
+    setIsEditing(false);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -51,7 +48,9 @@ const SubtaskListItem: React.FC<SubtaskListItemProps> = ({ subtask }) => {
   return (
     <div className='task-list-item-container'>
       <p className='subtask-name'>{subtask.name}</p>
-      <p className={`subtask-priority ${subtask.priority}`}>{subtask.priority}</p>
+      <p className={`subtask-priority ${subtask.priority}`}>
+        {subtask.priority}
+      </p>
       <p className='subtask-status'>
         <div className='edit-field-section'>
           {isEditing ? (

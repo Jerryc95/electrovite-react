@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import EditField from '$renderer/components/EditField';
-import { RootState } from '../../../../services/store';
 import { Contact } from 'src/models/contact';
 import { ContactEvent } from 'src/models/contactEvent';
 import NewContactEvent from './events/NewContactEvent';
@@ -17,19 +15,20 @@ import CalendarField from '$renderer/components/CalendarField';
 import ContactBK from './componentPages/ContactBK';
 import ContactNotes from './componentPages/ContactNotes';
 import DeleteModal from '$renderer/components/DeleteModal';
+import useBackClick from '../../../../hooks/useBackClick';
+import {
+  useUpdateContactMutation,
+  useRemoveContactMutation,
+} from '../../../../services/contactAPI';
+import { parseDate } from '../../../../helpers/ParseDate';
+import ContactProjects from './componentPages/ContactProjects';
 
 interface ContactDetailProps {
-  setContacts: React.Dispatch<React.SetStateAction<Contact[]>>;
   contact: Contact;
-  setShowingContact: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ContactDetail: React.FC<ContactDetailProps> = ({
-  setContacts,
-  contact,
-  setShowingContact,
-}) => {
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
+  const goBack = useBackClick();
   const [selectedPage, setSelectedPage] = useState('Bookkeeping');
   const [showingDeleteContact, setShowingDeleteContact] = useState(false);
   const [addingEvent, setAddingEvent] = useState(false);
@@ -41,11 +40,14 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
     <ContactBK contact={contact} />,
   );
 
+  const [updateContact] = useUpdateContactMutation();
+  const [deleteContact] = useRemoveContactMutation();
+
   const togglePage = (page: string) => {
     setSelectedPage(page);
     switch (page) {
       case 'Projects':
-        setComponentPage(<ContactBK contact={contact} />);
+        setComponentPage(<ContactProjects contact={contact} />);
         break;
       case 'Documents':
         setComponentPage(<ContactBK contact={contact} />);
@@ -60,19 +62,7 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
   };
 
   const toggleContact = () => {
-    if (accountState) {
-      const url = `http://localhost:3000/contacts?id=${accountState.account?.id}`;
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          setContacts(data);
-        });
-    }
-    setShowingContact(false);
-  };
-
-  const dateParser = (date: Date) => {
-    return new Date(date);
+    goBack();
   };
 
   const handleSortContacts = () => {
@@ -80,21 +70,26 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
       const today = new Date();
 
       const futureEvents = contact.events.filter((event) => {
-        return dateParser(event.event_date).getTime() > today.getTime();
+        return parseDate(event.event_date).getTime() > today.getTime();
       });
 
       const sortedEvents = futureEvents.sort((a, b) => {
         return (
-          dateParser(a.event_date).getTime() -
-          dateParser(b.event_date).getTime()
+          parseDate(a.event_date).getTime() -
+          parseDate(b.event_date).getTime()
         );
       });
       setSortedContactEvents(sortedEvents);
     }
   };
 
+  const handleUpdateContact = async (data: any) => {
+    updateContact(data);
+  };
+
   const handleDeleteContact = () => {
-    // delete contact here with new RTK method
+    deleteContact(contact);
+    toggleContact();
   };
 
   useEffect(() => {
@@ -130,25 +125,25 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
               label='Phone Number:'
               field='phone'
               value={contact.phone}
-              id={contact.id}
               isInput={true}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
             <EditField
               label='Email:'
               field='email'
               value={contact.email}
-              id={contact.id}
               isInput={true}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
             <EditField
               label='Address:'
               field='address'
               value={contact.address}
-              id={contact.id}
               isInput={true}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
           </div>
           <div className='contact-detail-details-column'>
@@ -156,47 +151,51 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
               label='Company:'
               field='company'
               value={contact.company}
-              id={contact.id}
               isInput={true}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
             <EditField
               label='Role:'
               field='role'
               value={contact.role}
-              id={contact.id}
               isInput={true}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
             <EditField
               label='Industry:'
               field='industry'
               value={contact.industry}
-              id={contact.id}
               isInput={true}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
           </div>
           <div className='contact-detail-details-column'>
             <div className='edit-field-section'>
               <p className='edit-field-label'>Date Added:</p>
               <p className='edit-field-content'>
-                {dateParser(contact.creation_date).toLocaleDateString()}
+                {parseDate(contact.creation_date).toLocaleDateString()}
               </p>
             </div>
             <CalendarField
               label='Last Contact:'
-              field='lastContactDate'
+              field='last_contact_date'
               value={contact.last_contact_date}
-              id={contact.id}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
+              // id={contact.id}
+              // baseURL='http://localhost:3000/contacts/update/'
             />
             <CalendarField
               label='Next Contact:'
               field='nextContactDate'
               value={contact.next_contact_date}
-              id={contact.id}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
+              // id={contact.id}
+              // baseURL='http://localhost:3000/contacts/update/'
             />
           </div>
           <div className='contact-detail-details-column'>
@@ -204,25 +203,25 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
               label='Contact Status:'
               field='contactStatus'
               value={contact.contact_status}
-              id={contact.id}
               options={contactStatus}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
             <DropdownField
               label='Proposal Status:'
-              field='proposalStatus'
+              field='proposal_status'
               value={contact.proposal_status}
-              id={contact.id}
               options={proposalStatus}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
             <DropdownField
               label='Contract Status:'
-              field='contractStatus'
+              field='contract_status'
               value={contact.contract_status}
-              id={contact.id}
               options={contractStatus}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
           </div>
           <div className='contact-detail-details-column'>
@@ -230,24 +229,26 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
               label='Birthday:'
               field='birthday'
               value={contact.birthday}
-              id={contact.id}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
+              // id={contact.id}
+              // baseURL='http://localhost:3000/contacts/update/'
             />
             <EditField
               label='Website:'
               field='website'
               value={contact.website}
-              id={contact.id}
               isInput={true}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
             <EditField
               label='Social:'
               field='social'
               value={contact.social}
-              id={contact.id}
               isInput={true}
-              baseURL='http://localhost:3000/contacts/update/'
+              item={contact}
+              onEdit={handleUpdateContact}
             />
           </div>
         </div>
@@ -277,11 +278,11 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
           }}
         >
           <h3>Events</h3>
-          {sortedContactEvents.length === 0 ? (
-            <p>Added events will appear here</p>
+          {contact.events.length === 0 ? (
+            <p className='info-text'>Added events will appear here</p>
           ) : (
             <div className='contact-detail-activity-column'>
-              {sortedContactEvents.map((event) => (
+              {contact.events.map((event) => (
                 <ContactEventView key={event.event_id} event={event} />
               ))}
             </div>
@@ -291,9 +292,9 @@ const ContactDetail: React.FC<ContactDetailProps> = ({
       {addingEvent && (
         <NewContactEvent
           setAddingEvent={setAddingEvent}
-          addingEvent={addingEvent}
-          contact={contact}
-          setSortedEvents={setSortedContactEvents}
+          // addingEvent={addingEvent}
+          id={contact.id}
+          // setSortedEvents={setSortedContactEvents}
         />
       )}
       {showingDeleteContact && (

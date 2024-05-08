@@ -10,28 +10,23 @@ export const useEditField = (initialValue: string | null) => {
   };
 
   const handleSaveClick = async (
-    id: number,
     field: string,
-    baseURL: string,
+    item: any,
+    onEdit: (data: any) => Promise<void>,
   ) => {
-    const url = `${baseURL}${id}`;
-    const data = {
-      [field]: editedValue,
-    };
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update value');
+    const updatedItem = { ...item };
+    // const data = {
+    //   [field]: editedValue,
+    // };
+    console.log(updatedItem);
+    for (const key in updatedItem) {
+      if (key == field) {
+        updatedItem[field] = editedValue;
       }
-    } catch (error) {
-      console.log(error);
     }
+
+    console.log(updatedItem);
+    onEdit(updatedItem);
     setIsEditing(false);
   };
 
@@ -43,7 +38,6 @@ export const useEditField = (initialValue: string | null) => {
   ) => {
     setEditedValue(e.target.value);
   };
-
 
   return {
     isEditing,

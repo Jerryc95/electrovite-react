@@ -3,9 +3,11 @@ import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
+  faChevronRight,
   faPenToSquare,
 } from '@fortawesome/free-solid-svg-icons';
 
+import { useUpdateProjectMutation } from '../../../../services/projectAPI';
 import { clearTaskState, selectedTasks } from '../../../../services/taskSlice';
 import { useFetchTasksQuery } from '../../../../services/taskAPI';
 import { Project } from '../../../../models/project';
@@ -15,87 +17,77 @@ import KanbanBoard from './taskViews/KanbanBoard';
 import DropdownField from '$renderer/components/DropdownField';
 import { projectStatus } from '../../../../statuses/projectStatus';
 import EditField from '$renderer/components/EditField';
-import { Task } from 'src/models/task';
-// import TaskDetail from './taskViews/TaskDetail';
 import EditProject from './EditProject';
 import useBackClick from '../../../../hooks/useBackClick';
+import ProjectSidebar from './ProjectSidebar';
 
 interface ProjectDetailProps {
   project: Project;
-  // setShowingProject: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ProjectDetail: React.FC<ProjectDetailProps> = ({
-  project,
-  // setShowingProject,
-}) => {
+const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
   const tasks = useSelector(selectedTasks);
   const goBack = useBackClick();
 
   const [addingTask, setAddingTask] = useState(false);
-  const [showingTask, setShowingTask] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task>(tasks[0]);
   const [taskView, setTaskView] = useState('Board');
   const [editingProject, setEditingProject] = useState(false);
+  const [showingSidebar, setShowingSidebar] = useState(false);
 
   const viewOptions = ['Board', 'List'];
-  const [componentView, setComponentView] = useState<JSX.Element>(
-    <KanbanBoard
-      tasks={tasks}
-      // setSelectedTask={setSelectedTask}
-      // setShowingTask={setShowingTask}
-    />,
-  );
+  // const [componentView, setComponentView] = useState<JSX.Element>(
+  //   <KanbanBoard tasks={tasks} />,
+  // );
 
-  const fetchTasks = useFetchTasksQuery(project.id);
+  const fetchTasks = useFetchTasksQuery(project.id, {
+    refetchOnMountOrArgChange: true,
+  });
+  const [updateProject] = useUpdateProjectMutation();
 
   const toggleProject = () => {
-    clearTaskState();
+    // clearTaskState();
     goBack();
-    // setShowingProject(false);
   };
 
   const toggleProjectEdit = () => {
     setEditingProject(!editingProject);
   };
 
-  const toggleView = useCallback(
-    (view: string) => {
-      setTaskView(view);
-      switch (view) {
-        case 'Board':
-          setComponentView(
-            <KanbanBoard
-              tasks={tasks}
-              // setSelectedTask={setSelectedTask}
-              // setShowingTask={setShowingTask}
-            />,
-          );
-          break;
-        case 'List':
-          setComponentView(
-            <TaskList
-              tasks={tasks}
-              setSelectedTask={setSelectedTask}
-              setShowingTask={setShowingTask}
-            />,
-          );
-      }
-    },
-    [tasks],
-  );
+  const handleUpdateProject = async (data: any) => {
+    updateProject(data);
+  };
+
+  const toggleView = useCallback((view: string) => {
+    setTaskView(view);
+    // setTaskView(view);
+    // switch (view) {
+    //   case 'Board':
+    //     setComponentView(<KanbanBoard tasks={tasks} />);
+    //     break;
+    //   case 'List':
+    //     setComponentView(<TaskList tasks={tasks} />);
+    // }
+  }, []);
+
+  const toggleSidebar = () => {
+    setShowingSidebar(!showingSidebar);
+  };
 
   useEffect(() => {
-    clearTaskState();
+    // clearTaskState();
     fetchTasks;
+    // toggleView('Board');
+  }, [fetchTasks]);
+
+  useEffect(() => {
     toggleView('Board');
-  }, [fetchTasks, toggleView]);
+  }, [toggleView]);
 
   return (
     <div className='project-detail-container'>
       <div className='project-detail-header'>
         <div className='project-detail-header-leading'>
-          <div className='project-detail-back' onClick={()=> toggleProject()}>
+          <div className='project-detail-back' onClick={() => toggleProject()}>
             <FontAwesomeIcon icon={faChevronLeft} />
             <p>Projects</p>
           </div>
@@ -119,18 +111,18 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
               label='Description:'
               field='description'
               value={project.description}
-              id={project.id}
               isInput={false}
-              baseURL='http://localhost:3000/projects/update/'
+              item={project}
+              onEdit={handleUpdateProject}
             />
           </div>
           <DropdownField
             label='Project Status:'
             field='status'
             value={project.status}
-            id={project.id}
             options={projectStatus}
-            baseURL='http://localhost:3000/projects/update/'
+            item={project}
+            onEdit={handleUpdateProject}
           />
         </div>
         {/* <div className='project-detail-header'>
@@ -141,7 +133,27 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
         </div> */}
       </div>
       <div className='project-detail-bottom-container'>
-        <h3>Tasks</h3>
+        <div className='project-detail-header'>
+          <h3>Tasks</h3>
+          <div
+            className={`project-sidebar-chevron-container ${
+              showingSidebar
+                ? 'open-sidebar-chevron-container'
+                : ''
+            }`}
+            onClick={toggleSidebar}
+          >
+            <FontAwesomeIcon
+              icon={showingSidebar ? faChevronRight : faChevronLeft}
+              size='xl'
+              className={`project-sidebar-chevron ${
+                showingSidebar ? 'collapsed-chevron' : ''
+              }`}
+            />
+          </div>
+          <ProjectSidebar project={project} showingSidebar={showingSidebar} />
+        </div>
+
         <div className='view-options'>
           {viewOptions.map((option) => (
             <div
@@ -164,7 +176,18 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
           {tasks.length === 0 ? (
             <p>Tasks will appear here once added.</p>
           ) : (
-            <div>{componentView}</div>
+            // <div>{componentView}</div>
+            <div>
+              {taskView == 'Board' ? (
+                <>
+                  <KanbanBoard tasks={tasks} />
+                </>
+              ) : (
+                <>
+                  <TaskList tasks={tasks} />
+                </>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -176,21 +199,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
           tasks={tasks}
         />
       )}
-      {/* {showingTask && (
-        <TaskDetail
-          task={selectedTask}
-          setShowingTask={setShowingTask}
-          accountID={project.account_id}
-          // tasks={tasks}
-          project={project}
-        />
-      )} */}
       {editingProject && (
-        <EditProject
-          project={project}
-          setEditingProject={setEditingProject}
-          // setShowingProject={setShowingProject}
-        />
+        <EditProject project={project} setEditingProject={setEditingProject} />
       )}
     </div>
   );

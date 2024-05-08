@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -9,7 +9,6 @@ import {
 
 import { RootState } from '../../../../services/store';
 import { BKEntry } from 'src/models/BKEntry';
-import { BKExpense } from 'src/models/BKExpense';
 import EditField from '$renderer/components/EditField';
 import ProgressBar from '$renderer/components/ProgressBar';
 import { Contact } from 'src/models/contact';
@@ -17,168 +16,191 @@ import CurrencyField from '$renderer/components/CurrencyField';
 import CalendarField from '$renderer/components/CalendarField';
 import DeleteModal from '$renderer/components/DeleteModal';
 import UpdateModal from '$renderer/components/UpdateModal';
-import "../../../styles/detailPage.scss"
-
+import '../../../styles/detailPage.scss';
+import useBackClick from '../../../../hooks/useBackClick';
+import {
+  useRemoveEntryMutation,
+  useUpdateEntryMutation,
+} from '../../../../services/bookkeepingAPI';
+import { parseDate } from '../../../../helpers/ParseDate';
+import { Project } from 'src/models/project';
 
 interface BKEntryDetailProps {
   entry: BKEntry;
   entries: BKEntry[];
-  setShowingEntry: React.Dispatch<React.SetStateAction<boolean>>;
-  setEntries: React.Dispatch<React.SetStateAction<BKEntry[]>>;
-  setRevenueEntries: React.Dispatch<React.SetStateAction<BKEntry[]>>;
-  setExpenseEntries: React.Dispatch<React.SetStateAction<BKEntry[]>>;
-  setRecurringExpenses: React.Dispatch<React.SetStateAction<BKExpense[]>>;
-  BKHighlights: string[];
-}
-
-interface IBK {
-  entries: BKEntry[];
-  recurringExpenses: BKExpense[];
 }
 
 interface BKClient {
   id: number;
   first_name: string;
   last_name: string;
+  type: 'contact';
 }
 
-const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
-  entry,
-  entries,
-  setShowingEntry,
-  setEntries,
-  setRevenueEntries,
-  setExpenseEntries,
-  setRecurringExpenses,
-  BKHighlights,
-}) => {
+interface BKProject {
+  id: number;
+  name: string;
+  type: 'project';
+}
+
+interface IEntry {
+  id: number;
+  entry_name: string;
+  type: 'entry';
+}
+
+type BKData = BKClient | BKProject | IEntry;
+
+const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
+  const goBack = useBackClick();
+
+  const [updateEntry] = useUpdateEntryMutation();
+  const [removeEntry] = useRemoveEntryMutation();
+
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalClientRevenue, setTotalClientRevenue] = useState(0);
   const [outstandingAmount, setOutstandingAmount] = useState(
     entry.outstanding_amount,
   );
   const [paidAmount, setPaidAmount] = useState(entry.paid_amount);
-  // const [nextPayment, setNextPayment] = useState(entry.next_payment_date);
+  const [nextPayment, setNextPayment] = useState(entry.next_payment_date);
   const [contact, setContact] = useState<Contact>();
   const [contacts, setContacts] = useState<BKClient[]>([]);
-  const [selectedContact, setSelectedContact] = useState<BKClient | null>(null);
+  const [selectedContact, setSelectedContact] = useState<BKData | null>(null);
+  const [project, setProject] = useState<Project>();
+  const [projects, setProjects] = useState<BKProject[]>([]);
+  const [selectedProject, setSelectedProject] = useState<BKData | null>(null);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [showingContactModal, setShowingContactModal] = useState(false);
+  const [showingProjectModal, setShowingProjectModal] = useState(false);
 
   const accountState = useSelector((state: RootState) => state.accountReducer);
 
   const toggleEntry = () => {
-    if (accountState) {
-      const url = `http://localhost:3000/bookkeeping?id=${accountState.account?.id}`;
-      fetch(url)
-        .then((response) => response.json())
-        .then(async (data: IBK) => {
-          await Promise.all([
-            setRecurringExpenses(data.recurringExpenses),
-            setEntries(data.entries),
-            ...BKHighlights.map(async (highlight) => {
-              switch (highlight) {
-                case 'Revenue': {
-                  setRevenueEntries(
-                    data.entries.filter(
-                      (entry) => entry.transaction_type === 'Income',
-                    ),
-                  );
-                  break;
-                }
-                case 'Expenses': {
-                  setExpenseEntries(
-                    data.entries.filter(
-                      (entry) => entry.transaction_type === 'Expense',
-                    ),
-                  );
-                  break;
-                }
-              }
-            }),
-          ]);
-        });
-    }
-    setShowingEntry(false);
+    goBack();
   };
 
-  const dateParser = (date: Date) => {
-    return new Date(date);
-  };
-
-  const getContact = async (id: number) => {
-    if (entry.contact_id || selectedContact !== null) {
-      const url = `http://localhost:3000/contacts/${id}`;
-      try {
-        const response = await fetch(url);
-        const responseData = await response.json();
-        console.log(responseData);
-        setContact(responseData);
-      } catch (error) {
-        console.log(error);
+  const getContactInfo = useCallback(
+    async (id: number) => {
+      if (entry.contact_id || selectedContact !== null) {
+        const url = `http://localhost:3000/contacts/details/${id}`;
+        try {
+          const response = await fetch(url);
+          const responseData = await response.json();
+          setContact(responseData);
+        } catch (error) {
+          console.log(error);
+        }
       }
-    }
-  };
+    },
+    [entry.contact_id, selectedContact],
+  );
 
   const getContacts = () => {
-    const url = `http://localhost:3000/contacts/names?id=${accountState.account?.id}`;
+    const url = `http://localhost:3000/contacts/names/${accountState.account?.id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: BKClient[]) => {
-        setContacts(data);
+        const formattedData: BKClient[] = data.map((item) => ({
+          id: item.id,
+          first_name: item.first_name,
+          last_name: item.last_name,
+          type: 'contact',
+        }));
+        setContacts(formattedData);
       });
   };
 
-  const handleAddContact = async () => {
-    const url = `http://localhost:3000/bookkeeping/update/${entry.bookkeeping_id}`;
-    if (selectedContact) {
-      const data = {
-        contactID: selectedContact.id,
-      };
-      fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then(async (data: BKEntry) => {
-          await Promise.all([getContact(data.contact_id || 0)]);
-        });
+  // const handleContactChange = () => {
 
-      try {
-        const response = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        });
-        const responseData: BKEntry = await response.json();
-        if (responseData.contact_id) {
-          getContact(responseData.contact_id);
+  // }
+
+  const handleConnectContact = () => {
+    if (selectedContact) {
+      const updatedEntry: BKEntry = {
+        entry_name: entry.entry_name,
+        bookkeeping_id: entry.bookkeeping_id,
+        contact_id: selectedContact.id,
+        account_id: entry.account_id,
+        total_amount: entry.total_amount,
+        paid_amount: entry.paid_amount,
+        outstanding_amount: entry.outstanding_amount,
+        category: entry.category,
+        transaction_type: entry.transaction_type,
+        description: entry.description,
+        entry_date: entry.entry_date,
+        first_name: entry.first_name,
+        last_name: entry.last_name,
+        paid: entry.paid,
+        next_payment_date: entry.next_payment_date,
+        project_id: entry.project_id,
+      };
+      updateEntry(updatedEntry);
+    }
+  };
+
+  const getProjectInfo = useCallback(
+    async (id: number) => {
+      if (entry.project_id || selectedProject !== null) {
+        const url = `http://localhost:3000/projects/details/${id}`;
+        try {
+          const response = await fetch(url);
+          const responseData = await response.json();
+          setProject(responseData);
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
       }
+    },
+    [entry.project_id, selectedProject],
+  );
+
+  const getProjects = () => {
+    const url = `http://localhost:3000/projects/names/${accountState.account?.id}`;
+    fetch(url)
+      .then((response) => response.json())
+      .then((data: BKProject[]) => {
+        const formattedData: BKProject[] = data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          type: 'project',
+        }));
+        setProjects(formattedData);
+      });
+  };
+
+  const handleConnectProject = () => {
+    if (selectedProject) {
+      const updatedEntry: BKEntry = {
+        entry_name: entry.entry_name,
+        bookkeeping_id: entry.bookkeeping_id,
+        contact_id: entry.contact_id,
+        account_id: entry.account_id,
+        total_amount: entry.total_amount,
+        paid_amount: entry.paid_amount,
+        outstanding_amount: entry.outstanding_amount,
+        category: entry.category,
+        transaction_type: entry.transaction_type,
+        description: entry.description,
+        entry_date: entry.entry_date,
+        first_name: entry.first_name,
+        last_name: entry.last_name,
+        paid: entry.paid,
+        next_payment_date: entry.next_payment_date,
+        project_id: selectedProject.id,
+      };
+      updateEntry(updatedEntry);
     }
   };
 
   const handleDeleteEntry = () => {
-    const url = `http://localhost:3000/bookkeeping/delete/${entry.bookkeeping_id}`;
-    try {
-      fetch(url, {
-        method: 'DELETE',
-      });
-      setEntries(
-        entries.filter((e) => e.bookkeeping_id != entry.bookkeeping_id),
-      );
-      setShowingEntry(false);
-    } catch (error) {
-      console.log(error);
-    }
+    goBack();
+    removeEntry(entry.bookkeeping_id);
     setShowDeleteAlert(false);
+  };
+
+  const handleUpdateEntry = async (data: any) => {
+    updateEntry(data);
   };
 
   useEffect(() => {
@@ -195,9 +217,12 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
     setTotalRevenue(revenue);
     setTotalClientRevenue(clientRevenue);
     if (entry.contact_id) {
-      getContact(entry.contact_id);
+      getContactInfo(entry.contact_id);
     }
-  }, [selectedContact]);
+    if (entry.project_id) {
+      getProjectInfo(entry.project_id);
+    }
+  }, [entries, entry.contact_id, entry.project_id, getContactInfo, getProjectInfo]);
 
   return (
     <div className='detail-container'>
@@ -211,7 +236,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
         </div>
         <div className='detail-row'>
           <h3 className='mr-8'>
-            {dateParser(entry.entry_date).toLocaleDateString()}
+            {parseDate(entry.entry_date).toLocaleDateString()}
           </h3>
           <FontAwesomeIcon
             className='settings-button'
@@ -229,7 +254,9 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
             })}
           </h1>
           <div className='detail-col align-fe'>
-            <h4>{entry.transaction_type}</h4>
+            <h4 className={`${entry.transaction_type}`}>
+              {entry.transaction_type}
+            </h4>
             <h3>{entry.category}</h3>
           </div>
         </div>
@@ -238,9 +265,9 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
             label='Description:'
             field='description'
             value={entry.description}
-            id={entry.bookkeeping_id}
+            item={entry}
+            onEdit={handleUpdateEntry}
             isInput={false}
-            baseURL='http://localhost:3000/bookkeeping/update/'
           />
         </div>
 
@@ -251,10 +278,10 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
               <div className='detail-row'>
                 <CurrencyField
                   label=''
-                  field='paidAmount'
+                  field='paid_amount'
                   value={paidAmount}
-                  id={entry.bookkeeping_id}
-                  baseURL='http://localhost:3000/bookkeeping/update/'
+                  item={entry}
+                  onEdit={handleUpdateEntry}
                   totalAmount={entry.total_amount}
                   outstandingAmount={outstandingAmount}
                   setPaidAmount={setPaidAmount}
@@ -272,7 +299,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
               </h3>
             </div>
             <ProgressBar
-            height={30}
+              height={30}
               total={parseFloat(entry.total_amount)}
               current={parseFloat(paidAmount)}
             />
@@ -293,10 +320,10 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
                   <h2>Next Payment</h2>
                   <CalendarField
                     label=''
-                    field='nextPaymentDate'
+                    field='next_payment_date'
                     value={entry.next_payment_date}
-                    id={entry.bookkeeping_id}
-                    baseURL='http://localhost:3000/bookkeeping/update/'
+                    item={entry}
+                    onEdit={handleUpdateEntry}
                   />
                 </div>
               )}
@@ -314,7 +341,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
                   ).toFixed(0)}
                   %
                 </h4>
-                {contact && (
+                {entry.contact_id && (
                   <h4>
                     Client:{' '}
                     {(
@@ -329,12 +356,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
           </div>
         </div>
         <div className='detail-row jc-sb'>
-          <div
-            className='third-detail-card pd4'
-            onClick={() => console.log(entry)}
-          >
-
-            {/* ALL THIS NEEDS TO BE UPDATED TO PROPERLY LINK */}
+          <div className='third-detail-card pd4'>
             {contact ? (
               <div className='detail-col pd4'>
                 <h3>
@@ -358,7 +380,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
           <div className='third-detail-card pd4 ai-cen'>
             {contact ? (
               <div className='detail-col'>
-                <h3>Invoice/doc links</h3>
+                <h3>Invoice</h3>
               </div>
             ) : (
               <div className='detail-col jc-cen'>
@@ -370,15 +392,19 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
               </div>
             )}
           </div>
-          <div className='third-detail-card pd4 ai-cen'>
-            {contact ? (
-              <div className='detail-col'>
-                <h3>Project link</h3>
+          <div className='third-detail-card pd4'>
+            {project ? (
+              <div className='detail-col pd4'>
+                <h3>{project.name}</h3>
+                <p>{project.description}</p>
               </div>
             ) : (
-              <div className='detail-col'>
+              <div className='detail-col ai-cen'>
                 <p className='filler-text'>No Project Connected</p>
-                <button className='main-button button-brand-lighter-blue'>
+                <button
+                  className=' main-button button-brand-lighter-blue'
+                  onClick={() => setShowingProjectModal(true)}
+                >
                   Connect Project
                 </button>
               </div>
@@ -395,12 +421,28 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({
       )}
       {showingContactModal && (
         <UpdateModal
-          onSubmit={handleAddContact}
+          onSubmit={handleConnectContact}
           onLoad={getContacts}
           setShowingModal={setShowingContactModal}
-          item='contact'
+          currentItem='contact'
+          connectingItem='entry'
           data={contacts}
           setData={setSelectedContact}
+          height='200px'
+          width='400px'
+        />
+      )}
+      {showingProjectModal && (
+        <UpdateModal
+          onSubmit={handleConnectProject}
+          onLoad={getProjects}
+          setShowingModal={setShowingProjectModal}
+          currentItem='project'
+          connectingItem='entry'
+          data={projects}
+          setData={setSelectedProject}
+          height='200px'
+          width='400px'
         />
       )}
     </div>

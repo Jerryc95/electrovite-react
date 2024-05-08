@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -26,18 +26,18 @@ import AboutPage from '$renderer/pages/AboutPage';
 import Settings from '../pages/Settings';
 import Avatar from './Avatar';
 import exampleAvatar from '../../../assets/Avatars/exampleAvatar.png';
-import usePagePicker from '../../hooks/usePagePicker';
+// import usePagePicker from '../../hooks/usePagePicker';
 import { useSignOutAccountMutation } from '../../services/authAPI';
 import { clearSubscriptionInfo } from '../../services/subscriptionSlice';
-import { clearPaymentState } from '../..//services/paymentSlice';
+import { clearPaymentState } from '../../services/paymentSlice';
 import '../styles/navbar.scss';
-
-// interface NavbarProps {
-//   setComponent: React.Dispatch<React.SetStateAction<JSX.Element>>;
-// }
+import { resetAccountState, selectPage } from '../../services/accountSlice';
+import { clearBookkeepingState } from '../../services/bookkeepingSlice';
+import { clearContactState } from '../../services/contactSlice';
+import Emoji from './Emoji';
 
 const Navbar: React.FC = () => {
-  const { toggleComponent, activeMenuItem } = usePagePicker(<Home />, 'home');
+  // const { toggleComponent } = usePagePicker(<Home />, 'home');
   const [collapsed, setCollapsed] = useState(false);
   const [showingSettings, setShowingSettings] = useState(false);
 
@@ -53,8 +53,8 @@ const Navbar: React.FC = () => {
   };
 
   const setPage = (component: JSX.Element, menuItem: string) => {
-    // setComponent(component);
-    toggleComponent(component, menuItem);
+    dispatch(selectPage(menuItem));
+    // toggleComponent(component, menuItem);
   };
 
   const toggleSettings = () => {
@@ -70,7 +70,10 @@ const Navbar: React.FC = () => {
     signOutAccount(accountState);
     dispatch(clearSubscriptionInfo());
     dispatch(clearPaymentState());
-    navigate('/');
+    dispatch(clearBookkeepingState());
+    dispatch(clearContactState());
+    dispatch(resetAccountState());
+    navigate('/sign-in');
   };
 
   const capitalize = (str: string | undefined) => {
@@ -78,6 +81,10 @@ const Navbar: React.FC = () => {
       return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
     }
   };
+
+  useEffect(()=> {
+    console.log(accountState.accountProfile)
+  },[])
 
   return (
     <nav className={`navbar ${collapsed ? 'collapsed-nav' : ''}`}>
@@ -99,10 +106,12 @@ const Navbar: React.FC = () => {
             />
           </div>
         </div>
-        <Link to='/home'>
+        <Link to='/'>
           <li
             onClick={() => setPage(<Home />, 'home')}
-            className={`${activeMenuItem == 'home' ? 'active-menu-item' : ''}`}
+            className={`${
+              accountState.selectedPage == 'home' ? 'active-menu-item' : ''
+            }`}
           >
             <FontAwesomeIcon icon={faHome} className='navbar-li-icon' />
             <span className={`nav-item ${collapsed ? 'hidden' : ''}`}>
@@ -115,7 +124,7 @@ const Navbar: React.FC = () => {
           <li
             onClick={() => setPage(<Projects />, 'projects')}
             className={`${
-              activeMenuItem == 'projects' ? 'active-menu-item' : ''
+              accountState.selectedPage == 'projects' ? 'active-menu-item' : ''
             }`}
           >
             <FontAwesomeIcon
@@ -133,7 +142,7 @@ const Navbar: React.FC = () => {
           <li
             onClick={() => setPage(<Contacts />, 'contacts')}
             className={`${
-              activeMenuItem == 'contacts' ? 'active-menu-item' : ''
+              accountState.selectedPage == 'contacts' ? 'active-menu-item' : ''
             }`}
           >
             <FontAwesomeIcon icon={faAddressCard} className='navbar-li-icon' />
@@ -146,7 +155,7 @@ const Navbar: React.FC = () => {
           <li
             onClick={() => setPage(<Documents />, 'documents')}
             className={`${
-              activeMenuItem == 'documents' ? 'active-menu-item' : ''
+              accountState.selectedPage == 'documents' ? 'active-menu-item' : ''
             }`}
           >
             <FontAwesomeIcon icon={faFile} className='navbar-li-icon' />
@@ -159,7 +168,9 @@ const Navbar: React.FC = () => {
           <li
             onClick={() => setPage(<Bookkeeping />, 'bookkeeping')}
             className={`${
-              activeMenuItem == 'bookkeeping' ? 'active-menu-item' : ''
+              accountState.selectedPage == 'bookkeeping'
+                ? 'active-menu-item'
+                : ''
             }`}
           >
             <FontAwesomeIcon icon={faCoins} className='navbar-li-icon' />
@@ -171,13 +182,18 @@ const Navbar: React.FC = () => {
       </ul>
       <ul className='navbar-bottom'>
         <li onClick={toggleSettings}>
-          <Avatar
+          {/* <    <Avatar
             cName='nav-avatar'
-            src={exampleAvatar}
+            src={}
             alt='Selected Avatar'
             onClick={() => {
               console.log(exampleAvatar);
             }}
+          />> */}
+          <Emoji
+            cName='nav-avatar'
+            symbol={accountState.accountProfile?.profile_pic != null ? accountState.accountProfile.profile_pic : "❓"}
+            onClick={() => console.log()}
           />
           <div
             className={`nav-account-info ${collapsed ? 'hidden' : ''}`}
@@ -220,7 +236,7 @@ const Navbar: React.FC = () => {
                 </span>
               </li>
             </Link>
-            <Link to='settings'>
+            <Link to='/settings'>
               <li
                 onClick={() => handleSettingsClick(<Settings />, 'settings')}
                 className={`${showingSettings ? '' : 'hidden'}`}

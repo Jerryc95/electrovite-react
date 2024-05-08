@@ -16,4 +16,5 @@ export type BKEntry = {
     last_name: string | null;
     paid: boolean;
     next_payment_date: Date | null;
+    project_id: number | null;
 }

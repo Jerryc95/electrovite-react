@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { Contact } from 'src/models/contact';
-import { RootState } from '../../services/store';
+// import { RootState } from '../../services/store';
 import ContactRow from '$renderer/components/dashboard/contacts/ContactRow';
 import ContactRowLabel from '$renderer/components/dashboard/contacts/ContactRowLabel';
 import NewContact from '$renderer/components/dashboard/contacts/NewContact';
-import ContactDetail from '$renderer/components/dashboard/contacts/ContactDetail';
+// import ContactDetail from '$renderer/components/dashboard/contacts/ContactDetail';
 import '../styles/contacts.scss';
 import { ContactEvent } from 'src/models/contactEvent';
 import UpcomingEventView from '$renderer/components/dashboard/contacts/events/UpcomingEventView';
+import { selectedAccount } from '../../services/accountSlice';
+
+import { useFetchContactsQuery } from '../../services/contactAPI';
+import { selectContact, selectedContacts } from '../../services/contactSlice';
 
 interface UpcomingEvent {
   contact: Contact;
@@ -17,14 +22,19 @@ interface UpcomingEvent {
 }
 
 const Contacts: React.FC = () => {
+  const user = useSelector(selectedAccount);
+  const contacts = useSelector(selectedContacts);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [sortingOption, setSortingOption] = useState('firstName');
   const [addingContact, setAddingContact] = useState(false);
-  const [showingContact, setShowingContact] = useState(false);
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [selectedContact, setSelectedContact] = useState<Contact>(contacts[0]);
   const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
 
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const fetchContacts = useFetchContactsQuery(user.account?.id, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const sortingOptions = [
     { value: 'firstName', display: 'First Name' },
@@ -35,8 +45,13 @@ const Contacts: React.FC = () => {
   ];
 
   const toggleContact = (contact: Contact) => {
-    setSelectedContact(contact);
-    setShowingContact(!showingContact);
+    dispatch(selectContact(contact));
+    navigate(
+      `/contacts/${contact.first_name.replaceAll(
+        ' ',
+        '-',
+      )}-${contact.last_name.replaceAll(' ', '-')}`,
+    );
   };
 
   const dateParser = (date: Date) => {
@@ -86,49 +101,45 @@ const Contacts: React.FC = () => {
   });
 
   useEffect(() => {
-    if (accountState) {
-      const url = `http://localhost:3000/contacts?id=${accountState.account?.id}`;
-      const today = new Date();
-      const upcomingEventsArray: UpcomingEvent[] = [];
-      fetch(url)
-        .then((response) => response.json())
-        .then((data: Contact[]) => {
-          setContacts(data);
-          data.forEach((contact) => {
-            if (contact.events.length !== 0) {
-              contact.events.forEach((event) => {
-                if (dateParser(event.event_date) > today) {
-                  const upcomingEvent: UpcomingEvent = {
-                    contact: contact,
-                    event: event,
-                  };
-                  upcomingEventsArray.push(upcomingEvent);
-                }
-              });
-            }
-          });
-
-          const sortedUpcomingEvents = upcomingEventsArray.sort((a, b) => {
-            const dateA = dateParser(a.event.event_date);
-            const dateB = dateParser(b.event.event_date);
-            if (dateA.getTime() < dateB.getTime()) {
-              return -1;
-            }
-            if (dateA.getTime() > dateB.getTime()) {
-              return 1;
-            }
-            return 0;
-          });
-          setUpcomingEvents(sortedUpcomingEvents.splice(0, 4));
-        });
-    }
+    fetchContacts;
   }, []);
+
+  useEffect(() => {
+    const today = new Date();
+    const upcomingEventsArray: UpcomingEvent[] = [];
+    contacts.forEach((contact) => {
+      if (contact.events.length !== 0) {
+        contact.events.forEach((event) => {
+          if (dateParser(event.event_date) > today) {
+            const upcomingEvent: UpcomingEvent = {
+              contact: contact,
+              event: event,
+            };
+            upcomingEventsArray.push(upcomingEvent);
+          }
+        });
+      }
+    });
+
+    const sortedUpcomingEvents = upcomingEventsArray.sort((a, b) => {
+      const dateA = dateParser(a.event.event_date);
+      const dateB = dateParser(b.event.event_date);
+      if (dateA.getTime() < dateB.getTime()) {
+        return -1;
+      }
+      if (dateA.getTime() > dateB.getTime()) {
+        return 1;
+      }
+      return 0;
+    });
+    setUpcomingEvents(sortedUpcomingEvents.splice(0, 4));
+  }, [contacts]);
 
   return (
     <div className='contacts-container'>
       <div className='contacts-header'>
         <h2>Contacts</h2>
-        <button onClick={() => setAddingContact(!addingContact)}>
+        <button onClick={() => setAddingContact(true)}>
           Add Contact
         </button>
       </div>
@@ -136,7 +147,9 @@ const Contacts: React.FC = () => {
         <div className='contacts-upcoming-events'>
           <h3>Upcoming Events</h3>
           {upcomingEvents.length === 0 ? (
-            <p>Next upcoming contact events will appear here</p>
+            <p className='info-text'>
+              Next upcoming contact events will appear here
+            </p>
           ) : (
             <div className='contacts-upcoming-event'>
               {upcomingEvents.map((upcomingEvent) => (
@@ -183,19 +196,10 @@ const Contacts: React.FC = () => {
       {addingContact && (
         <NewContact
           setAddingContact={setAddingContact}
-          addingContact={addingContact}
-          id={accountState.account?.id}
-          setContacts={setContacts}
-          contacts={contacts}
-        />
-      )}
-
-      {showingContact && (
-        <ContactDetail
-          key={selectedContact.id}
-          setContacts={setContacts}
-          contact={selectedContact}
-          setShowingContact={setShowingContact}
+          // addingContact={addingContact}
+          id={user.account?.id}
+          // setContacts={setContacts}
+          // contacts={contacts}
         />
       )}
     </div>

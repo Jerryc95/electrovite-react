@@ -11,97 +11,91 @@ import { useUpdateTaskMutation } from '../../../../../services/taskAPI';
 
 interface KanbanProps {
   tasks: Task[];
-  // setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  // setSelectedTask: React.Dispatch<React.SetStateAction<Task>>;
-  // setShowingTask: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const KanbanBoard: React.FC<KanbanProps> = ({
-  tasks,
-  // setTasks,
-  // setSelectedTask,
-  // setShowingTask,
-}) => {
+const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
   const [notStartedTasks, setNotStartedTasks] = useState<Task[]>(tasks);
   const [inProgTasks, setInProgTasks] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
 
   const [updateTask] = useUpdateTaskMutation();
 
+  // this may need to loop through the tasks to update the index
   const handleUpdateTask = async (
     tasks: Task[],
     liftedTask: Task,
     updatedStatus: string,
     updatedIndex: number,
   ) => {
-   
     const foundTask = tasks.find((task) => {
       return task.task_id === liftedTask.task_id;
     });
-  
+
     if (foundTask) {
       switch (updatedStatus) {
         case 'not-started': {
-          updateTask({
-            taskID: foundTask.task_id,
-            taskStatus: taskStatus.NotStarted,
-            columnIndex: updatedIndex
-          })
           // foundTask.task_status = taskStatus.NotStarted;
+          updateTask({
+            task_id: foundTask.task_id,
+            project_id: foundTask.project_id,
+            name: foundTask.name,
+            description: foundTask.description,
+            notes: foundTask.notes,
+            creation_date: foundTask.creation_date,
+            start_date: foundTask.start_date,
+            due_date: foundTask.due_date,
+            task_status: taskStatus.NotStarted,
+            priority: foundTask.priority,
+            column_index: updatedIndex,
+            subtasks: foundTask.subtasks,
+          })
+          
           break;
         }
         case 'in-progress': {
           // foundTask.task_status = taskStatus.InProgress;
           updateTask({
-            taskID: foundTask.task_id,
-            taskStatus: taskStatus.InProgress,
-            columnIndex: updatedIndex
+            task_id: foundTask.task_id,
+            project_id: foundTask.project_id,
+            name: foundTask.name,
+            description: foundTask.description,
+            notes: foundTask.notes,
+            creation_date: foundTask.creation_date,
+            start_date: foundTask.start_date,
+            due_date: foundTask.due_date,
+            task_status: taskStatus.InProgress,
+            priority: foundTask.priority,
+            column_index: updatedIndex,
+            subtasks: foundTask.subtasks,
           })
           break;
         }
         case 'completed': {
           // foundTask.task_status = taskStatus.Completed;
           updateTask({
-            taskID: foundTask.task_id,
-            taskStatus: taskStatus.Completed,
-            columnIndex: updatedIndex
+            task_id: foundTask.task_id,
+            project_id: foundTask.project_id,
+            name: foundTask.name,
+            description: foundTask.description,
+            notes: foundTask.notes,
+            creation_date: foundTask.creation_date,
+            start_date: foundTask.start_date,
+            due_date: foundTask.due_date,
+            task_status: taskStatus.Completed,
+            priority: foundTask.priority,
+            column_index: updatedIndex,
+            subtasks: foundTask.subtasks,
           })
           break;
         }
       }
-      // const data = {
-      //   taskID: foundTask.task_id,
-      //   // taskStatus: 'In Progress',
-      //   taskStatus: foundTask.task_status,
-      //   columnIndex: updatedIndex,
-      // };
-      // console.log("data:",data)
-      
-      // const url = `http://localhost:3000/tasks/update/${foundTask.task_id}`;
-      // try {
-      //   const response = await fetch(url, {
-      //     method: 'PUT',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify(data),
-      //   });
-      //   if (!response.ok) {
-      //     throw new Error('Failed to update value');
-      //   }
-      // } catch (error) {
-      //   console.log(error);
-      // }
-      // updateTask(data)
-      
     }
- 
-    
-
   };
 
   const handleOnDragEnd = (result: DropResult) => {
     const { source, destination } = result;
+    console.log("soruce:",source)
+    console.log("destination:", destination)
     if (!destination) {
       return;
     }
@@ -119,6 +113,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({
     if (source.droppableId === 'not-started') {
       liftedTask = notStarted[source.index];
       notStarted.splice(source.index, 1);
+      console.log("array:", notStarted)
     } else if (source.droppableId === 'in-progress') {
       liftedTask = inProg[source.index];
       inProg.splice(source.index, 1);
@@ -126,6 +121,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({
       liftedTask = completed[source.index];
       completed.splice(source.index, 1);
     }
+    
     if (destination.droppableId === 'not-started') {
       notStarted.splice(destination.index, 0, liftedTask);
       setNotStartedTasks(notStarted);
@@ -153,8 +149,6 @@ const KanbanBoard: React.FC<KanbanProps> = ({
         'completed',
         destination.index,
       );
-
-      // setTasks([...notStartedTasks, ...inProgTasks, ...completedTasks]);
     }
   };
 
@@ -190,17 +184,15 @@ const KanbanBoard: React.FC<KanbanProps> = ({
             >
               <h4 className='column-header'>Not Started</h4>
               {notStartedTasks
-                .sort((a, b) => {
-                  a.column_index < b.column_index;
-                  return 0;
-                })
+                // .sort((a, b) => {
+                //   a.column_index < b.column_index;
+                //   return 0;
+                // })
                 .map((task, index) => (
                   <KanbanCard
                     index={index}
                     task={task}
-                    tasks={notStartedTasks}
-                    // setSelectedTask={setSelectedTask}
-                    // setShowingTask={setShowingTask}
+                    tasks={tasks}
                     key={task.task_id}
                   />
                 ))}
@@ -219,17 +211,15 @@ const KanbanBoard: React.FC<KanbanProps> = ({
             >
               <h4 className='column-header'>In Progress</h4>
               {inProgTasks
-                .sort((a, b) => {
-                  a.column_index < b.column_index;
-                  return 0;
-                })
+                // .sort((a, b) => {
+                //   a.column_index < b.column_index;
+                //   return 0;
+                // })
                 .map((task, index) => (
                   <KanbanCard
                     index={index}
                     task={task}
-                    tasks={inProgTasks}
-                    // setSelectedTask={setSelectedTask}
-                    // setShowingTask={setShowingTask}
+                    tasks={tasks}
                     key={task.task_id}
                   />
                 ))}
@@ -248,17 +238,15 @@ const KanbanBoard: React.FC<KanbanProps> = ({
             >
               <h4 className='column-header'>Completed</h4>
               {completedTasks
-                .sort((a, b) => {
-                  a.column_index < b.column_index;
-                  return 0;
-                })
+                // .sort((a, b) => {
+                //   a.column_index < b.column_index;
+                //   return 0;
+                // })
                 .map((task, index) => (
                   <KanbanCard
                     index={index}
                     task={task}
-                    tasks={completedTasks}
-                    // setSelectedTask={setSelectedTask}
-                    // setShowingTask={setShowingTask}
+                    tasks={tasks}
                     key={task.task_id}
                   />
                 ))}
