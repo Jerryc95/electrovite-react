@@ -11,7 +11,7 @@ import NewContact from '$renderer/components/dashboard/contacts/NewContact';
 import '../styles/contacts.scss';
 import { ContactEvent } from 'src/models/contactEvent';
 import UpcomingEventView from '$renderer/components/dashboard/contacts/events/UpcomingEventView';
-import { selectedAccount } from '../../services/accountSlice';
+import { getUser } from '../../services/accountSlice';
 
 import { useFetchContactsQuery } from '../../services/contactAPI';
 import { selectContact, selectedContacts } from '../../services/contactSlice';
@@ -22,7 +22,7 @@ interface UpcomingEvent {
 }
 
 const Contacts: React.FC = () => {
-  const user = useSelector(selectedAccount);
+  const user = useSelector(getUser);
   const contacts = useSelector(selectedContacts);
 
   const dispatch = useDispatch();
@@ -177,7 +177,7 @@ const Contacts: React.FC = () => {
           ))}
         </div>
         {sortedContacts.length === 0 ? (
-          <p>Contacts will appear here</p>
+          <p className='info-text'>Contacts will appear here</p>
         ) : (
           <div className='contacts-rows'>
             <ContactRowLabel key={'1'} />

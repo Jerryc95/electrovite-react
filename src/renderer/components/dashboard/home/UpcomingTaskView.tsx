@@ -26,7 +26,6 @@ interface UpcomingTaskProps {
 }
 
 const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
-  const [uncompletedSubtasks, setUncompletedSubtasks] = useState(0);
   const [completedSubtasks, setCompletedSubtasks] = useState(0);
   const [totalSubtasks, setTotalSubtasks] = useState(0);
 
@@ -63,7 +62,6 @@ const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
   useEffect(() => {
     let uncompleted = 0;
     let completed = 0;
-    // console.log(upcomingTask)
     if (upcomingTask.subtasks) {
         
       upcomingTask.subtasks.forEach((subtask) => {
@@ -73,14 +71,13 @@ const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
           uncompleted += 1;
         }
       });
-      setUncompletedSubtasks(uncompleted);
       setCompletedSubtasks(completed);
       setTotalSubtasks(uncompleted + completed);
     }
   }, []);
 
   return (
-    <div className='kanban-card-container'>
+    <div className='kanban-card-container'style={{height: "150px"}}>
       <div>
         <h5>{upcomingTask.project_name}</h5>
         <div className='row space-between'>
@@ -96,14 +93,6 @@ const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
           </p>
         </div>
       </div>
-      {/* <div className='row'>
-        <ProgressBar
-          current={completedSubtasks}
-          total={totalSubtasks}
-          height={15}
-        />
-        <span className='progress-count'>{uncompletedSubtasks}/{totalSubtasks}</span>
-      </div> */}
        {totalSubtasks !== 0 ? (
             <div className='row'>
               <ProgressBar
@@ -118,7 +107,6 @@ const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
           ) : (
             <span className='no-tasks'>No subtasks added</span>
           )}
-        {/* </div> */}
     </div>
   );
 };

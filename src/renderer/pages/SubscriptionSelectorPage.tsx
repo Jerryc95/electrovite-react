@@ -2,16 +2,18 @@ import React, { useEffect, useState } from 'react';
 
 import SubscriptionSelector from '$renderer/components/SubscriptionSelector';
 import '../styles/subSelector.scss';
+import { Subscription } from 'src/models/subscription';
 
-interface Subscription {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  billing_cycle: string;
-  features: string[];
-  stripe_price_id: string;
-}
+// interface Subscription {
+//   id: number;
+//   name: string;
+//   description: string;
+//   price: number;
+//   billing_cycle: string;
+//   features: string[];
+//   stripe_price_id: string;
+//   tier: 
+// }
 
 interface SubscriptionSelectorPageProps {
   setSubscription: React.Dispatch<React.SetStateAction<Subscription | null>>;

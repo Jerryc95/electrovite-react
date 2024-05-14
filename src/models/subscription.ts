@@ -6,4 +6,5 @@ export type Subscription = {
   billing_cycle: string;
   features: string[];
   stripe_price_id: string;
+  tier: number;
 };

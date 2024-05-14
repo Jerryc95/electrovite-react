@@ -7,8 +7,10 @@ import { RootState } from '../../../services/store';
 import { AccountProfile } from 'src/models/accountProfile';
 import { useUpdateProfileMutation } from '../../../services/profileAPI';
 import { updateProfileState } from '../../../services/accountSlice';
+import EmojiPicker from '../EmojiPicker';
 
 const SettingsProfile: React.FC = () => {
+  // this prob can be updated
   const accountState = useSelector((state: RootState) => state.accountReducer);
   const [accountProfile, setAccountProfile] = useState<AccountProfile | null>(
     accountState.accountProfile,
@@ -17,6 +19,9 @@ const SettingsProfile: React.FC = () => {
   const [editingBusiness, setEditingBusiness] = useState(false);
   const [editedLabel, setEditedlabel] = useState('');
   const [editedValue, setEditedValue] = useState('');
+  const [selectedEmoji, setSelectedEmoji] = useState(
+    accountState.accountProfile!.profile_pic,
+  );
 
   const dispatch = useDispatch();
   const [updateProfile] = useUpdateProfileMutation();
@@ -24,8 +29,9 @@ const SettingsProfile: React.FC = () => {
   const personalOnSubmit = () => {
     if (editedValue != '' && editedLabel != '') {
       if (accountProfile) {
-        dispatch(updateProfileState(accountProfile))
-        updateProfile(accountProfile)
+        accountProfile.profile_pic = selectedEmoji;
+        dispatch(updateProfileState(accountProfile));
+        updateProfile(accountProfile);
       }
     }
 
@@ -35,7 +41,7 @@ const SettingsProfile: React.FC = () => {
   const businessOnSubmit = () => {
     if (editedValue != '' && editedLabel != '') {
       if (accountProfile) {
-        dispatch(updateProfileState(accountProfile))
+        dispatch(updateProfileState(accountProfile));
         updateProfile(accountProfile);
       }
     }
@@ -48,6 +54,18 @@ const SettingsProfile: React.FC = () => {
     setEditedlabel(name);
     setEditedValue(value);
     setAccountProfile((prevProfile) => ({ ...prevProfile!, [name]: value }));
+  };
+
+  const handleEmojiChange = (emoji: string) => {
+    setSelectedEmoji(emoji);
+    setAccountProfile((prevProfile) => ({
+      ...prevProfile!,
+      profile_pic: emoji,
+    }));
+    if (accountProfile) {
+      dispatch(updateProfileState(accountProfile));
+      updateProfile(accountProfile);
+    }
   };
 
   const toggleEdit = (
@@ -167,6 +185,7 @@ const SettingsProfile: React.FC = () => {
             </button>
           )}
         </form>
+        <EmojiPicker onChange={handleEmojiChange} />
       </div>
       <div className='settings-section'>
         <div className='settings-section-header'>

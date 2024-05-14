@@ -6,7 +6,7 @@ import { Project } from 'src/models/project';
 import { Contact } from 'src/models/contact';
 import { BKEntry } from 'src/models/BKEntry';
 import UpdateModal from '$renderer/components/UpdateModal';
-import { selectedAccount } from '../../../../services/accountSlice';
+import { getUser } from '../../../../services/accountSlice';
 import { useUpdateProjectMutation } from '../../../../services/projectAPI';
 import { useUpdateEntryMutation } from '../../../../services/bookkeepingAPI';
 import ProjectEntryItem from './ProjectEntryItem';
@@ -42,7 +42,7 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
   project,
   showingSidebar,
 }) => {
-  const user = useSelector(selectedAccount);
+  const user = useSelector(getUser);
   const [contact, setContact] = useState<Contact | null>();
   const [contacts, setContacts] = useState<BKClient[]>([]);
   const [selectedContact, setSelectedContact] = useState<BKData | null>(null);

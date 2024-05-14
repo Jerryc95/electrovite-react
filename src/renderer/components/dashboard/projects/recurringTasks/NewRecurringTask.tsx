@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import useBackClick from '../../../../../hooks/useBackClick';
+// import useBackClick from '../../../../../hooks/useBackClick';
+import { useAddRecurringTaskMutation } from '../../../../../services/recurringTaskAPI';
 // import { RecurringTask } from 'src/models/recurringTask';
 
 interface NewRecurringTaskProps {
@@ -9,35 +10,40 @@ interface NewRecurringTaskProps {
 }
 
 // THIS NEEDS REDUX STORE UPDATE
-const NewRecurringTask: React.FC<NewRecurringTaskProps> = ({ setAddingTask, id }) => {
+const NewRecurringTask: React.FC<NewRecurringTaskProps> = ({
+  setAddingTask,
+  id,
+}) => {
   const [task, setTask] = useState('');
   const [frequency, setFrequency] = useState('Daily');
 
   const frequencies = ['Daily', 'Weekly', 'Monthly'];
+  const [addRecurringTask] = useAddRecurringTaskMutation();
 
   const createRecurringTask = async () => {
-    const url = 'http://localhost:3000/projects/add/task';
+    // const url = 'http://localhost:3000/projects/add/task';
     const newRecurringTask = {
       accountID: id,
       task: task,
       frequency: frequency,
     };
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newRecurringTask),
-      });
+    addRecurringTask(newRecurringTask);
+    // try {
+    //   const response = await fetch(url, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(newRecurringTask),
+    //   });
 
-      const responseData = await response.json();
+    // const responseData = await response.json();
 
-      // setRecurringTasks((tasks) => [...tasks, responseData])
-      setAddingTask(false)
-    } catch (error) {
-      console.log(error);
-    }
+    // setRecurringTasks((tasks) => [...tasks, responseData])
+    setAddingTask(false);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (
@@ -45,7 +51,12 @@ const NewRecurringTask: React.FC<NewRecurringTaskProps> = ({ setAddingTask, id }
       <div className='new-item-form'>
         <div className='new-item-heading'>
           <h2>New Recurring Task</h2>
-          <button onClick={()=> setAddingTask(false)}>Cancel</button>
+          <button
+            className='button-brand-magenta'
+            onClick={() => setAddingTask(false)}
+          >
+            Cancel
+          </button>
         </div>
         <div className='new-item-details-container'>
           <div className='new-item-details jc-cen'>

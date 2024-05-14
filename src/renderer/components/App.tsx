@@ -1,3 +1,4 @@
+import React from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -21,7 +22,8 @@ import AboutPage from '$renderer/pages/AboutPage';
 import TaskDetail from './dashboard/projects/taskViews/TaskDetail';
 import ContactDetail from './dashboard/contacts/ContactDetail';
 import BKEntryDetail from './dashboard/bookkeeping/BKEntryDetail';
-import React from 'react';
+
+import ProtectedRoute from '../../helpers/ProtectedRoute';
 
 const App = () => {
   const account = useSelector(
@@ -44,18 +46,16 @@ const App = () => {
     (state: RootState) => state.bookkeepingReducer.entries,
   );
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-React.useEffect(()=> {
-  console.log("hi")
-  if (account == null) {
-    navigate("/sign-in")
-  }
-},[account])
+  React.useEffect(() => {
+    if (account == null) {
+      navigate('/sign-in');
+    }
+  }, [account]);
 
   return (
     <div>
-      {/* {account != null && <Navigate to="/home" />} */}
       {account != null && <Navbar />}
       <Routes>
         <Route path='/forgot-password' element={<ForgotPasswordPage />} />
@@ -92,8 +92,22 @@ React.useEffect(()=> {
                 )}
               </>
             )}
+            {/* <Route
+              path='/contacts'
+              element={
+                <ProtectedRoute subscriptionID={3}>
+                  <Contacts />
+                </ProtectedRoute>
+              }
+            /> */}
 
-            <Route path='/contacts' element={<Contacts />} />
+            <Route
+              path='/contacts'
+              element={<ProtectedRoute subscriptionTier={3} requestedFeature='Contacts'/>}
+            >
+              <Route path='/contacts' element={<Contacts />} />
+            </Route>
+
             {contact != null && (
               <>
                 <Route

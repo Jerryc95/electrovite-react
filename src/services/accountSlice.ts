@@ -16,6 +16,7 @@ interface accountState {
   selectedPage: string;
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
+  deletedAt: Date | null;
 }
 
 const initialAccountState: accountState = {
@@ -24,6 +25,7 @@ const initialAccountState: accountState = {
   selectedPage: 'home',
   loading: 'idle',
   error: null,
+  deletedAt: null,
 };
 
 export const accountSlice = createSlice({
@@ -41,6 +43,10 @@ export const accountSlice = createSlice({
     },
     selectPage: (state, action: PayloadAction<string>) => {
       state.selectedPage = action.payload;
+    },
+    clearAccountError: (state) => {
+      state.error = null;
+      state.deletedAt = null;
     },
   },
 
@@ -72,7 +78,13 @@ export const accountSlice = createSlice({
       authAPI.endpoints.signInAccount.matchFulfilled,
       (state, action: PayloadAction<Account>) => {
         state.loading = 'fulfilled';
-        state.account = action.payload;
+        if (action.payload.is_deleted == true) {
+          state.error = 'Account Deleted';
+          state.deletedAt = action.payload.deleted_at;
+        }
+        if (action.payload.is_deleted == false) {
+          state.account = action.payload;
+        }
       },
     );
 
@@ -108,6 +120,21 @@ export const accountSlice = createSlice({
       },
     );
 
+    builder.addMatcher(
+      authAPI.endpoints.recoverAccount.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
+
+    builder.addMatcher(
+      authAPI.endpoints.recoverAccount.matchFulfilled,
+      (state, action: PayloadAction<Account>) => {
+        state.loading = 'fulfilled';
+        state.account = action.payload;
+      },
+    );
+
     //PROFILE API
     builder.addMatcher(
       profileAPI.endpoints.fetchProfile.matchPending,
@@ -126,7 +153,7 @@ export const accountSlice = createSlice({
   },
 });
 
-export const selectedAccount = (state: RootState) => state.accountReducer;
+export const getUser = (state: RootState) => state.accountReducer;
 
 export const {
   resetAccountState,

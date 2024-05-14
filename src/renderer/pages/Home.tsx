@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon, faCalendar } from '@fortawesome/free-solid-svg-icons';
@@ -16,43 +16,50 @@ import { RootState } from '../../services/store';
 
 import '../styles/Home.scss';
 import { parseDate } from '../../helpers/ParseDate';
-import { ContactEvent } from 'src/models/contactEvent';
+// import { ContactEvent } from 'src/models/contactEvent';
 import { BKEntry } from 'src/models/BKEntry';
 import { Contact } from 'src/models/contact';
 import UpcomingEventView from '$renderer/components/dashboard/contacts/events/UpcomingEventView';
 import UpcomingTaskView from '$renderer/components/dashboard/home/UpcomingTaskView';
 import NewClientsBox from '$renderer/components/dashboard/home/NewClientsBox';
 import InvoiceInfoBox from '$renderer/components/dashboard/home/InvoiceInfoBox';
+import {
+  useFetchRevenueQuery,
+  useFetchUpcomingEventsQuery,
+  useFetchUpcomingTasksQuery,
+} from '../../services/homeAPI';
+import { selectedRevenue, selectedUpcomingEvents, selectedUpcomingTasks } from '../../services/homeSlice';
+import { getUser } from '../../services/accountSlice';
 // import { taskStatus } from 'src/statuses/taskStatus';
 // import { Subtask } from 'src/models/subTask';
 
-interface UpcomingEvent {
-  contact: Contact;
-  event: ContactEvent;
-}
+// interface UpcomingEvent {
+//   contact: Contact;
+//   event: ContactEvent;
+// }
 
-interface ISubtask {
-  subtask_id: number;
-  task_id: number;
-  subtask_status: string;
-}
+// interface ISubtask {
+//   subtask_id: number;
+//   task_id: number;
+//   subtask_status: string;
+// }
 
-interface UpcomingTask {
-  project_name: string;
-  task_id: number;
-  name: string;
-  due_date: Date;
-  task_status: string;
-  completed: boolean;
-  priority: string;
-  subtasks: ISubtask[];
-}
+// interface UpcomingTask {
+//   project_name: string;
+//   task_id: number;
+//   name: string;
+//   due_date: Date;
+//   task_status: string;
+//   completed: boolean;
+//   priority: string;
+//   subtasks: ISubtask[];
+// }
 
-interface IHomeData {
-  contacts: Contact[];
-  revenue: BKEntry[];
-  upcomingTasks: UpcomingTask[];
-}
+// interface IHomeData {
+//   contacts: Contact[];
+//   revenue: BKEntry[];
+//   upcomingTasks: UpcomingTask[];
+// }
 
 interface IRevenueEntryData {
   date: string;
@@ -67,18 +74,32 @@ interface IRevenueChartData {
 }
 
 const Home: React.FC = () => {
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector(getUser);
+  const upcomingTasks = useSelector(selectedUpcomingTasks)
+  const upcomingEvents = useSelector(selectedUpcomingEvents)
+  const revenue = useSelector(selectedRevenue)
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [timeOfDay, setTimeOfDay] = useState('Morning');
   const [timeIcon, setTimeIcon] = useState(faSun);
-  const [upcomingTasks, setUpcomingTasks] = useState<UpcomingTask[]>([]);
-  const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
+  // const [upcomingTasks, setUpcomingTasks] = useState<UpcomingTask[]>([]);
+  // const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
   const [revenueEntries, setRevenueEntries] = useState<IRevenueChartData[]>([]);
   //   const [uncompletedSubtasks, setUncompletedSubtasks] = useState(0);
   //   const [completedSubtasks, setCompletedSubtasks] = useState(0);
   //   const [totalSubtasks, setTotalSubtasks] = useState(uncompletedSubtasks + completedSubtasks);
 
-  const today = new Date();
+  const fetchTasks = useFetchUpcomingTasksQuery(user.account?.id, {
+    refetchOnMountOrArgChange: true,
+  });
+  const fetchEvents = useFetchUpcomingEventsQuery(user.account?.id, {
+    refetchOnMountOrArgChange: true,
+  });
+  const fetchRevenue = useFetchRevenueQuery(user.account?.id, {
+    refetchOnMountOrArgChange: true,  
+  });
+
+  // const today = new Date();
+  const today = useMemo(()=> new Date(),[])
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
@@ -207,55 +228,55 @@ const Home: React.FC = () => {
     setRevenueEntries(rawChartData);
   };
 
-  useEffect(() => {
-    if (accountState) {
-      const url = `http://localhost:3000/home?id=${accountState.account?.id}`;
-      const upcomingEventsArray: UpcomingEvent[] = [];
-      const upcomingTasksArray: UpcomingTask[] = [];
+  // useEffect(() => {
+    // if (accountState) {
+      // const url = `http://localhost:3000/home?id=${accountState.account?.id}`;
+      // const upcomingEventsArray: UpcomingEvent[] = [];
+      // const upcomingTasksArray: UpcomingTask[] = [];
       //   let uncompleted = 0
       //   let completed = 0
 
-      fetch(url)
-        .then((response) => response.json())
-        .then(async (data: IHomeData) => {
-          await Promise.all([
+      // fetch(url)
+      //   .then((response) => response.json())
+      //   .then(async (data: IHomeData) => {
+      //     await Promise.all([
             // console.log('raw Data:', data),
-            setContacts(data.contacts),
-            data.contacts.forEach((contact) => {
-              if (contact.events.length !== 0) {
-                contact.events.forEach((event) => {
-                  if (parseDate(event.event_date) > today) {
-                    const upcomingEvent: UpcomingEvent = {
-                      contact: contact,
-                      event: event,
-                    };
-                    upcomingEventsArray.push(upcomingEvent);
-                  }
-                });
-              }
-            }),
-            setUpcomingEvents(
-              upcomingEventsArray
-                .sort((a, b) => {
-                  const dateA = parseDate(a.event.event_date);
-                  const dateB = parseDate(b.event.event_date);
-                  if (dateA.getTime() < dateB.getTime()) {
-                    return -1;
-                  }
-                  if (dateA.getTime() > dateB.getTime()) {
-                    return 1;
-                  }
-                  return 0;
-                })
-                .slice(0, 3),
-            ),
+            // setContacts(data.contacts),
+            // data.contacts.forEach((contact) => {
+              // if (contact.events.length !== 0) {
+              //   contact.events.forEach((event) => {
+              //     if (parseDate(event.event_date) > today) {
+              //       const upcomingEvent: UpcomingEvent = {
+              //         contact: contact,
+              //         event: event,
+              //       };
+              //       upcomingEventsArray.push(upcomingEvent);
+              //     }
+              //   });
+              // }
+            // }),
+            // setUpcomingEvents(
+            //   upcomingEventsArray
+            //     .sort((a, b) => {
+            //       const dateA = parseDate(a.event.event_date);
+            //       const dateB = parseDate(b.event.event_date);
+            //       if (dateA.getTime() < dateB.getTime()) {
+            //         return -1;
+            //       }
+            //       if (dateA.getTime() > dateB.getTime()) {
+            //         return 1;
+            //       }
+            //       return 0;
+            //     })
+            //     .slice(0, 3),
+            // ),
 
-            data.upcomingTasks.forEach((upcomingTask) => {
-              const daysRemaining = Math.ceil(
-                timeDifference(upcomingTask.due_date) / (1000 * 60 * 60 * 24),
-              );
-              if (daysRemaining < 7) {
-                upcomingTasksArray.push(upcomingTask);
+            // data.upcomingTasks.forEach((upcomingTask) => {
+            //   const daysRemaining = Math.ceil(
+            //     timeDifference(upcomingTask.due_date) / (1000 * 60 * 60 * 24),
+            //   );
+            //   if (daysRemaining < 7) {
+            //     upcomingTasksArray.push(upcomingTask);
                 //     upcomingTask.subtasks.forEach((subtask) => {
                 //         if (subtask.subtask_status === taskStatus.Completed) {
                 //             completed += 1;
@@ -263,15 +284,34 @@ const Home: React.FC = () => {
                 //             uncompleted += 1;
                 //           }
                 //     })
-              }
-              setUpcomingTasks(upcomingTasksArray.slice(0, 3));
+              // }
+              // setUpcomingTasks(upcomingTasksArray.slice(0, 3));
               //   setUncompletedSubtasks(uncompleted)
-              //   setCompletedSubtasks(completed)
-            }),
-            handleSetRevenueEntries(data.revenue, 60),
-          ]);
-        });
-    }
+              //    setCompletedSubtasks(completed)
+            // }),
+            // handleSetRevenueEntries(data.revenue, 60),
+            // handleSetRevenueEntries(revenue, 60),
+    //       ]);
+    //     });
+    // }
+    // const currentHour = today.getHours();
+
+    // if (currentHour >= 5 && currentHour < 12) {
+    //   setTimeOfDay('Morning');
+    //   setTimeIcon(faSun);
+    // } else if (currentHour >= 12 && currentHour < 17) {
+    //   setTimeOfDay('Afternoon');
+    //   setTimeIcon(faSun);
+    // } else if (currentHour >= 17 && currentHour < 20) {
+    //   setTimeOfDay('Evening');
+    //   setTimeIcon(faMoon);
+    // } else if (currentHour >= 20 && currentHour < 4) {
+    //   setTimeOfDay('Night');
+    //   setTimeIcon(faMoon);
+    // }
+  // }, []);
+
+  useEffect(() => {
     const currentHour = today.getHours();
 
     if (currentHour >= 5 && currentHour < 12) {
@@ -287,12 +327,19 @@ const Home: React.FC = () => {
       setTimeOfDay('Night');
       setTimeIcon(faMoon);
     }
+  }, [today]);
+
+  useEffect(() => {
+    fetchEvents;
+    fetchTasks;
+    fetchRevenue;
+    handleSetRevenueEntries(revenue, 60)
   }, []);
   return (
     <div className='home-container'>
       <div className='home-header'>
         <h2>
-          Good {timeOfDay}, {accountState.accountProfile?.first_name}!{' '}
+          Good {timeOfDay}, {user.accountProfile?.first_name}!{' '}
           <FontAwesomeIcon size='sm' icon={timeIcon} />
         </h2>
         <div className='row date'>

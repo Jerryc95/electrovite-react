@@ -17,12 +17,12 @@ export const taskAPI = createApi({
       }),
     }),
 
-    fetchUpcomingTasks: builder.query<Task[], number | undefined>({
-      query: (accountID) => ({
-        url: `/upcoming/${accountID}`,
-        method: 'GET',
-      }),
-    }),
+    // fetchUpcomingTasks: builder.query<Task[], number | undefined>({
+    //   query: (accountID) => ({
+    //     url: `/upcoming/${accountID}`,
+    //     method: 'GET',
+    //   }),
+    // }),
     addTask: builder.mutation<Task, object>({
       query: (body) => ({
         url: '/add',
@@ -51,7 +51,7 @@ export const taskAPI = createApi({
 
 export const {
   useFetchTasksQuery,
-  useFetchUpcomingTasksQuery,
+  // useFetchUpcomingTasksQuery,
   useAddTaskMutation,
   useUpdateTaskMutation,
   useRemoveTaskMutation,

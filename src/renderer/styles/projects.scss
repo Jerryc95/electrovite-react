@@ -44,6 +44,13 @@
     padding-left: 8px;
     padding-right: 8px;
     border-bottom: 1px solid #e2e2e2;
+
+    .upcoming-task-row {
+      display: flex;
+      .upcoming-task-container {
+        padding-right: 20px;
+      }
+    }
     
     p {
       color: #909090;
@@ -174,7 +181,7 @@
 
       button {
         align-items: center;
-        background-color: #b5179e;
+        // background-color: #b5179e;
         color: #fff;
         border: none;
         border-radius: 15px;
@@ -184,11 +191,21 @@
         width: 125px;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        box-shadow: 0px 0px 5px rgba(181, 23, 158, 0.6);
+        // box-shadow: 0px 0px 5px rgba(181, 23, 158, 0.6);
+
+        // &:hover {
+        //   background-color: #750564;
+        //   box-shadow: 0px 0px 5px rgba(117, 5, 100, 0.6);
+        // }
+      }
+
+      .task-chevron {
+        position: absolute;
+        margin-left: 45px;
+        transform: translateY(20px);
 
         &:hover {
-          background-color: #750564;
-          box-shadow: 0px 0px 5px rgba(117, 5, 100, 0.6);
+          color: #4361ee;
         }
       }
     }
@@ -207,12 +224,18 @@
     }
     .projects-view {
       .projects-grid {
+        padding-top: 15px;
+        padding-right: 5px;
+        padding-left: 5px;
+        gap: 10px;
         grid-template-columns: repeat(4, 1fr);
       }
     }
   }
+}
+  
 
-  .project-detail-container {
+.collapsed-nav ~ .project-detail-container {
     width: 95%;
     margin-left: 80px;
     padding-left: 10px;
@@ -222,15 +245,16 @@
       width: 95%;
       margin: 0;
     }
+  }
 
-    .task-detail-container {
+  .collapsed-nav ~ .task-detail-container {
       width: 95%;
       margin-left: 80px;
       padding-left: 10px;
       padding-right: 10px;
     }
-  }
-}
+  
+
 
 .projects-view {
   width: 75%;
@@ -328,7 +352,7 @@
   flex-direction: column;
   justify-content: space-between;
   width: 195px;
-  height: 165px;
+  height: 200px;
   background-color: #fefefe;
   border-radius: 20px;
   box-shadow: 0px 0px 30px rgba(107, 107, 107, 0.1);

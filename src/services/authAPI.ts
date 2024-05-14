@@ -37,6 +37,22 @@ export const authAPI = createApi({
         body: account,
       }),
     }),
+    
+    recoverAccount: builder.mutation<Account, object>({
+      query: (account) => ({
+        url: '/recover',
+        method: 'POST',
+        body: account,
+      }),
+    }),
+
+    forceDeleteAccount: builder.mutation<null, object>({
+      query: (account) => ({
+        url: '/force-delete',
+        method: 'DELETE',
+        body: account,
+      }),
+    }),
 
     updateEmail: builder.mutation<
       Account,
@@ -85,6 +101,8 @@ export const {
   useSignInAccountMutation,
   useSignOutAccountMutation,
   useDeleteAccountMutation,
+  useForceDeleteAccountMutation,
+  useRecoverAccountMutation,
   useUpdateEmailMutation,
   useUpdatePasswordMutation,
   useForgotPasswordMutation,

@@ -1,16 +1,16 @@
 .avatar-display {
-    border: 3px solid #ccc;
+    // border: 3px solid #ccc;
     border-radius: 50px;
 
 }
 .avatar-edit {
-    border: 3px solid #fff;
+    box-shadow: inset 0 0 0 0px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.2s ease-in-out;
     border-radius: 5px;
     font-size: 2rem;
 
     &:hover{
-        filter: brightness(0.8);
-        border: 3px solid #f72585;
+        box-shadow: inset 0 0 0 2.3px #f72585;
     }
 }
 
@@ -21,6 +21,7 @@
 
 .avatar-selection-list {
     display: flex;
+    justify-content: center;
 
     li {
         padding: 10px;

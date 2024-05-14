@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { BKEntry } from 'src/models/BKEntry';
-import { selectedAccount } from '../../services/accountSlice';
+import { getUser } from '../../services/accountSlice';
 import '../styles/bookkeeping.scss';
 import BKHighlight from '$renderer/components/dashboard/bookkeeping/BKHighlight';
 import NewBKEntry from '$renderer/components/dashboard/bookkeeping/NewBKEntry';
 import BKEntryRow from '$renderer/components/dashboard/bookkeeping/BKEntryRow';
 import BKEntryRowLabel from '$renderer/components/dashboard/bookkeeping/BKEntryRowLabel';
 import NewExpense from '$renderer/components/dashboard/bookkeeping/Expenses/NewExpense';
-// import { BKExpense } from 'src/models/BKExpense';
 import RecurringExpense from '$renderer/components/dashboard/bookkeeping/Expenses/RecurringExpense';
 import {
   selectedEntries,
@@ -19,16 +19,10 @@ import {
   setSelectedEntry,
 } from '../../services/bookkeepingSlice';
 import { useFetchEntriesQuery } from '../../services/bookkeepingAPI';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 
-// interface IBK {
-//   entries: BKEntry[];
-//   recurringExpenses: BKExpense[];
-// }
 
 const Bookkeeping: React.FC = () => {
-  const user = useSelector(selectedAccount);
+  const user = useSelector(getUser);
   const entries = useSelector(selectedEntries);
   const revenueEntries = useSelector(selectedRevenueEntries);
   const expenseEntries = useSelector(selectedExpenseEntries);
@@ -56,7 +50,7 @@ const Bookkeeping: React.FC = () => {
     'YTD',
     'Last Year',
   ];
-  const BKHighlights = ['Profit', 'Expenses', 'Revenue', 'Outstanding'];
+  // const BKHighlights = ['Profit', 'Expenses', 'Revenue', 'Outstanding'];
 
   const dateParser = (date: Date) => {
     return new Date(date);
@@ -161,40 +155,6 @@ const Bookkeeping: React.FC = () => {
       }
     }
   });
-
-  // useEffect(() => {
-  // if (accountState) {
-  //   const url = `http://localhost:3000/bookkeeping?id=${accountState.account?.id}`;
-  //   fetch(url)
-  //     .then((response) => response.json())
-  //     .then(async (data: IBK) => {
-  //       await Promise.all([
-  //         setRecurringExpenses(data.recurringExpenses),
-  //         setEntries(data.entries),
-  //         ...BKHighlights.map(async (highlight) => {
-  //           switch (highlight) {
-  //             case 'Revenue': {
-  //               setRevenueEntries(
-  //                 data.entries.filter(
-  //                   (entry) => entry.transaction_type === 'Income',
-  //                 ),
-  //               );
-  //               break;
-  //             }
-  //             case 'Expenses': {
-  //               setExpenseEntries(
-  //                 data.entries.filter(
-  //                   (entry) => entry.transaction_type === 'Expense',
-  //                 ),
-  //               );
-  //               break;
-  //             }
-  //           }
-  //         }),
-  //       ]);
-  //     });
-  // }
-  // }, []);
 
   useEffect(() => {
     fetchEntries;

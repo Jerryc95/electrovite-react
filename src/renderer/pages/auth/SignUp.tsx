@@ -15,6 +15,7 @@ const defaultSubscription: Subscription = {
   billing_cycle: '',
   features: [],
   stripe_price_id: '',
+  tier: 0
 };
 
 const SignUpPage: React.FC = () => {

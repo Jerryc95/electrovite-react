@@ -32,7 +32,7 @@ const SettingsDeleteAccount: React.FC = () => {
             console.log(data)
             setAlertMessage("Error deleting account.")
           } else {
-            navigate('/')
+            navigate('/sign-in')
           }
         })
       } else {

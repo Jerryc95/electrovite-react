@@ -9,7 +9,7 @@ const NewClientsBox: React.FC<NewClientsBoxProps> = ({ contacts }) => {
   const [percentChange, setPercentChange] = useState(0);
 
   useEffect(() => {
-    console.log(contacts);
+    // console.log(contacts);
   }, [contacts]);
 
   return (

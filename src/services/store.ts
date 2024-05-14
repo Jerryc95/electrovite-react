@@ -20,9 +20,12 @@ import { subtaskAPI } from './subtaskAPI';
 import { recurringTaskAPI } from './recurringTaskAPI';
 import { contactAPI } from './contactAPI';
 import { bookkeepingAPI } from './bookkeepingAPI';
+import { homeAPI } from './homeAPI';
 import contactSlice from './contactSlice';
 import subtaskSlice from './subtaskSlice';
 import bookkeepingSlice from './bookkeepingSlice';
+import settingsSlice from './settingsSlice';
+import homeSlice from './homeSlice';
 
 
 export type RootState = ReturnType<typeof rootReducer>;
@@ -37,6 +40,8 @@ export const rootReducer = combineReducers({
   recurringTaskReducer: recurringTaskSlice,
   contactReducer: contactSlice,
   bookkeepingReducer: bookkeepingSlice,
+  settingsReducer: settingsSlice,
+  homeReducer: homeSlice,
   [authAPI.reducerPath]: authAPI.reducer,
   [profileAPI.reducerPath]: profileAPI.reducer,
   [subscriptionAPI.reducerPath]: subscriptionAPI.reducer,
@@ -47,6 +52,7 @@ export const rootReducer = combineReducers({
   [recurringTaskAPI.reducerPath]: recurringTaskAPI.reducer,
   [contactAPI.reducerPath]: contactAPI.reducer,
   [bookkeepingAPI.reducerPath]: bookkeepingAPI.reducer,
+  [homeAPI.reducerPath]: homeAPI.reducer,
 });
 
 const persistConfig = {
@@ -81,6 +87,7 @@ const store = configureStore({
     recurringTaskAPI.middleware,
     contactAPI.middleware,
     bookkeepingAPI.middleware,
+    homeAPI.middleware,
   ],
 });
 

@@ -68,6 +68,7 @@ const ConfirmCancelSub: React.FC<ConfirmCancelSubProps> = ({
           'Summary Dashboard',
         ],
         stripe_price_id: 'N/A',
+        tier: 1
       };
 
       const cancelledSubscription = {

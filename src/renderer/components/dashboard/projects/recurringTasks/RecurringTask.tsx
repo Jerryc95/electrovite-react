@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
@@ -6,6 +6,7 @@ import { RecurringTask } from 'src/models/recurringTask';
 import '../../../../styles/components/card.scss';
 import '../../../../styles/styledEffects.scss';
 import EditRecurringTask from './EditRecurringTask';
+import { useUpdateRecurringTaskMutation } from '../../../../../services/recurringTaskAPI';
 
 interface RecurringTaskProps {
   recurringTask: RecurringTask;
@@ -13,34 +14,25 @@ interface RecurringTaskProps {
 
 const RecurringTaskView: React.FC<RecurringTaskProps> = ({ recurringTask }) => {
   const [isCompleted, setIsCompleted] = useState(recurringTask.is_completed);
-  const [labelColor, setLabelColor] = useState('');
+  // const [labelColor, setLabelColor] = useState('');
   const [editingTask, setEditingTask] = useState(false);
 
-  const handleCompletionChange = async (value: boolean) => {
+  const [updateRecurringTask] = useUpdateRecurringTaskMutation();
+
+  const handleCompletionChange = (value: boolean, updatedTime: Date) => {
     setIsCompleted(value);
-    const updatedTask = {
-      isCompleted: value,
+    const updatedRecurringTask: RecurringTask = {
+      rt_id: recurringTask.rt_id,
+      account_id: recurringTask.account_id,
+      task: recurringTask.task,
+      frequency: recurringTask.frequency,
+      is_completed: value,
+      last_updated_at: updatedTime,
     };
-    const urlBase = 'http://localhost:3000';
-    const apiUrl = `/projects/update/task/${recurringTask.rt_id}`;
-    const url = urlBase + apiUrl;
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedTask),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update value');
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    updateRecurringTask(updatedRecurringTask);
   };
 
-  useEffect(() => {
+  const handleFrequencyReset = useCallback(() => {
     const currentDate = new Date();
     const currentDay = currentDate.getDay();
     const currentWeek =
@@ -56,37 +48,95 @@ const RecurringTaskView: React.FC<RecurringTaskProps> = ({ recurringTask }) => {
 
     switch (recurringTask.frequency) {
       case 'Daily': {
-        setLabelColor('brand-pink');
         if (lastUpdatedDate.getDay() < currentDay) {
-          //   setIsCompleted(false);
-          handleCompletionChange(false);
+          handleCompletionChange(false, currentDate);
         }
         break;
       }
       case 'Weekly': {
-        setLabelColor('brand-blue');
-        if (
-          Math.ceil(
-            ((lastUpdatedDate.getTime() -
-              new Date(lastUpdatedDate.getFullYear(), 0, 4).getTime()) /
-              86400000 +
-              1) /
-              7,
-          ) < currentWeek
-        ) {
-          handleCompletionChange(false);
-        }
+        const isSameWeek =
+        lastUpdatedDate.getFullYear() === currentDate.getFullYear() &&
+        Math.floor((lastUpdatedDate.getTime() - new Date(currentDate.getFullYear(), 0, 0).getTime()) / 604800000) ===
+        Math.floor((currentDate.getTime() - new Date(currentDate.getFullYear(), 0, 0).getTime()) / 604800000);
+    
+      if (!isSameWeek) {
+        handleCompletionChange(false, currentDate);
+      }
+        // if (
+        //   Math.ceil(
+        //     ((lastUpdatedDate.getTime() -
+        //       new Date(lastUpdatedDate.getFullYear(), 0, 4).getTime()) /
+        //       86400000 +
+        //       1) /
+        //       7,
+        //   ) <
+        //   currentWeek
+        // ) {
+  
+        //   handleCompletionChange(false, currentDate);
+        // }
         break;
       }
       case 'Monthly': {
-        setLabelColor('brand-purple');
         if (lastUpdatedDate.getMonth() < currentMonth) {
-          handleCompletionChange(false);
+          console.log('here');
+          handleCompletionChange(false, currentDate);
         }
         break;
       }
     }
   }, []);
+
+  useEffect(() => {
+    handleFrequencyReset();
+  }, [handleFrequencyReset]);
+
+  // useEffect(() => {
+  //   const currentDate = new Date();
+  //   const currentDay = currentDate.getDay();
+  //   const currentWeek =
+  //     Math.ceil(
+  //       ((currentDate.getTime() -
+  //         new Date(currentDate.getFullYear(), 0, 4).getTime()) /
+  //         86400000 +
+  //         1) /
+  //         7,
+  //     ) + 1;
+  //   const currentMonth = currentDate.getMonth();
+  //   const lastUpdatedDate = new Date(recurringTask.last_updated_at);
+
+  //   switch (recurringTask.frequency) {
+  //     case 'Daily': {
+  //       setLabelColor('brand-pink');
+  //       if (lastUpdatedDate.getDay() < currentDay) {
+  //         handleCompletionChange(false);
+  //       }
+  //       break;
+  //     }
+  //     case 'Weekly': {
+  //       setLabelColor('brand-blue');
+  //       if (
+  //         Math.ceil(
+  //           ((lastUpdatedDate.getTime() -
+  //             new Date(lastUpdatedDate.getFullYear(), 0, 4).getTime()) /
+  //             86400000 +
+  //             1) /
+  //             7,
+  //         ) < currentWeek
+  //       ) {
+  //         handleCompletionChange(false);
+  //       }
+  //       break;
+  //     }
+  //     case 'Monthly': {
+  //       setLabelColor('brand-purple');
+  //       if (lastUpdatedDate.getMonth() < currentMonth) {
+  //         handleCompletionChange(false);
+  //       }
+  //       break;
+  //     }
+  //   }
+  // }, []);
 
   return (
     <div
@@ -100,13 +150,18 @@ const RecurringTaskView: React.FC<RecurringTaskProps> = ({ recurringTask }) => {
               className='checkbox'
               type='checkbox'
               checked={isCompleted}
-              onChange={() => handleCompletionChange(!isCompleted)}
+              onChange={() =>
+                handleCompletionChange(
+                  !isCompleted,
+                  recurringTask.last_updated_at,
+                )
+              }
             />
             <span className='checkmark'></span>
           </label>
           <div className='card-column justify-content-start'>
             <h5>{recurringTask.task}</h5>
-            <p className={`subtitle ${labelColor}`}>
+            <p className={`subtitle ${recurringTask.frequency}`}>
               {recurringTask.frequency}
             </p>
           </div>

@@ -26,7 +26,6 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   onSubmit,
   handleBackClick,
 }) => {
-
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [profilePic, setProfilePic] = useState('');
@@ -46,13 +45,20 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     });
   };
 
+  const handleProfilePicSelection = (emoji: string) => {
+    setProfilePic(emoji);
+  };
+
   return (
     <div>
       <form className='profile-edit-form' onSubmit={handleSubmit}>
         <div className='profile-edit-form-avatar'>
           <p>Profile Emoji:</p>
           {/* <AvatarPicker setSelectedProfilePic={setProfilePic} /> */}
-          <EmojiPicker setSelectedProfilePic={setProfilePic}/>
+          <EmojiPicker
+            // setSelectedProfilePic={setProfilePic}
+            onChange={handleProfilePicSelection}
+          />
         </div>
         <label className='profile-edit-form-label'>
           First Name
@@ -99,7 +105,12 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
         </div> */}
         {type === 'creating' && (
           <div className='profile-edit-submit-button'>
-            <button className='button-brand-light-blue' onClick={handleBackClick}>Back</button>
+            <button
+              className='button-brand-light-blue'
+              onClick={handleBackClick}
+            >
+              Back
+            </button>
             <button className='button-brand-pink'>Get Started</button>
           </div>
         )}

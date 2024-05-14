@@ -190,7 +190,7 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
             />
             <CalendarField
               label='Next Contact:'
-              field='nextContactDate'
+              field='next_contact_date'
               value={contact.next_contact_date}
               item={contact}
               onEdit={handleUpdateContact}

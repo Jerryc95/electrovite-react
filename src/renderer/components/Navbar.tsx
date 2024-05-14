@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,8 +24,8 @@ import Documents from './dashboard/documents/Documents';
 import Bookkeeping from '$renderer/pages/Bookkeeping';
 import AboutPage from '$renderer/pages/AboutPage';
 import Settings from '../pages/Settings';
-import Avatar from './Avatar';
-import exampleAvatar from '../../../assets/Avatars/exampleAvatar.png';
+// import Avatar from './Avatar';
+// import exampleAvatar from '../../../assets/Avatars/exampleAvatar.png';
 // import usePagePicker from '../../hooks/usePagePicker';
 import { useSignOutAccountMutation } from '../../services/authAPI';
 import { clearSubscriptionInfo } from '../../services/subscriptionSlice';
@@ -81,10 +81,6 @@ const Navbar: React.FC = () => {
       return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
     }
   };
-
-  useEffect(()=> {
-    console.log(accountState.accountProfile)
-  },[])
 
   return (
     <nav className={`navbar ${collapsed ? 'collapsed-nav' : ''}`}>

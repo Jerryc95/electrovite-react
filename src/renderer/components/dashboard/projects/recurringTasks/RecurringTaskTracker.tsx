@@ -31,10 +31,10 @@ const RecurringTaskTracker: React.FC<RecurringTaskTrackerProps> = ({
       }
       case 'Weekly Tasks': {
         filteredTasks = recurringTasks.filter(
-          (task) => task.frequency === 'Daily',
+          (task) => task.frequency === 'Weekly',
         );
         filteredCompletedTasks = recurringTasks.filter(
-          (task) => task.frequency === 'Daily' && task.is_completed === true,
+          (task) => task.frequency === 'Weekly' && task.is_completed === true,
         );
         setTasks(filteredTasks);
         setCompletedTasks(filteredCompletedTasks);
@@ -42,10 +42,10 @@ const RecurringTaskTracker: React.FC<RecurringTaskTrackerProps> = ({
       }
       case 'Monthly Tasks': {
         filteredTasks = recurringTasks.filter(
-          (task) => task.frequency === 'Daily',
+          (task) => task.frequency === 'Monthly',
         );
         filteredCompletedTasks = recurringTasks.filter(
-          (task) => task.frequency === 'Daily' && task.is_completed === true,
+          (task) => task.frequency === 'Monthly' && task.is_completed === true,
         );
         setTasks(filteredTasks);
         setCompletedTasks(filteredCompletedTasks);

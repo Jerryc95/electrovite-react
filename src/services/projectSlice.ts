@@ -9,7 +9,7 @@ import { projectAPI } from './projectAPI';
 
 interface projectState {
   projects: Project[];
-  selectedProject: Project | null
+  selectedProject: Project | null;
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
 }
@@ -26,10 +26,9 @@ export const projectSlice = createSlice({
   initialState: initialProjectState,
   reducers: {
     clearProjectState: () => initialProjectState,
-    selectProject: (state, action: PayloadAction<Project>) => { 
-      state.selectedProject = action.payload
-    }
-
+    selectProject: (state, action: PayloadAction<Project>) => {
+      state.selectedProject = action.payload;
+    },
   },
   extraReducers: (builder) => {
     // PROJECTS API
@@ -42,7 +41,7 @@ export const projectSlice = createSlice({
 
     builder.addMatcher(
       projectAPI.endpoints.fetchProjects.matchFulfilled,
-        (state, action: PayloadAction<Project[]>) => {
+      (state, action: PayloadAction<Project[]>) => {
         state.loading = 'fulfilled';
         const projects = action.payload;
         state.projects = projects.sort((a, b) => {
@@ -51,6 +50,7 @@ export const projectSlice = createSlice({
           }
           return 0;
         });
+
       },
     );
 
@@ -88,7 +88,7 @@ export const projectSlice = createSlice({
         );
         if (index !== -1) {
           state.projects[index] = action.payload;
-          state.selectedProject = action.payload
+          state.selectedProject = action.payload;
         }
       },
     );
@@ -121,7 +121,7 @@ export const projectSlice = createSlice({
 
     builder.addMatcher(
       projectAPI.endpoints.fetchContactProjects.matchFulfilled,
-        (state, action: PayloadAction<Project[]>) => {
+      (state, action: PayloadAction<Project[]>) => {
         state.loading = 'fulfilled';
         const projects = action.payload;
         state.projects = projects.sort((a, b) => {
@@ -135,7 +135,7 @@ export const projectSlice = createSlice({
   },
 });
 
-export const selectedProjects = (state: RootState) =>
+export const getProjects = (state: RootState) =>
   state.projectReducer.projects;
 
 export const { clearProjectState, selectProject } = projectSlice.actions;

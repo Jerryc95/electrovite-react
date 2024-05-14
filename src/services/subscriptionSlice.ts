@@ -7,6 +7,7 @@ import { subscriptionAPI } from './subscriptionAPI';
 import { SubscriptionInfo } from 'src/models/subscriptionInfo';
 import { Subscription } from 'src/models/subscription';
 import { StripeSubscription } from 'src/models/stripeSubscription';
+import { RootState } from './store';
 
 interface subscriptionState {
   subscription: Subscription | null;
@@ -28,8 +29,8 @@ export const subscriptionSlice = createSlice({
   reducers: {
     clearSubscriptionInfo: () => inititalSubscriptionState,
     updateSubscription: (state, action: PayloadAction<subscriptionState>) => {
-        state.subscription = action.payload.subscription
-        state.stripeSubscription = action.payload.stripeSubscription
+      state.subscription = action.payload.subscription;
+      state.stripeSubscription = action.payload.stripeSubscription;
     },
   },
   extraReducers: (builder) => {
@@ -50,6 +51,9 @@ export const subscriptionSlice = createSlice({
     );
   },
 });
+
+export const getSubscription = (state: RootState) =>
+  state.subscriptionReducer.subscription;
 
 export const { clearSubscriptionInfo, updateSubscription } =
   subscriptionSlice.actions;

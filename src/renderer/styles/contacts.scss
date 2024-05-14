@@ -130,6 +130,13 @@
     display: flex;
     flex-direction: column;
 
+    .info-text {
+      color: #909090;
+      font-size: 0.85rem;
+      text-align: center;
+      padding-top: 25px;
+    }
+
     .contacts-sorting-options {
       display: flex;
       padding-bottom: 15px;
@@ -201,14 +208,15 @@
       width: 25%;
     }
   }
+}
 
-  .contact-detail-container {
+.collapsed-nav ~.contact-detail-container {
     // min-width: 100%;
     width: 93%;
     margin-left: 80px;
     padding-left: 10px;
   }
-}
+
 
 .contact-row-container {
   display: flex;

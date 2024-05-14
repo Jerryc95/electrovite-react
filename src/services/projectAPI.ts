@@ -36,6 +36,8 @@ export const projectAPI = createApi({
         method: 'DELETE',
       }),
     }),
+
+    
     fetchContactProjects: builder.mutation<
       Project[],
       { accountID: number; contactID: number }

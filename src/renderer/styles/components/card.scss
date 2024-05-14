@@ -9,6 +9,8 @@
   background-color: #fefefe;
   box-shadow: 0px 0px 20px rgba(107, 107, 107, 0.1);
 
+ 
+
 }
 .card-row {
   display: flex;
@@ -40,6 +42,17 @@
 .subtitle {
   font-size: 0.75rem;
   font-weight: bold;
+}
+
+.Daily {
+  color: #f72585;
+}
+.Weekly {
+  color: #4361ee;
+}
+
+.Monthly {
+  color: #7209b7;
 }
 
 .small-card-container {

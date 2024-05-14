@@ -6,47 +6,42 @@ import { useSelector } from 'react-redux/es/hooks/useSelector';
 import Emoji from './Emoji';
 import { RootState } from '../../services/store';
 
+import '../styles/avatar.scss';
+
 interface EmojiPickerProps {
-  setSelectedProfilePic: React.Dispatch<React.SetStateAction<string>>;
+//   setSelectedProfilePic: React.Dispatch<React.SetStateAction<string>>;
+  onChange: (emoji: string) => void;
 }
 
 const EmojiPicker: React.FC<EmojiPickerProps> = ({
-  setSelectedProfilePic: setSelectedProfile,
+//   setSelectedProfilePic,
+  onChange,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedEmoji, setSelectedEmoji] = useState(0);
+  const [selectedEmoji, setSelectedEmoji] = useState('👨‍💻');
 
   const profilePic = useSelector(
     (state: RootState) => state.accountReducer.accountProfile?.profile_pic,
   );
 
-  const emojis = [
-    '👨‍💻',
-    '👩‍💻',
-    '💻',
-    '🗄️',
-    '📁',
-    '📎',
-    '📝',
-    '🖊️',
-    '📚',
-    '📇',
-  ];
+  const emojis = ['👨‍💻', '👩‍💻', '💻', '🗄️', '📁', '📎', '📝', '🖊️', '📚', '📇'];
 
   const handleEmojiClick = () => {
     setShowDropdown(!showDropdown);
   };
 
-  const handleEmojiSelection = (index: number, emoji: string) => {
-    setSelectedEmoji(index);
+  const handleEmojiSelection = (emoji: string) => {
+    setSelectedEmoji(emoji);
     setShowDropdown(!showDropdown);
-    setSelectedProfile(emoji);
+    // setSelectedProfilePic(emoji);
+    onChange(emoji)
   };
 
   useEffect(() => {
-    if (!profilePic) {
-      setSelectedEmoji(0);
-      setSelectedProfile(emojis[0]);
+    if (profilePic) {
+      setSelectedEmoji(profilePic);
+      onChange(profilePic)
+    //   setSelectedProfilePic(profilePic);
     }
   }, []);
 
@@ -55,7 +50,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
       <div className='selected-avatar'>
         <Emoji
           cName='avatar-edit'
-          symbol={emojis[selectedEmoji]}
+          symbol={selectedEmoji}
           onClick={handleEmojiClick}
         />
       </div>
@@ -63,11 +58,11 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
       {showDropdown && (
         <ul className='avatar-selection-list'>
           {emojis.map((emoji, index) => (
-            <li>
+            <li key={index}>
               <Emoji
                 cName='avatar-edit'
                 symbol={emoji}
-                onClick={() => handleEmojiSelection(index, emoji)}
+                onClick={() => handleEmojiSelection(emoji)}
               />
             </li>
           ))}

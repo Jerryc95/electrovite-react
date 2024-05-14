@@ -68,6 +68,7 @@ const NewExpense: React.FC<NewExpenseProps> = ({
         <div className='new-item-heading'>
           <h2>New Recurring Expense</h2>
           <button
+          className='button-brand-magenta'
             onClick={() => {
               setAddingExpense(false);
             }}

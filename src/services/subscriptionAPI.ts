@@ -7,7 +7,7 @@ export const subscriptionAPI = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/subscription' }),
 
   endpoints: (builder) => ({
-    fetchSubscriptions: builder.mutation<Subscription, object>({
+    fetchSubscriptions: builder.query<Subscription, object>({
       query: (subcriptions) => ({
         url: '/',
         method: 'GET',
