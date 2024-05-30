@@ -6,7 +6,7 @@ import { RootState } from '../../../../services/store';
 
 import NewSubscriberForm from './SubcriberForms/NewSubscriberForm';
 import ExistingSubscriberForm from './SubcriberForms/ExistingSubscriberForm';
-import ReturningSubscriberForm from './SubcriberForms/ReturningSubscriberForm';
+// import ReturningSubscriberForm from './SubcriberForms/ReturningSubscriberForm';
 
 interface ExistingAccountSubscribeFormProps {
   subscription: Subscription;
@@ -33,7 +33,6 @@ const ExistingAccountSubscribeForm: React.FC<
       setIsUpdatingPlan={setViewingPlans}
       setViewingPlans={setViewingPlans}
       setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
-      customer={subscriptionState.stripeSubscription!.customer}
     />,
   );
 
@@ -49,7 +48,6 @@ const ExistingAccountSubscribeForm: React.FC<
           setIsUpdatingPlan={setUpdatingPlan}
           setViewingPlans={setViewingPlans}
           setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
-          customer={subscriptionState.stripeSubscription!.customer}
         />,
       );
     } else if (
@@ -63,7 +61,6 @@ const ExistingAccountSubscribeForm: React.FC<
         setIsUpdatingPlan={setUpdatingPlan}
         setViewingPlans={setViewingPlans}
         setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
-        customer={subscriptionState.stripeSubscription!.customer}
       />,
         // <ReturningSubscriberForm
         //   subscription={subscription}

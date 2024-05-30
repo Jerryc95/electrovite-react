@@ -48,13 +48,13 @@ export const taskSlice = createSlice({
 
     builder.addMatcher(taskAPI.endpoints.addTask.matchPending, (state) => {
       state.loading = 'pending';
-      console.log("fetching")
+      console.log('fetching');
     });
     builder.addMatcher(
       taskAPI.endpoints.addTask.matchFulfilled,
       (state, action: PayloadAction<Task>) => {
         state.loading = 'fulfilled';
-        console.log("fetched")
+        console.log('fetched');
         const newTask: Task = action.payload;
         newTask.subtasks = [];
         state.tasks.push(newTask);
@@ -81,6 +81,7 @@ export const taskSlice = createSlice({
         if (i !== -1) {
           state.tasks[i] = updatedTask;
           state.selectedTask = updatedTask;
+          console.log(updatedTask)
         }
       },
     );
@@ -103,7 +104,8 @@ export const taskSlice = createSlice({
   },
 });
 
-export const selectedTasks = (state: RootState) => state.taskReducer.tasks;
+export const getTasks = (state: RootState) => state.taskReducer.tasks;
 
-export const { clearTaskState, selectTask } = taskSlice.actions;
+export const { clearTaskState, selectTask } =
+  taskSlice.actions;
 export default taskSlice.reducer;

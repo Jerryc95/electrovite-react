@@ -4,53 +4,37 @@ import { faTrash, faPause } from '@fortawesome/free-solid-svg-icons';
 
 import { BKExpense } from 'src/models/BKExpense';
 import DeleteModal from '$renderer/components/DeleteModal';
-import { useRemoveRecurringExpenseMutation, useUpdateRecurringExpenseMutation } from '../../../../../services/bookkeepingAPI';
+import {
+  useRemoveRecurringExpenseMutation,
+  useUpdateRecurringExpenseMutation,
+} from '../../../../../services/bookkeepingAPI';
 
 interface RecurringExpenseProps {
   expense: BKExpense;
-  // expenses: BKExpense[];
-  // setExpenses: React.Dispatch<React.SetStateAction<BKExpense[]>>;
 }
 
-const RecurringExpense: React.FC<RecurringExpenseProps> = ({
-  expense,
-  // expenses,
-  // setExpenses,
-}) => {
+const RecurringExpense: React.FC<RecurringExpenseProps> = ({ expense }) => {
   const [removeExpense] = useRemoveRecurringExpenseMutation();
   const [updateExpense] = useUpdateRecurringExpenseMutation();
 
   const [showingDeleteModal, setShowingDeleteModal] = useState(false);
-  // const [isPaused, setIsPaused] = useState(false);
 
   const handleDelete = () => {
-    // const url = `http://localhost:3000/bookkeeping/delete/expense/${expense.re_id}`;
-    // try {
-    //   fetch(url, {
-    //     method: 'DELETE',
-    //   });
-
-    //   setExpenses(expenses.filter((e) => e.re_id != expense.re_id));
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    removeExpense(expense.re_id)
+    removeExpense(expense.re_id);
     setShowingDeleteModal(false);
   };
 
   const handlePause = () => {
     const updatedExpense: BKExpense = {
       re_id: expense.re_id,
-    account_id: expense.account_id,
-    re_description: expense.re_description,
-    amount: expense.amount,
-    frequency: expense.frequency,
-    is_active: !expense.is_active,
-    created_at: expense.created_at,
-
-    }
-    updateExpense(updatedExpense)
-    // setIsPaused(!isPaused);
+      account_id: expense.account_id,
+      re_description: expense.re_description,
+      amount: expense.amount,
+      frequency: expense.frequency,
+      is_active: !expense.is_active,
+      created_at: expense.created_at,
+    };
+    updateExpense(updatedExpense);
   };
 
   return (

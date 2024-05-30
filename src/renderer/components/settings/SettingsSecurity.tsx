@@ -3,17 +3,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
-import { RootState } from '../../../services/store';
 import {
   useUpdateEmailMutation,
   useUpdatePasswordMutation,
 } from '../../../services/authAPI';
-import { updateEmailState } from '../../../services/accountSlice';
+import { getUser, updateEmailState } from '../../../services/accountSlice';
 import { checkEmail } from '../../../helpers/CheckEmail';
 import { checkPassword } from '../../../helpers/CheckPassword';
 
 const SettingsSecurity: React.FC = () => {
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector(getUser);
 
   const [editingSecurity, setEditingSecurity] = useState(false);
   const [editingTwoFactor, setEditingTwoFactor] = useState(false);
@@ -73,7 +72,7 @@ const SettingsSecurity: React.FC = () => {
       setEmailAlertMessage('Email is not a valid Email address.');
     } else {
       dispatch(updateEmailState(email));
-      updateEmail({ id: accountState.account?.id, email: email });
+      updateEmail({ id: user.account?.id, email: email });
       setEmailAlertMessage('');
       toggleEdit(setEditingSecurity);
     }
@@ -86,8 +85,8 @@ const SettingsSecurity: React.FC = () => {
       );
     } else {
       updatePassword({
-        id: accountState.account?.id,
-        email: accountState.account?.email,
+        id: user.account?.id,
+        email: user.account?.email,
         password: currentPassword,
         newPassword: password,
       }).then((data) => {
@@ -133,7 +132,7 @@ const SettingsSecurity: React.FC = () => {
               />
             ) : (
               <span className='edit-settings-field'>
-                {accountState?.account?.email}
+                {user?.account?.email}
               </span>
             )}
           </label>
@@ -237,9 +236,9 @@ const SettingsSecurity: React.FC = () => {
         <h5>
           Two-factor authentication is
           <span
-            className={accountState.account?.two_factor_enabled ? 'on' : 'off'}
+            className={user.account?.two_factor_enabled ? 'on' : 'off'}
           >
-            {accountState.account?.two_factor_enabled ? ' ON' : ' OFF'}
+            {user.account?.two_factor_enabled ? ' ON' : ' OFF'}
           </span>
         </h5>
 
@@ -255,7 +254,7 @@ const SettingsSecurity: React.FC = () => {
               </div>
               <button className='button-brand-light-blue'>Setup</button>
             </div>
-            <div className='two-factor-option'>
+            {/* <div className='two-factor-option'>
               <div>
                 <h5>Phone Number</h5>
                 <p>
@@ -264,8 +263,8 @@ const SettingsSecurity: React.FC = () => {
                 </p>
               </div>
               <button className='button-brand-light-blue'>Setup</button>
-            </div>
-            {accountState.account?.two_factor_enabled ? (
+            </div> */}
+            {user.account?.two_factor_enabled ? (
               <button>Disable</button>
             ) : (
               <></>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateSubscription } from '../../../services/subscriptionSlice';
 import {
   useStripe,
   useElements,
@@ -12,25 +11,28 @@ import '../../styles/components/StripePaymentForm.scss';
 import { RootState } from '../../../services/store';
 import { StripeAddressElementOptions } from '@stripe/stripe-js';
 import { StripeSubscription } from 'src/models/stripeSubscription';
-import { SubscriptionState } from '@reduxjs/toolkit/dist/query/core/apiState';
-
-interface Subscription {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  billing_cycle: string;
-  features: string[];
-  stripe_price_id: string;
-}
+import { getUser } from '../../../services/accountSlice';
+import { Subscription } from 'src/models/subscription';
+import {
+  getStripeCustomer,
+  // updateSubscription,
+} from '../../../services/subscriptionSlice';
+import {
+  useCreateSubscriptionMutation,
+  useDeleteCustomerMutation,
+  useFetchSubscriptionInfoMutation,
+  useUpdateAccountMutation,
+  // useUpdateSubscriptionMutation,
+} from '../../../services/subscriptionAPI';
 
 interface StripePaymentFormProps {
   setCreationStep?: React.Dispatch<React.SetStateAction<number>>;
   setIsUpdatingPlan?: React.Dispatch<React.SetStateAction<boolean>>;
   setViewingPlans?: React.Dispatch<React.SetStateAction<boolean>>;
-  setSuccessfullySubscribedAlert?: React.Dispatch<React.SetStateAction<boolean>>;
+  setSuccessfullySubscribedAlert?: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
   subscription: Subscription | null;
-  customer: string;
   setStripeSubscription?: React.Dispatch<
     React.SetStateAction<StripeSubscription | null>
   >;
@@ -39,7 +41,6 @@ interface StripePaymentFormProps {
 export default function StripePaymentForm({
   setCreationStep,
   subscription,
-  customer,
   setStripeSubscription,
   setIsUpdatingPlan,
   setViewingPlans,
@@ -48,22 +49,21 @@ export default function StripePaymentForm({
   const [isLoading, setisLoading] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const subscriptionState = useSelector(
     (state: RootState) => state.subscriptionReducer,
   );
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector(getUser);
+  const customer = useSelector(getStripeCustomer);
+
+  const [createSubscription] = useCreateSubscriptionMutation();
+  const [updateAccount] = useUpdateAccountMutation();
+  const [deleteCustomer] = useDeleteCustomerMutation();
+  const [fetchSubscriptionInfo] = useFetchSubscriptionInfoMutation();
 
   const handleBackClick = () => {
     if (setCreationStep) {
-      const url = `http://localhost:3000/payment/delete-customer/${customer.toString()}`;
-      try {
-        fetch(url, {
-          method: 'DELETE',
-        });
-      } catch (error) {
-        console.log(error);
-      }
+      deleteCustomer({ customer: customer });
       setCreationStep(1);
     } else if (setIsUpdatingPlan) {
       setIsUpdatingPlan(false);
@@ -109,103 +109,144 @@ export default function StripePaymentForm({
     setisLoading(true);
     try {
       if (subscription) {
-        const subscribeResponse = await fetch(
-          'http://localhost:3000/payment/create-subscription',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              customer: customer.toString(),
-              priceID: subscription.stripe_price_id.toString(),
-            }),
-          },
-        );
-
-        const subResponseData = await subscribeResponse.json();
-
-        console.log(subResponseData);
-
-        const newSubscription: StripeSubscription = {
-          id: subResponseData.subscription.id,
-          customer: subResponseData.subscription.customer,
-          start_date: subResponseData.subscription.start_date,
-          current_period_end: subResponseData.subscription.current_period_end,
-          current_period_start:
-            subResponseData.subscription.current_period_start,
-          trial_end: subResponseData.subscription.trial_end,
-          cancel_at: subResponseData.subscription.cancel_at,
-          cancel_at_period_end:
-            subResponseData.subscription.cancel_at_period_end,
-          canceled_at: subResponseData.subscription.canceled_at,
-          status: subResponseData.subscription.status,
-          default_payment_method: subResponseData.subscription.default_payment_method,
-        };
-
-        console.log(newSubscription);
-        if (setStripeSubscription) {
-          setStripeSubscription(newSubscription);
-        } else {
-          const updatedSubscription = {
-            subscription: subscription,
-            stripeSubscription: newSubscription,
-            loading: subscriptionState.loading,
-            error: subscriptionState.error,
-          };
-          dispatch(updateSubscription(updatedSubscription));
-          try {
-            const response = await fetch("http://localhost:3000/subscription/update/account", {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                accountID: accountState.account?.id,
-                subscriptionID: subscription.id,
-                stripeSubID: newSubscription.id,
-              }),
-            });
-            if (!response.ok) {
-              throw new Error('Failed to update project');
-            }
-          } catch (error) {
-            console.log(error);
-          }
-
-        }
-      
-        elements.submit();
-
-        const confirmIntent =
-          subResponseData.type === 'setup'
-            ? stripe.confirmSetup
-            : stripe.confirmPayment;
-
-        const { error } = await confirmIntent({
-          elements: elements,
-          clientSecret: subResponseData.clientSecret,
-          confirmParams: {
-            return_url: 'http://localhost:5173/creating-account',
-          },
-          redirect: 'if_required',
+        const response = await createSubscription({
+          customer: customer,
+          priceID: subscription.stripe_price_id,
         });
 
-        if (error) {
-          console.log(error);
-        } else {
-          // Your customer is redirected to your `return_url`. For some payment
-          // methods like iDEAL, your customer is redirected to an intermediate
-          // site first to authorize the payment, then redirected to the `return_url`.
-        }
-        if (setCreationStep) {
-          setCreationStep(3);
-        } else if(setIsUpdatingPlan && setSuccessfullySubscribedAlert && setViewingPlans) {
-          setViewingPlans(false)
-          setIsUpdatingPlan(false)
-          setSuccessfullySubscribedAlert(true)
-        }
+        if ('data' in response) {
+          const { clientSecret, stripeSubscription, type } = response.data;
 
+          console.log(response.data);
+
+          // const subscribeResponse = await fetch(
+          //   'http://localhost:3000/payment/create-subscription',
+          //   {
+          //     method: 'POST',
+          //     headers: {
+          //       'Content-Type': 'application/json',
+          //     },
+          //     body: JSON.stringify({
+          //       customer: customer.toString(),
+          //       priceID: subscription.stripe_price_id.toString(),
+          //     }),
+          //   },
+          // );
+
+          // const subResponseData = await subscribeResponse.json();
+          // const newSubscription: StripeSubscription = {
+          //   id: subResponseData.subscription.id,
+          //   customer: subResponseData.subscription.customer,
+          //   start_date: subResponseData.subscription.start_date,
+          //   current_period_end: subResponseData.subscription.current_period_end,
+          //   current_period_start:
+          //     subResponseData.subscription.current_period_start,
+          //   trial_end: subResponseData.subscription.trial_end,
+          //   cancel_at: subResponseData.subscription.cancel_at,
+          //   cancel_at_period_end:
+          //     subResponseData.subscription.cancel_at_period_end,
+          //   canceled_at: subResponseData.subscription.canceled_at,
+          //   status: subResponseData.subscription.status,
+          //   default_payment_method:
+          //     subResponseData.subscription.default_payment_method,
+          // };
+          const newSubscription: StripeSubscription = {
+            id: stripeSubscription.id,
+            customer: stripeSubscription.customer,
+            start_date: stripeSubscription.start_date,
+            current_period_end: stripeSubscription.current_period_end,
+            current_period_start: stripeSubscription.current_period_start,
+            trial_end: stripeSubscription.trial_end,
+            cancel_at: stripeSubscription.cancel_at,
+            cancel_at_period_end: stripeSubscription.cancel_at_period_end,
+            canceled_at: stripeSubscription.canceled_at,
+            status: stripeSubscription.status,
+            default_payment_method: stripeSubscription.default_payment_method,
+          };
+
+          if (setStripeSubscription) {
+            setStripeSubscription(newSubscription);
+          } else {
+            // UPDATE HERE
+            updateAccount({
+              accountID: user.account?.id,
+              subscriptionID: subscription.id, 
+              stripeSubID: newSubscription.id,
+              previousSubID: subscriptionState.subscription!.id,
+            });
+            console.log(323)
+          
+
+            // try {
+            //   const response = await fetch(
+            //     'http://localhost:3000/subscription/update/account',
+            //     {
+            //       method: 'PATCH',
+            //       headers: {
+            //         'Content-Type': 'application/json',
+            //       },
+            //       body: JSON.stringify({
+            //         accountID: user.account?.id,
+            //         subscriptionID: subscription.id,
+            //         stripeSubID: newSubscription.id,
+            //         previousSubID: subscriptionState.subscription!.id,
+            //       }),
+            //     },
+            //   );
+            //   if (!response.ok) {
+            //     throw new Error('Failed to update project');
+            //   }
+            // } catch (error) {
+            //   console.log(error);
+            // }
+          }
+
+          elements.submit();
+
+          const confirmIntent =
+            type === 'setup' ? stripe.confirmSetup : stripe.confirmPayment;
+
+          // const { error } = await confirmIntent({
+          //   elements: elements,
+          //   clientSecret: subResponseData.clientSecret,
+          //   confirmParams: {
+          //     return_url: 'http://localhost:5173/creating-account',
+          //   },
+          //   redirect: 'if_required',
+          // });
+          const { error } = await confirmIntent({
+            elements: elements,
+            clientSecret: clientSecret,
+            confirmParams: {
+              return_url: 'http://localhost:5173/creating-account',
+            },
+            redirect: 'if_required',
+          });
+
+          if (error) {
+            console.log(error);
+          } else {
+            // Your customer is redirected to your `return_url`. For some payment
+            // methods like iDEAL, your customer is redirected to an intermediate
+            // site first to authorize the payment, then redirected to the `return_url`.
+          }
+          // const confirmIntent =
+          //   subResponseData.type === 'setup'
+          //     ? stripe.confirmSetup
+          //     : stripe.confirmPayment;
+
+          if (setCreationStep) {
+            setCreationStep(3);
+          } else if (
+            setIsUpdatingPlan &&
+            setSuccessfullySubscribedAlert &&
+            setViewingPlans
+          ) {
+            setViewingPlans(false);
+            setIsUpdatingPlan(false);
+            setSuccessfullySubscribedAlert(true);
+          }
+        }
       }
     } catch (error) {
       console.log(error);

@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { UpcomingTask } from 'src/models/UpcomingTask';
 import type { UpcomingEvent } from 'src/models/upcomingEvent';
 import type { BKEntry } from 'src/models/BKEntry';
+import { BKExpense } from 'src/models/BKExpense';
 
 export const homeAPI = createApi({
   reducerPath: 'homeAPI',
@@ -28,6 +29,12 @@ export const homeAPI = createApi({
         method: 'GET',
       }),
     }),
+    fetchExpenses: builder.query<BKExpense[], number | undefined>({
+      query: (accountID) => ({
+        url: `/recurring-expenses/${accountID}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -35,4 +42,5 @@ export const {
   useFetchRevenueQuery,
   useFetchUpcomingEventsQuery,
   useFetchUpcomingTasksQuery,
+  useFetchExpensesQuery,
 } = homeAPI;

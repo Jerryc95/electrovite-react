@@ -4,26 +4,26 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
   faCircleCheck,
-  faTrash,
+  faPenToSquare,
 } from '@fortawesome/free-solid-svg-icons';
 
-import { RootState } from '../../../../services/store';
 import { BKEntry } from 'src/models/BKEntry';
 import EditField from '$renderer/components/EditField';
 import ProgressBar from '$renderer/components/ProgressBar';
 import { Contact } from 'src/models/contact';
 import CurrencyField from '$renderer/components/CurrencyField';
 import CalendarField from '$renderer/components/CalendarField';
-import DeleteModal from '$renderer/components/DeleteModal';
 import UpdateModal from '$renderer/components/UpdateModal';
 import '../../../styles/detailPage.scss';
 import useBackClick from '../../../../hooks/useBackClick';
 import {
-  useRemoveEntryMutation,
+  // useRemoveEntryMutation,
   useUpdateEntryMutation,
 } from '../../../../services/bookkeepingAPI';
 import { parseDate } from '../../../../helpers/ParseDate';
 import { Project } from 'src/models/project';
+import EditBKEntry from './EditBKEntry';
+import { getUser } from '../../../../services/accountSlice';
 
 interface BKEntryDetailProps {
   entry: BKEntry;
@@ -55,7 +55,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   const goBack = useBackClick();
 
   const [updateEntry] = useUpdateEntryMutation();
-  const [removeEntry] = useRemoveEntryMutation();
+  // const [removeEntry] = useRemoveEntryMutation();
 
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalClientRevenue, setTotalClientRevenue] = useState(0);
@@ -70,11 +70,11 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   const [project, setProject] = useState<Project>();
   const [projects, setProjects] = useState<BKProject[]>([]);
   const [selectedProject, setSelectedProject] = useState<BKData | null>(null);
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [editingEntry, setEditingEntry] = useState(false);
   const [showingContactModal, setShowingContactModal] = useState(false);
   const [showingProjectModal, setShowingProjectModal] = useState(false);
 
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector(getUser);
 
   const toggleEntry = () => {
     goBack();
@@ -96,8 +96,8 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
     [entry.contact_id, selectedContact],
   );
 
-  const getContacts = () => {
-    const url = `http://localhost:3000/contacts/names/${accountState.account?.id}`;
+  const getContacts = useCallback(()=> {
+    const url = `http://localhost:3000/contacts/names/${user.account?.id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: BKClient[]) => {
@@ -108,14 +108,12 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
           type: 'contact',
         }));
         setContacts(formattedData);
+        setSelectedContact(formattedData[0])
       });
-  };
-
-  // const handleContactChange = () => {
-
-  // }
+  },[])
 
   const handleConnectContact = () => {
+    console.log(selectedContact)
     if (selectedContact) {
       const updatedEntry: BKEntry = {
         entry_name: entry.entry_name,
@@ -155,8 +153,8 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
     [entry.project_id, selectedProject],
   );
 
-  const getProjects = () => {
-    const url = `http://localhost:3000/projects/names/${accountState.account?.id}`;
+  const getProjects = useCallback(()=> {
+    const url = `http://localhost:3000/projects/names/${user.account?.id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: BKProject[]) => {
@@ -166,8 +164,24 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
           type: 'project',
         }));
         setProjects(formattedData);
+        setSelectedProject(formattedData[0])
       });
-  };
+  },[])
+
+  // const getProjects = () => {
+  //   const url = `http://localhost:3000/projects/names/${user.account?.id}`;
+  //   fetch(url)
+  //     .then((response) => response.json())
+  //     .then((data: BKProject[]) => {
+  //       const formattedData: BKProject[] = data.map((item) => ({
+  //         id: item.id,
+  //         name: item.name,
+  //         type: 'project',
+  //       }));
+  //       setProjects(formattedData);
+  //       setSelectedProject(formattedData[0])
+  //     });
+  // };
 
   const handleConnectProject = () => {
     if (selectedProject) {
@@ -193,12 +207,6 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
     }
   };
 
-  const handleDeleteEntry = () => {
-    goBack();
-    removeEntry(entry.bookkeeping_id);
-    setShowDeleteAlert(false);
-  };
-
   const handleUpdateEntry = async (data: any) => {
     updateEntry(data);
   };
@@ -222,7 +230,13 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
     if (entry.project_id) {
       getProjectInfo(entry.project_id);
     }
-  }, [entries, entry.contact_id, entry.project_id, getContactInfo, getProjectInfo]);
+  }, [
+    entries,
+    entry.contact_id,
+    entry.project_id,
+    getContactInfo,
+    getProjectInfo,
+  ]);
 
   return (
     <div className='detail-container'>
@@ -230,7 +244,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
         <div className='detail-header-leading'>
           <div className='detail-header-back' onClick={toggleEntry}>
             <FontAwesomeIcon icon={faChevronLeft} />
-            <p>Bookkeeping</p>
+            <p>Back</p>
           </div>
           <h2>{entry.entry_name}</h2>
         </div>
@@ -240,8 +254,8 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
           </h3>
           <FontAwesomeIcon
             className='settings-button'
-            icon={faTrash}
-            onClick={() => setShowDeleteAlert(!showDeleteAlert)}
+            icon={faPenToSquare}
+            onClick={() => setEditingEntry(!editingEntry)}
           />
         </div>
       </div>
@@ -412,11 +426,11 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
           </div>
         </div>
       </div>
-      {showDeleteAlert && (
-        <DeleteModal
-          onDelete={handleDeleteEntry}
-          setShowingModal={setShowDeleteAlert}
-          item='entry'
+      {editingEntry && (
+        <EditBKEntry
+          id={user.account?.id}
+          entry={entry}
+          setEditingEntry={setEditingEntry}
         />
       )}
       {showingContactModal && (

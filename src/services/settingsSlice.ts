@@ -23,7 +23,7 @@ export const settingsSlice = createSlice({
     }
 })
 
-export const FPSettings = (state: RootState) => state.settingsReducer
+export const getSettings = (state: RootState) => state.settingsReducer
 
 export const {completeOnboarding} = settingsSlice.actions
 export default settingsSlice.reducer

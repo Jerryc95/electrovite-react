@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { StrictModeDroppable } from '../../../../../../StrictModeDroppable';
 
-import { Subtask } from 'src/models/subtask';
+import { Subtask } from 'src/models/subTask';
 // import { Task } from 'src/models/task';
 
 import { taskStatus } from '../../../../../../statuses/taskStatus';
@@ -135,7 +135,7 @@ const STKanbanBoard: React.FC<KanbanProps> = ({ subtasks }) => {
     setNotStartedSubtasks(notStarted);
     setInProgSubtasks(inProg);
     setCompletedSubtasks(completed);
-  }, [subtasks]);
+  }, []);
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -151,10 +151,7 @@ const STKanbanBoard: React.FC<KanbanProps> = ({ subtasks }) => {
             >
               <h4 className='column-header'>Not Started</h4>
               {notStartedSubtasks
-                .sort((a, b) => {
-                  a.column_index < b.column_index;
-                  return 0;
-                })
+               
                 .map((subtask, index) => (
                   <STKanbanCard key={index} index={index} subtask={subtask} />
                 ))}
@@ -173,10 +170,7 @@ const STKanbanBoard: React.FC<KanbanProps> = ({ subtasks }) => {
             >
               <h4 className='column-header'>In Progress</h4>
               {inProgSubtasks
-                .sort((a, b) => {
-                  a.column_index < b.column_index;
-                  return 0;
-                })
+               
                 .map((subtask, index) => (
                   <STKanbanCard key={index} index={index} subtask={subtask} />
                 ))}
@@ -196,10 +190,7 @@ const STKanbanBoard: React.FC<KanbanProps> = ({ subtasks }) => {
             >
               <h4 className='column-header'>Completed</h4>
               {completedSubtasks
-                .sort((a, b) => {
-                  a.column_index < b.column_index;
-                  return 0;
-                })
+               
                 .map((subtask, index) => (
                   <STKanbanCard key={index} index={index} subtask={subtask} />
                 ))}

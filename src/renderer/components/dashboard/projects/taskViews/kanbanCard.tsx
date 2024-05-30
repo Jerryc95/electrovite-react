@@ -9,6 +9,7 @@ import { selectTask } from '../../../../../services/taskSlice';
 import ProgressBar from '$renderer/components/ProgressBar';
 import { Task } from 'src/models/task';
 import { taskStatus } from '../../../../../statuses/taskStatus';
+import { parseDate } from '../../../../../helpers/ParseDate';
 
 interface KanbanCardProps {
   index: number;
@@ -37,10 +38,6 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ index, task }) => {
     );
   };
 
-  const dateParser = (date: Date) => {
-    return new Date(date);
-  };
-
   const getDaysRemaining = (date: Date) => {
     const currentDate = new Date();
     const dueDate = new Date(date);
@@ -53,7 +50,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ index, task }) => {
     };
 
     if (daysRemaining > 7) {
-      return `Due: ${dateParser(task.due_date).toLocaleDateString(
+      return `Due: ${parseDate(task.due_date).toLocaleDateString(
         undefined,
         options,
       )}`;

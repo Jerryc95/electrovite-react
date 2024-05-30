@@ -150,6 +150,22 @@ export const accountSlice = createSlice({
         state.accountProfile = action.payload;
       },
     );
+
+    builder.addMatcher(
+      profileAPI.endpoints.updateProfile.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
+
+    builder.addMatcher(
+      profileAPI.endpoints.updateProfile.matchFulfilled,
+      (state, action: PayloadAction<AccountProfile>) => {
+        state.loading = 'fulfilled';
+        state.accountProfile = action.payload;
+        console.log(action.payload)
+      },
+    );
   },
 });
 

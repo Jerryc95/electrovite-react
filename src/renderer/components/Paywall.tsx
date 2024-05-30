@@ -12,6 +12,7 @@ interface PaywallProps {
   subscription: Subscription;
   requiredTier: number;
   requestedFeature: string;
+  onClose: () => void;
 }
 
 interface ISubscriptionDetails {
@@ -27,6 +28,7 @@ const Paywall: React.FC<PaywallProps> = ({
   subscription,
   requiredTier,
   requestedFeature,
+  onClose,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -69,9 +71,7 @@ const Paywall: React.FC<PaywallProps> = ({
 
   const handlePaywallNavigation = (option: string) => {
     if (option === 'dashboard') {
-      // set state of menu option
-      dispatch(selectPage('home'));
-      navigate('/');
+      onClose();
     }
     if (option === 'settings') {
       dispatch(selectPage('settings'));
@@ -200,7 +200,7 @@ const Paywall: React.FC<PaywallProps> = ({
                 handlePaywallNavigation('dashboard');
               }}
             >
-              Go to Dashboard
+              Go Back
             </button>
           </div>
         </div>

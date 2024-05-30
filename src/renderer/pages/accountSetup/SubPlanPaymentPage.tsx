@@ -4,21 +4,11 @@ import { StripeElementsOptions, loadStripe } from '@stripe/stripe-js';
 
 import StripePaymentForm from '$renderer/components/stripeAPI/StripePaymentForm';
 import { StripeSubscription } from 'src/models/stripeSubscription';
-
-interface Subscription {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  billing_cycle: string;
-  features: string[];
-  stripe_price_id: string;
-}
+import { Subscription } from 'src/models/subscription';
 
 interface SubPlanPaymentPageProps {
   setCreationStep: React.Dispatch<React.SetStateAction<number>>;
   subscription: Subscription | null;
-  customer: string;
   setStripeSubscription: React.Dispatch<
     React.SetStateAction<StripeSubscription | null>
   >;
@@ -27,7 +17,6 @@ interface SubPlanPaymentPageProps {
 function SubPlanPaymentPage({
   setCreationStep,
   subscription,
-  customer,
   setStripeSubscription,
 }: SubPlanPaymentPageProps): JSX.Element {
   const [stripePromise, setStripePromise] = useState<any>();
@@ -52,9 +41,7 @@ function SubPlanPaymentPage({
           <StripePaymentForm
             setCreationStep={setCreationStep}
             subscription={subscription}
-            customer={customer}
             setStripeSubscription={setStripeSubscription}
-
           />
         </Elements>
       ) : (

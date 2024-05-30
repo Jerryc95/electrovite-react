@@ -67,7 +67,8 @@ const STKanbanCard: React.FC<KanbanCardProps> = ({ index, subtask }) => {
     // }
   }, []);
   return (
-    <Draggable draggableId={subtask.subtask_id.toString()} index={index}>
+    <div>
+       <Draggable draggableId={subtask.subtask_id.toString()} index={index}>
       {(provided) => (
         <div
           className='kanban-card-container'
@@ -99,15 +100,18 @@ const STKanbanCard: React.FC<KanbanCardProps> = ({ index, subtask }) => {
               />
             </div>
           </div>
-          {editingSubtask && (
+        
+        </div>
+      )}
+    </Draggable>
+    {editingSubtask && (
             <EditSubtask
               subtask={subtask}
               setEditingSubtask={setEditingSubtask}
             />
           )}
-        </div>
-      )}
-    </Draggable>
+    </div>
+   
   );
 };
 

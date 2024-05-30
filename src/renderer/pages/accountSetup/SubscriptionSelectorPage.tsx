@@ -1,31 +1,20 @@
 import React, { useEffect, useState } from 'react';
 
 import SubscriptionSelector from '$renderer/components/SubscriptionSelector';
-import '../styles/subSelector.scss';
+import '../../styles/subSelector.scss';
 import { Subscription } from 'src/models/subscription';
-
-// interface Subscription {
-//   id: number;
-//   name: string;
-//   description: string;
-//   price: number;
-//   billing_cycle: string;
-//   features: string[];
-//   stripe_price_id: string;
-//   tier: 
-// }
 
 interface SubscriptionSelectorPageProps {
   setSubscription: React.Dispatch<React.SetStateAction<Subscription | null>>;
   setCreationStep: React.Dispatch<React.SetStateAction<number>>;
-  setCustomer: React.Dispatch<React.SetStateAction<string>>;
+  // setCustomer: React.Dispatch<React.SetStateAction<string>>;
   email: string,
 }
 
 const SubscriptionSelectorPage: React.FC<SubscriptionSelectorPageProps> = ({
   setSubscription,
   setCreationStep,
-  setCustomer,
+  // setCustomer,
   email,
 }) => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
@@ -85,7 +74,7 @@ const SubscriptionSelectorPage: React.FC<SubscriptionSelectorPageProps> = ({
                 planType={subscription.id == 1 ? 'free' : 'premium'}
                 setSubscription={setSubscription}
                 setCreationStep={setCreationStep}
-                setCustomer={setCustomer}
+                // setCustomer={setCustomer}
                 email={email}
               />
             </li>

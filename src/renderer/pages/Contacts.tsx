@@ -14,7 +14,7 @@ import UpcomingEventView from '$renderer/components/dashboard/contacts/events/Up
 import { getUser } from '../../services/accountSlice';
 
 import { useFetchContactsQuery } from '../../services/contactAPI';
-import { selectContact, selectedContacts } from '../../services/contactSlice';
+import { selectContact, getContacts } from '../../services/contactSlice';
 
 interface UpcomingEvent {
   contact: Contact;
@@ -23,7 +23,7 @@ interface UpcomingEvent {
 
 const Contacts: React.FC = () => {
   const user = useSelector(getUser);
-  const contacts = useSelector(selectedContacts);
+  const contacts = useSelector(getContacts);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

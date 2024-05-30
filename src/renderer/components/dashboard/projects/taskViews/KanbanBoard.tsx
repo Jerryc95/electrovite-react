@@ -9,6 +9,7 @@ import KanbanCard from './kanbanCard';
 import { taskStatus } from '../../../../../statuses/taskStatus';
 import { useUpdateTaskMutation } from '../../../../../services/taskAPI';
 
+
 interface KanbanProps {
   tasks: Task[];
 }
@@ -94,8 +95,8 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
 
   const handleOnDragEnd = (result: DropResult) => {
     const { source, destination } = result;
-    console.log("soruce:",source)
-    console.log("destination:", destination)
+    // console.log("soruce:",source)
+    // console.log("destination:", destination)
     if (!destination) {
       return;
     }
@@ -113,7 +114,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
     if (source.droppableId === 'not-started') {
       liftedTask = notStarted[source.index];
       notStarted.splice(source.index, 1);
-      console.log("array:", notStarted)
+      // console.log("array:", notStarted)
     } else if (source.droppableId === 'in-progress') {
       liftedTask = inProg[source.index];
       inProg.splice(source.index, 1);
@@ -149,8 +150,13 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
         'completed',
         destination.index,
       );
+      // console.log(completedTasks)
     }
+    // combined the 3 arrays together and set the state to that new array
+    console.log(notStarted)
   };
+
+
 
   useEffect(() => {
     const notStarted: Task[] = [];
@@ -168,7 +174,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
     setNotStartedTasks(notStarted);
     setInProgTasks(inProg);
     setCompletedTasks(completed);
-  }, [tasks]);
+  }, []);
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -184,10 +190,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
             >
               <h4 className='column-header'>Not Started</h4>
               {notStartedTasks
-                // .sort((a, b) => {
-                //   a.column_index < b.column_index;
-                //   return 0;
-                // })
+              //  .sort((a, b) => a.column_index - b.column_index)
                 .map((task, index) => (
                   <KanbanCard
                     index={index}
@@ -211,10 +214,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
             >
               <h4 className='column-header'>In Progress</h4>
               {inProgTasks
-                // .sort((a, b) => {
-                //   a.column_index < b.column_index;
-                //   return 0;
-                // })
+              //  .sort((a, b) => a.column_index - b.column_index)
                 .map((task, index) => (
                   <KanbanCard
                     index={index}
@@ -238,10 +238,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
             >
               <h4 className='column-header'>Completed</h4>
               {completedTasks
-                // .sort((a, b) => {
-                //   a.column_index < b.column_index;
-                //   return 0;
-                // })
+              //  .sort((a, b) => a.column_index - b.column_index)
                 .map((task, index) => (
                   <KanbanCard
                     index={index}

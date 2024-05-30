@@ -10,7 +10,6 @@ interface SubscriberFormProps {
   setIsUpdatingPlan: React.Dispatch<React.SetStateAction<boolean>>;
   setViewingPlans: React.Dispatch<React.SetStateAction<boolean>>;
   setSuccessfullySubscribedAlert: React.Dispatch<React.SetStateAction<boolean>>;
-  customer: string;
 }
 
 function NewSubscriberForm({
@@ -18,7 +17,6 @@ function NewSubscriberForm({
   setIsUpdatingPlan,
   setViewingPlans,
   setSuccessfullySubscribedAlert,
-  customer,
 }: SubscriberFormProps): JSX.Element {
   const [stripePromise, setStripePromise] = useState<any>();
 
@@ -34,6 +32,7 @@ function NewSubscriberForm({
       setStripePromise(loadStripe(publishableKey));
     });
   }, []);
+
   return (
     <div className='subscription-update-container'>
       <div className='subscription-columns-container'>
@@ -42,7 +41,6 @@ function NewSubscriberForm({
             <Elements stripe={stripePromise} options={options}>
               <StripePaymentForm
                 subscription={subscription}
-                customer={customer}
                 setIsUpdatingPlan={setIsUpdatingPlan}
                 setViewingPlans={setViewingPlans}
                 setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}

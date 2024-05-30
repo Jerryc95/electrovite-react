@@ -3,24 +3,24 @@ import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
-import { RootState } from '../../../services/store';
+
 import { AccountProfile } from 'src/models/accountProfile';
 import { useUpdateProfileMutation } from '../../../services/profileAPI';
-import { updateProfileState } from '../../../services/accountSlice';
+import { getUser, updateProfileState } from '../../../services/accountSlice';
 import EmojiPicker from '../EmojiPicker';
 
 const SettingsProfile: React.FC = () => {
   // this prob can be updated
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector(getUser);
   const [accountProfile, setAccountProfile] = useState<AccountProfile | null>(
-    accountState.accountProfile,
+    user.accountProfile,
   );
   const [editingPersonal, setEditingPersonal] = useState(false);
   const [editingBusiness, setEditingBusiness] = useState(false);
   const [editedLabel, setEditedlabel] = useState('');
   const [editedValue, setEditedValue] = useState('');
   const [selectedEmoji, setSelectedEmoji] = useState(
-    accountState.accountProfile!.profile_pic,
+    user.accountProfile!.profile_pic,
   );
 
   const dispatch = useDispatch();
@@ -28,10 +28,11 @@ const SettingsProfile: React.FC = () => {
 
   const personalOnSubmit = () => {
     if (editedValue != '' && editedLabel != '') {
-      if (accountProfile) {
-        accountProfile.profile_pic = selectedEmoji;
-        dispatch(updateProfileState(accountProfile));
-        updateProfile(accountProfile);
+      if (user) {
+        user.accountProfile!.profile_pic = selectedEmoji;
+        // dispatch(updateProfileState(accountProfile));
+        updateProfile(user.accountProfile!);
+        console.log("changed")
       }
     }
 
@@ -63,6 +64,7 @@ const SettingsProfile: React.FC = () => {
       profile_pic: emoji,
     }));
     if (accountProfile) {
+      console.log(accountProfile)
       dispatch(updateProfileState(accountProfile));
       updateProfile(accountProfile);
     }

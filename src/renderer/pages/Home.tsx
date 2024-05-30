@@ -12,11 +12,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-import { RootState } from '../../services/store';
-
 import '../styles/Home.scss';
 import { parseDate } from '../../helpers/ParseDate';
-// import { ContactEvent } from 'src/models/contactEvent';
 import { BKEntry } from 'src/models/BKEntry';
 import { Contact } from 'src/models/contact';
 import UpcomingEventView from '$renderer/components/dashboard/contacts/events/UpcomingEventView';
@@ -24,42 +21,21 @@ import UpcomingTaskView from '$renderer/components/dashboard/home/UpcomingTaskVi
 import NewClientsBox from '$renderer/components/dashboard/home/NewClientsBox';
 import InvoiceInfoBox from '$renderer/components/dashboard/home/InvoiceInfoBox';
 import {
+  useFetchExpensesQuery,
   useFetchRevenueQuery,
   useFetchUpcomingEventsQuery,
   useFetchUpcomingTasksQuery,
 } from '../../services/homeAPI';
-import { selectedRevenue, selectedUpcomingEvents, selectedUpcomingTasks } from '../../services/homeSlice';
+import {
+  getExpenses,
+  getRevenue,
+  getUpcomingEvents,
+  getUpcomingTasks,
+} from '../../services/homeSlice';
 import { getUser } from '../../services/accountSlice';
-// import { taskStatus } from 'src/statuses/taskStatus';
-// import { Subtask } from 'src/models/subTask';
-
-// interface UpcomingEvent {
-//   contact: Contact;
-//   event: ContactEvent;
-// }
-
-// interface ISubtask {
-//   subtask_id: number;
-//   task_id: number;
-//   subtask_status: string;
-// }
-
-// interface UpcomingTask {
-//   project_name: string;
-//   task_id: number;
-//   name: string;
-//   due_date: Date;
-//   task_status: string;
-//   completed: boolean;
-//   priority: string;
-//   subtasks: ISubtask[];
-// }
-
-// interface IHomeData {
-//   contacts: Contact[];
-//   revenue: BKEntry[];
-//   upcomingTasks: UpcomingTask[];
-// }
+import RecurringExpenseBox from '$renderer/components/dashboard/home/RecurringExpenseBox';
+import BlurredOverlay from '$renderer/components/BlurredOverlay';
+import { getSubscription } from '../../services/subscriptionSlice';
 
 interface IRevenueEntryData {
   date: string;
@@ -75,9 +51,11 @@ interface IRevenueChartData {
 
 const Home: React.FC = () => {
   const user = useSelector(getUser);
-  const upcomingTasks = useSelector(selectedUpcomingTasks)
-  const upcomingEvents = useSelector(selectedUpcomingEvents)
-  const revenue = useSelector(selectedRevenue)
+  const subscription = useSelector(getSubscription);
+  const upcomingTasks = useSelector(getUpcomingTasks);
+  const upcomingEvents = useSelector(getUpcomingEvents);
+  const recurringExpenses = useSelector(getExpenses);
+  const revenue = useSelector(getRevenue);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [timeOfDay, setTimeOfDay] = useState('Morning');
   const [timeIcon, setTimeIcon] = useState(faSun);
@@ -95,11 +73,12 @@ const Home: React.FC = () => {
     refetchOnMountOrArgChange: true,
   });
   const fetchRevenue = useFetchRevenueQuery(user.account?.id, {
-    refetchOnMountOrArgChange: true,  
+    refetchOnMountOrArgChange: true,
   });
+  const fetchExpenses = useFetchExpensesQuery(user.account?.id);
 
   // const today = new Date();
-  const today = useMemo(()=> new Date(),[])
+  const today = useMemo(() => new Date(), []);
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
@@ -228,89 +207,6 @@ const Home: React.FC = () => {
     setRevenueEntries(rawChartData);
   };
 
-  // useEffect(() => {
-    // if (accountState) {
-      // const url = `http://localhost:3000/home?id=${accountState.account?.id}`;
-      // const upcomingEventsArray: UpcomingEvent[] = [];
-      // const upcomingTasksArray: UpcomingTask[] = [];
-      //   let uncompleted = 0
-      //   let completed = 0
-
-      // fetch(url)
-      //   .then((response) => response.json())
-      //   .then(async (data: IHomeData) => {
-      //     await Promise.all([
-            // console.log('raw Data:', data),
-            // setContacts(data.contacts),
-            // data.contacts.forEach((contact) => {
-              // if (contact.events.length !== 0) {
-              //   contact.events.forEach((event) => {
-              //     if (parseDate(event.event_date) > today) {
-              //       const upcomingEvent: UpcomingEvent = {
-              //         contact: contact,
-              //         event: event,
-              //       };
-              //       upcomingEventsArray.push(upcomingEvent);
-              //     }
-              //   });
-              // }
-            // }),
-            // setUpcomingEvents(
-            //   upcomingEventsArray
-            //     .sort((a, b) => {
-            //       const dateA = parseDate(a.event.event_date);
-            //       const dateB = parseDate(b.event.event_date);
-            //       if (dateA.getTime() < dateB.getTime()) {
-            //         return -1;
-            //       }
-            //       if (dateA.getTime() > dateB.getTime()) {
-            //         return 1;
-            //       }
-            //       return 0;
-            //     })
-            //     .slice(0, 3),
-            // ),
-
-            // data.upcomingTasks.forEach((upcomingTask) => {
-            //   const daysRemaining = Math.ceil(
-            //     timeDifference(upcomingTask.due_date) / (1000 * 60 * 60 * 24),
-            //   );
-            //   if (daysRemaining < 7) {
-            //     upcomingTasksArray.push(upcomingTask);
-                //     upcomingTask.subtasks.forEach((subtask) => {
-                //         if (subtask.subtask_status === taskStatus.Completed) {
-                //             completed += 1;
-                //           } else {
-                //             uncompleted += 1;
-                //           }
-                //     })
-              // }
-              // setUpcomingTasks(upcomingTasksArray.slice(0, 3));
-              //   setUncompletedSubtasks(uncompleted)
-              //    setCompletedSubtasks(completed)
-            // }),
-            // handleSetRevenueEntries(data.revenue, 60),
-            // handleSetRevenueEntries(revenue, 60),
-    //       ]);
-    //     });
-    // }
-    // const currentHour = today.getHours();
-
-    // if (currentHour >= 5 && currentHour < 12) {
-    //   setTimeOfDay('Morning');
-    //   setTimeIcon(faSun);
-    // } else if (currentHour >= 12 && currentHour < 17) {
-    //   setTimeOfDay('Afternoon');
-    //   setTimeIcon(faSun);
-    // } else if (currentHour >= 17 && currentHour < 20) {
-    //   setTimeOfDay('Evening');
-    //   setTimeIcon(faMoon);
-    // } else if (currentHour >= 20 && currentHour < 4) {
-    //   setTimeOfDay('Night');
-    //   setTimeIcon(faMoon);
-    // }
-  // }, []);
-
   useEffect(() => {
     const currentHour = today.getHours();
 
@@ -333,7 +229,8 @@ const Home: React.FC = () => {
     fetchEvents;
     fetchTasks;
     fetchRevenue;
-    handleSetRevenueEntries(revenue, 60)
+    fetchExpenses;
+    handleSetRevenueEntries(revenue, 60);
   }, []);
   return (
     <div className='home-container'>
@@ -349,73 +246,90 @@ const Home: React.FC = () => {
       </div>
       <h3>Upcoming Tasks</h3>
       <div className='home-row'>
-        {upcomingTasks.map((upcomingTask) => (
-          <div className='margin' key={upcomingTask.task_id}>
-            <UpcomingTaskView upcomingTask={upcomingTask} />
-          </div>
-        ))}
+        {upcomingTasks.length > 0 ? (
+          <>
+            {upcomingTasks.map((upcomingTask) => (
+              <div className='margin' key={upcomingTask.task_id}>
+                <UpcomingTaskView upcomingTask={upcomingTask} />
+              </div>
+            ))}
+          </>
+        ) : (
+          <p className='info-text'>
+            It looks like you're all caught up on your upcoming tasks!
+          </p>
+        )}
       </div>
       <h3>Upcoming Events</h3>
       <div className='home-row'>
-        {upcomingEvents.map((event) => (
-          <div className='margin'>
-            <UpcomingEventView upcomingEvent={event} />
-          </div>
-        ))}
+        {upcomingEvents.length > 0 ? (
+          <>
+            {upcomingEvents.map((event) => (
+              <div className='margin'>
+                <UpcomingEventView upcomingEvent={event} />
+              </div>
+            ))}
+          </>
+        ) : (
+          <p className='info-text'>
+            Looks like there are no upcoming events coming up.
+          </p>
+        )}
       </div>
       <h3>Finances</h3>
-      <div className='home-row'>
-        <div className='home-col'>
-          <NewClientsBox contacts={contacts} />
-          <InvoiceInfoBox label='Overdue Invoices' invoices={[]} />
-          <InvoiceInfoBox label='Paid Invoices' invoices={[]} />
-          <InvoiceInfoBox label='Recurring Expenses' invoices={[]} />
-        </div>
-        <div
-          className='revenue-chart-container'
-          onClick={() => {
-            console.log(revenueEntries);
-          }}
-        >
-          <div className='home-row margin space-between'>
-            <h4>Revenue</h4>
-            <h5>Last 30 Days vs prior Month</h5>
+      <BlurredOverlay
+        blur={subscription!.tier > 2 ? 0 : 8}
+        allowed={subscription!.tier > 2 ? true : false}
+        text="Subscribe to Flowplanr Pro to unlock Finances"
+      >
+        <div className='home-row'>
+          <div className='home-col'>
+            <NewClientsBox id={user.account?.id} />
+            <InvoiceInfoBox label='Overdue Invoices' invoices={[]} />
+            <InvoiceInfoBox label='Paid Invoices' invoices={[]} />
+            <RecurringExpenseBox recurringExpenses={recurringExpenses} />
           </div>
+          <div className='revenue-chart-container'>
+            <div className='home-row margin space-between'>
+              <h4>Revenue</h4>
+              <h5>Last 30 Days vs prior Month</h5>
+            </div>
 
-          <ResponsiveContainer width='100%' height='100%'>
-            <LineChart
-              margin={{
-                top: 20,
-                right: 30,
-                // left: 20,
-                bottom: 75,
-              }}
-            >
-              <XAxis
-                dataKey='date'
-                allowDuplicatedCategory={false}
-                interval={6}
-              />
-              <YAxis tickFormatter={YAxisFormatter} />
-              <Tooltip />
-              <Legend />
-              {revenueEntries.map((entries) => (
-                <Line
-                  type='monotoneY'
-                  dataKey='amount'
-                  data={entries.data}
-                  name={entries.name}
-                  key={entries.name}
-                  stroke={entries.stroke}
-                  dot={false}
-                  strokeWidth={3}
-                  opacity={entries.opacity}
+            <ResponsiveContainer width='100%' height='100%'>
+              <LineChart
+                margin={{
+                  top: 20,
+                  right: 30,
+                  // left: 20,
+                  bottom: 75,
+                }}
+              >
+                <XAxis
+                  dataKey='date'
+                  allowDuplicatedCategory={false}
+                  interval={6}
                 />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+                <YAxis tickFormatter={YAxisFormatter} />
+                <Tooltip />
+                <Legend />
+                {revenueEntries.map((entries) => (
+                  <Line
+                    type='monotoneY'
+                    dataKey='amount'
+                    data={entries.data}
+                    name={entries.name}
+                    key={entries.name}
+                    stroke={entries.stroke}
+                    dot={false}
+                    strokeWidth={3}
+                    opacity={entries.opacity}
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-      </div>
+      </BlurredOverlay>
     </div>
   );
 };

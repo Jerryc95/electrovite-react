@@ -1,6 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSubscription } from '../../../../services/subscriptionSlice';
+import {
+  getStripeCustomer,
+  updateSubscription,
+} from '../../../../services/subscriptionSlice';
 import { StripeSubscription } from 'src/models/stripeSubscription';
 
 import { RootState } from '../../../../services/store';
@@ -22,6 +25,7 @@ const ConfirmCancelSub: React.FC<ConfirmCancelSubProps> = ({
   const subscriptionState = useSelector(
     (state: RootState) => state.subscriptionReducer,
   );
+  const customer = useSelector(getStripeCustomer);
   const dispatch = useDispatch();
 
   const handleCancelSubClick = async () => {
@@ -68,12 +72,14 @@ const ConfirmCancelSub: React.FC<ConfirmCancelSubProps> = ({
           'Summary Dashboard',
         ],
         stripe_price_id: 'N/A',
-        tier: 1
+        tier: 1,
       };
 
       const cancelledSubscription = {
         subscription: starterSubscription,
+        previousSubscription: subscriptionState.subscription,
         stripeSubscription: updatedStripeSubscription,
+        stripeCustomer: customer,
         loading: subscriptionState.loading,
         error: subscriptionState.error,
       };

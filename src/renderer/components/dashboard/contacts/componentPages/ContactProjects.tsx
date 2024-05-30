@@ -41,6 +41,7 @@ const ContactProjects: React.FC<ContactProjectsProps> = ({ contact }) => {
         <div className='projects-grid'>
           {projects.map((project) => (
             <div
+              key={project.id}
               className='project-grid-item'
               onClick={() => toggleProject(project)}
             >

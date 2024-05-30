@@ -33,12 +33,12 @@ const Settings: React.FC = () => {
   const [fetchPaymentMethod] = useFetchPaymentMethodMutation();
 
   useEffect(() => {
-    
+    console.log(subscriptionState.stripeSubscription)
     if (
       subscriptionState.stripeSubscription?.id != null &&
-      paymentMethodState.payment == null
+      paymentMethodState.payment == null &&
+      subscriptionState.stripeSubscription.default_payment_method != null
     ) {
-      console.log(subscriptionState.stripeSubscription)
       const customerInfo = {
         customer: subscriptionState.stripeSubscription.customer,
         id: subscriptionState.stripeSubscription.default_payment_method,

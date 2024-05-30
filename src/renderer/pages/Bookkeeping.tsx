@@ -12,10 +12,10 @@ import BKEntryRowLabel from '$renderer/components/dashboard/bookkeeping/BKEntryR
 import NewExpense from '$renderer/components/dashboard/bookkeeping/Expenses/NewExpense';
 import RecurringExpense from '$renderer/components/dashboard/bookkeeping/Expenses/RecurringExpense';
 import {
-  selectedEntries,
-  selectedExpenseEntries,
-  selectedRecurringExpenses,
-  selectedRevenueEntries,
+  getEntries,
+  getExpenseEntries,
+  getRecurringExpenses,
+  getRevenueEntries,
   setSelectedEntry,
 } from '../../services/bookkeepingSlice';
 import { useFetchEntriesQuery } from '../../services/bookkeepingAPI';
@@ -23,10 +23,10 @@ import { useFetchEntriesQuery } from '../../services/bookkeepingAPI';
 
 const Bookkeeping: React.FC = () => {
   const user = useSelector(getUser);
-  const entries = useSelector(selectedEntries);
-  const revenueEntries = useSelector(selectedRevenueEntries);
-  const expenseEntries = useSelector(selectedExpenseEntries);
-  const recurringExpenses = useSelector(selectedRecurringExpenses);
+  const entries = useSelector(getEntries);
+  const revenueEntries = useSelector(getRevenueEntries);
+  const expenseEntries = useSelector(getExpenseEntries);
+  const recurringExpenses = useSelector(getRecurringExpenses);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

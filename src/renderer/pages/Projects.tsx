@@ -14,22 +14,26 @@ import NewRecurringTask from '$renderer/components/dashboard/projects/recurringT
 import RecurringTaskView from '$renderer/components/dashboard/projects/recurringTasks/RecurringTask';
 import RecurringTaskTracker from '$renderer/components/dashboard/projects/recurringTasks/RecurringTaskTracker';
 import { getUser } from '../../services/accountSlice';
-import { selectedRecurringTasks } from '../../services/recurringTaskSlice';
+import { getRecurringTasks } from '../../services/recurringTaskSlice';
 import { useFetchRecurringTasksQuery } from '../../services/recurringTaskAPI';
-import { selectedUpcomingTasks } from '../../services/homeSlice';
+import { getUpcomingTasks } from '../../services/homeSlice';
 import UpcomingTaskView from '$renderer/components/dashboard/home/UpcomingTaskView';
+import { getSubscription } from '../../services/subscriptionSlice';
+import Paywall from '$renderer/components/Paywall';
 
 const Projects: React.FC = () => {
   const user = useSelector(getUser);
+  const subscription = useSelector(getSubscription);
   const projects = useSelector(getProjects);
-  const recurringTasks = useSelector(selectedRecurringTasks);
-  const upcomingTasks = useSelector(selectedUpcomingTasks)
+  const recurringTasks = useSelector(getRecurringTasks);
+  const upcomingTasks = useSelector(getUpcomingTasks);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [addingProject, setAddingProject] = useState(false);
+  const [viewingPaywall, setViewingPaywall] = useState(false);
   const [addingRecurringTask, setAddingRecurringTask] = useState(false);
   const [viewingRecurringTasks, setViewingRecurringTasks] = useState(true);
 
@@ -44,6 +48,18 @@ const Projects: React.FC = () => {
   const toggleRecurringTasks = () => {
     setViewingRecurringTasks(!viewingRecurringTasks);
   };
+
+  const handleAddProject = () => {
+    if (projects.length >= 3 && subscription?.tier == 1) {
+      setViewingPaywall(true);
+    } else {
+      setAddingProject(true);
+    }
+  };
+
+  const closePaywall = () => {
+    setViewingPaywall(false)
+  }
 
   const projectFilters = [
     { name: 'All', cName: 'filter-capsule all' },
@@ -89,7 +105,7 @@ const Projects: React.FC = () => {
     <div className='projects-container'>
       <div className='projects-header'>
         <h2>Projects</h2>
-        <button onClick={() => setAddingProject(true)}>Add New Project</button>
+        <button onClick={handleAddProject}>Add New Project</button>
       </div>
       <h3>Upcoming Tasks</h3>
       <div className='projects-overview'>
@@ -100,14 +116,14 @@ const Projects: React.FC = () => {
           </p>
         ) : (
           <div className='upcoming-task-row'>
-            {
-              upcomingTasks.map((upcomingTask) => (
-                <div key={upcomingTask.task_id} className='upcoming-task-container'>
-                   <UpcomingTaskView upcomingTask={upcomingTask}/>
-                  </div>
-               
-              ))
-            }
+            {upcomingTasks.map((upcomingTask) => (
+              <div
+                key={upcomingTask.task_id}
+                className='upcoming-task-container'
+              >
+                <UpcomingTaskView upcomingTask={upcomingTask} />
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -155,15 +171,14 @@ const Projects: React.FC = () => {
             >
               Add Task
             </button>
-              <FontAwesomeIcon
-                onClick={toggleRecurringTasks}
-                icon={viewingRecurringTasks ? faChevronDown : faChevronUp}
-                size='lg'
-                className={`task-chevron ${
-                  viewingRecurringTasks ? 'collapsed-chevron' : ''
-                }`}
-              />
-        
+            <FontAwesomeIcon
+              onClick={toggleRecurringTasks}
+              icon={viewingRecurringTasks ? faChevronDown : faChevronUp}
+              size='lg'
+              className={`task-chevron ${
+                viewingRecurringTasks ? 'collapsed-chevron' : ''
+              }`}
+            />
           </div>
 
           {recurringTasks.length === 0 ? (
@@ -204,6 +219,15 @@ const Projects: React.FC = () => {
         <NewRecurringTask
           setAddingTask={setAddingRecurringTask}
           id={user.account?.id}
+        />
+      )}
+
+      {viewingPaywall && (
+        <Paywall
+          subscription={subscription!}
+          requiredTier={2}
+          requestedFeature='Unlimited Projects'
+          onClose={closePaywall}
         />
       )}
     </div>

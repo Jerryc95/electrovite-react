@@ -4,6 +4,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { StripePaymentMethod } from '../models/stripePaymentMethod';
 import { paymentAPI } from './paymentAPI';
+import { RootState } from './store';
 
 interface paymentState {
   payment: StripePaymentMethod | null;
@@ -23,13 +24,16 @@ export const paymentSlice = createSlice({
   initialState: inititalPaymentState,
   reducers: {
     clearPaymentState: () => inititalPaymentState,
-    updatePaymentMethod: (state, action: PayloadAction<StripePaymentMethod>) => {
+    updatePaymentMethod: (
+      state,
+      action: PayloadAction<StripePaymentMethod>,
+    ) => {
       state.payment = action.payload;
     },
   },
 
   extraReducers: (builder) => {
-    //SUBSCRIPTION API
+    //PAYMENTS API
     builder.addMatcher(
       paymentAPI.endpoints.fetchPaymentMethod.matchPending,
       (state) => {
@@ -46,5 +50,6 @@ export const paymentSlice = createSlice({
   },
 });
 
-export const {clearPaymentState} = paymentSlice.actions
+export const getPayment = (state: RootState) => state.paymentReducer;
+export const { clearPaymentState } = paymentSlice.actions;
 export default paymentSlice.reducer;

@@ -5,12 +5,12 @@ import { useSelector } from 'react-redux';
 import AuthForm from '$renderer/components/AuthForm';
 import { useSignInAccountMutation } from '../../../services/authAPI';
 import Onboarding from '../onboarding/Onboarding';
-import { FPSettings } from '../../../services/settingsSlice';
+import { getSettings } from '../../../services/settingsSlice';
 
 // import { useFetchProfileMutation } from '../../../services/profileAPI';
 
 const SignInPage: React.FC = () => {
-  const settings = useSelector(FPSettings)
+  const settings = useSelector(getSettings)
   const [signInUser] = useSignInAccountMutation();
   const navigate = useNavigate();
 

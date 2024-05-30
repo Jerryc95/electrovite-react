@@ -5,8 +5,13 @@ import { faArrowRight, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../../../../services/store';
 import { Subscription } from 'src/models/subscription';
-import { updateSubscription } from '../../../../../services/subscriptionSlice';
-import { StripeSubscription } from 'src/models/stripeSubscription';
+// import { updateSubscription } from '../../../../../services/subscriptionSlice';
+// import { StripeSubscription } from 'src/models/stripeSubscription';
+import { getUser } from '../../../../../services/accountSlice';
+import {
+  useCancelSubscriptionMutation,
+  useUpdateSubscriptionMutation,
+} from '../../../../../services/subscriptionAPI';
 
 interface SubscriberFormProps {
   subscription: Subscription;
@@ -24,9 +29,11 @@ const ExistingSubscriberForm: React.FC<SubscriberFormProps> = ({
   const subscriptionState = useSelector(
     (state: RootState) => state.subscriptionReducer,
   );
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector(getUser);
+  const [updateSubscription] = useUpdateSubscriptionMutation();
+  const [cancelledSubscription] = useCancelSubscriptionMutation();
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const getPlanColorClass = (plan: string | undefined) => {
     switch (plan) {
@@ -41,53 +48,34 @@ const ExistingSubscriberForm: React.FC<SubscriberFormProps> = ({
     }
   };
 
-  const handleUpdatePlan = async () => {
-    const url = 'http://localhost:3000/payment/update-subscription';
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          currentSubscriptionID: subscriptionState.stripeSubscription?.id,
-          priceID: subscription.stripe_price_id,
-          subscriptionID: subscription.id,
-          accountID: accountState.account?.id,
-        }),
-      });
-      const responseData = await response.json();
-      console.log(responseData)
-      const updatedStripeSubscription: StripeSubscription = {
-        id: responseData.subscription.id,
-        customer: responseData.subscription.customer,
-        start_date: responseData.subscriptionstart_date,
-        current_period_end: responseData.subscription.current_period_end,
-        current_period_start: responseData.subscription.current_period_start,
-        trial_end: responseData.subscription.trial_end,
-        cancel_at: responseData.subscription.cancel_at,
-        cancel_at_period_end: responseData.subscription.cancel_at_period_end,
-        canceled_at: responseData.subscription.canceled_at,
-        status: responseData.subscription.status,
-        default_payment_method: responseData.subscription.default_payment_method,
+  const handleUpdatePlan = () => {
+    if (subscription.id !== 1) {
+      const data = {
+        stripeSubID: subscriptionState.stripeSubscription?.id,
+        priceID: subscription.stripe_price_id,
+        subscriptionID: subscription.id,
+        previousSubID: subscriptionState.subscription?.id,
+        accountID: user.account?.id,
       };
-
-      const updatedSubscription = {
-        subscription: subscription,
-        stripeSubscription: updatedStripeSubscription,
-        loading: subscriptionState.loading,
-        error: subscriptionState.error,
+      console.log(data)
+      updateSubscription(data);
+    } else {
+      const data = {
+        stripe_sub_id: subscriptionState.stripeSubscription?.id,
+        accountID: user.account?.id,
+        previous_sub_id: subscriptionState.subscription?.id
       };
-      // add api to get payment method here
-
-      dispatch(updateSubscription(updatedSubscription));
-
-      setIsUpdatingPlan(false);
-      setViewingPlans(false);
-      setSuccessfullySubscribedAlert(true);
-    } catch (error) {
-      console.log(error);
+      console.log(data);
+      cancelledSubscription(data);
     }
+
+    // add api to get payment method here
+
+    // dispatch(updateSubscription(updatedSubscription));
+
+    setIsUpdatingPlan(false);
+    setViewingPlans(false);
+    setSuccessfullySubscribedAlert(true);
   };
 
   return (

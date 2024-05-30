@@ -7,14 +7,12 @@ import ExistingAccountSubscribeForm from './ExistingAccountSubscribeForm';
 
 interface SubDetailColumnProps {
   subscription: Subscription;
-  customer: string;
   setViewingPlans: React.Dispatch<React.SetStateAction<boolean>>
   setSuccessfullySubscribedAlert: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const SubDetailColumn: React.FC<SubDetailColumnProps> = ({
   subscription,
-  customer,
   setSuccessfullySubscribedAlert,
   setViewingPlans
 }) => {

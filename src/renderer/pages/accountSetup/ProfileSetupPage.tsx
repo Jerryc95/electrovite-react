@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
   useRegisterAccountMutation,
   useSignInAccountMutation,
-} from '../../services/authAPI';
+} from '../../../services/authAPI';
 import ProfileEditForm from '$renderer/components/ProfileEditForm';
 import { StripeSubscription } from 'src/models/stripeSubscription';
+import { useSelector } from 'react-redux';
+import { getStripeCustomer } from '../../../services/subscriptionSlice';
+import { useDeleteCustomerMutation } from '../../../services/subscriptionAPI';
 
 interface Subscription {
   id: number;
@@ -24,7 +27,6 @@ interface ProfileSetupPageProps {
   password: string;
   subscription: Subscription | null;
   stripeSubscription: StripeSubscription | null;
-  customer: string;
 }
 
 const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
@@ -33,10 +35,12 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
   setCreationStep,
   subscription,
   stripeSubscription,
-  customer,
 }) => {
   const [registerAccount] = useRegisterAccountMutation();
   const [signInAccount] = useSignInAccountMutation();
+  const [deleteCustomer] = useDeleteCustomerMutation();
+
+  const customer = useSelector(getStripeCustomer);
 
   const navigate = useNavigate();
   const handleSetup = (formData: {
@@ -65,6 +69,7 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
     if (subscription?.id !== 1) {
       setCreationStep(2);
     } else {
+      deleteCustomer({customer: customer});
       setCreationStep(1);
     }
   };

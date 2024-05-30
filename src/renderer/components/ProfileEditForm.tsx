@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux/es/hooks/useSelector';
+// import { useSelector } from 'react-redux/es/hooks/useSelector';
 
 import '../styles/profileEditForm.scss';
-import AvatarPicker from './AvatarPicker';
 import EmojiPicker from './EmojiPicker';
 
 import { RootState } from '../../services/store';
@@ -28,7 +27,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
 }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [profilePic, setProfilePic] = useState('');
+  const [profilePic, setProfilePic] = useState('👨‍💻');
   const [logo, setLogo] = useState<File | null | undefined>(null);
   const [company, setCompany] = useState('');
   const [role, setRole] = useState('');

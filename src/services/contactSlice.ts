@@ -183,7 +183,7 @@ export const contactSlice = createSlice({
   },
 });
 
-export const selectedContacts = (state: RootState) =>
+export const getContacts = (state: RootState) =>
   state.contactReducer.contacts;
 
 export const { clearContactState, selectContact } = contactSlice.actions;

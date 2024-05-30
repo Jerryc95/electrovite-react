@@ -102,7 +102,7 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
         <div className='contact-detail-header-leading'>
           <div className='contact-detail-back' onClick={toggleContact}>
             <FontAwesomeIcon icon={faChevronLeft} />
-            <p>Contacts</p>
+            <p>Back</p>
           </div>
           <h2>
             {contact.first_name} {contact.last_name}

@@ -7,6 +7,7 @@ import { RootState } from '../../../../../services/store';
 import { updateSubscription } from '../../../../../services/subscriptionSlice';
 import { Subscription } from 'src/models/subscription';
 import { StripeSubscription } from 'src/models/stripeSubscription';
+import { getUser } from 'src/services/accountSlice';
 
 interface SubscriberFormProps {
   subscription: Subscription;
@@ -24,7 +25,7 @@ const ReturningSubscriberForm: React.FC<SubscriberFormProps> = ({
   const subscriptionState = useSelector(
     (state: RootState) => state.subscriptionReducer,
   );
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector(getUser);
 
   const dispatch = useDispatch();
 
@@ -53,7 +54,7 @@ const ReturningSubscriberForm: React.FC<SubscriberFormProps> = ({
           currentSubscriptionID: subscriptionState.stripeSubscription?.id,
           priceID: subscription.stripe_price_id,
           subscriptionID: subscription.id,
-          accountID: accountState.account?.id,
+          accountID: user.account?.id,
         }),
       });
       const responseData = await response.json();
@@ -75,6 +76,8 @@ const ReturningSubscriberForm: React.FC<SubscriberFormProps> = ({
       const updatedSubscription = {
         subscription: subscription,
         stripeSubscription: updatedStripeSubscription,
+        stripeCustomer: subscriptionState.stripeCustomer,
+        previousSubscription: subscription,
         loading: subscriptionState.loading,
         error: subscriptionState.error,
       };

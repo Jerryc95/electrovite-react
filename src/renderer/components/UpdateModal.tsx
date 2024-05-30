@@ -73,8 +73,8 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
         return i.entry_name === e.target.value
       }
     });
+    console.log(foundData)
     if (foundData) {
-
       setData(foundData);
     }
   };

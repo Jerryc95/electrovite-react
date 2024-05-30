@@ -58,7 +58,9 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
 
   const getContactInfo = useCallback(
     async (id: number) => {
+      console.log(1)
       if (project.contact_id || selectedContact !== null) {
+        console.log(2)
         const url = `http://localhost:3000/contacts/details/${id}`;
         try {
           const response = await fetch(url);
@@ -72,7 +74,8 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
     [project.contact_id, selectedContact],
   );
 
-  const getContacts = () => {
+  const getContacts = useCallback(() => {
+    console.log("ran with callback")
     const url = `http://localhost:3000/contacts/names/${user.account?.id}`;
     fetch(url)
       .then((response) => response.json())
@@ -84,8 +87,26 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
           type: 'contact',
         }));
         setContacts(formattedData);
+        setSelectedContact(formattedData[0])
       });
-  };
+  },[])
+
+  // const getContacts = () => {
+  //   console.log("ran without callback")
+  //   const url = `http://localhost:3000/contacts/names/${user.account?.id}`;
+  //   fetch(url)
+  //     .then((response) => response.json())
+  //     .then((data: BKClient[]) => {
+  //       const formattedData: BKClient[] = data.map((item) => ({
+  //         id: item.id,
+  //         first_name: item.first_name,
+  //         last_name: item.last_name,
+  //         type: 'contact',
+  //       }));
+  //       setContacts(formattedData);
+  //       setSelectedContact(formattedData[0])
+  //     });
+  // };
 
   const handleConnectContact = () => {
     if (selectedContact) {
@@ -110,15 +131,14 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
     const url = `http://localhost:3000/bookkeeping/project-entries/${id}`;
     try {
       const response = await fetch(url);
-      const responseData = await response.json();
+      const responseData: BKEntry[] = await response.json();
       setEntries(responseData);
-      console.log(responseData);
     } catch (error) {
       console.log(error);
     }
   }, []);
 
-  const getEntryNames = () => {
+  const getEntryNames = useCallback(async() => {
     const url = `http://localhost:3000/bookkeeping/entries/${user.account?.id}`;
     fetch(url)
       .then((response) => response.json())
@@ -129,11 +149,12 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
           type: 'entry',
         }));
         setEntryNames(formattedData);
+        setSelectedEntry(formattedData[0])
       });
-  };
+  },[])
+
 
   const handleConnectEntry = async () => {
-    console.log("entry:", selectedEntry)
     if (selectedEntry) {
         const url = `http://localhost:3000/bookkeeping/details/${selectedEntry.id}`;
         try {
@@ -207,7 +228,7 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
           )}
         </div>
       </div>
-      <h5>Project Entries</h5>
+      <h5>Entries</h5>
 
       {entries.length !== 0 ? (
         <div className='project-sidebar-section'>

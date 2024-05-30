@@ -39,7 +39,12 @@ const EditSubtask: React.FC<EditSubtaskProps> = ({
 
   const handleUpdateSubtask = async () => {
     console.log(subtask);
-    if (startDate !== null && startDate !== undefined) {
+    if (
+      startDate !== null &&
+      startDate !== undefined &&
+      endDate !== null &&
+      endDate !== undefined
+    ) {
       const data: Subtask = {
         subtask_id: subtask.subtask_id,
         task_id: subtask.task_id,
@@ -48,43 +53,59 @@ const EditSubtask: React.FC<EditSubtaskProps> = ({
         notes: subtask.notes,
         creation_date: subtask.creation_date,
         start_date: startDate,
-        due_date: subtask.due_date,
-        subtask_status: subtask.subtask_status,
-        priority: subtask.priority,
-        column_index: subtask.column_index,
-      };
-      updateSubtask(data);
-    } else if (endDate !== null && endDate !== undefined) {
-      const data: Subtask = {
-        subtask_id: subtask.subtask_id,
-        task_id: subtask.task_id,
-        name: name,
-        description: subtask.description,
-        notes: subtask.notes,
-        creation_date: subtask.creation_date,
-        start_date: subtask.start_date,
         due_date: endDate,
         subtask_status: subtask.subtask_status,
         priority: subtask.priority,
         column_index: subtask.column_index,
       };
       updateSubtask(data);
-    } else {
-      const data: Subtask = {
-        subtask_id: subtask.subtask_id,
-        task_id: subtask.task_id,
-        name: name,
-        description: subtask.description,
-        notes: subtask.notes,
-        creation_date: subtask.creation_date,
-        start_date: subtask.start_date,
-        due_date: subtask.due_date,
-        subtask_status: subtask.subtask_status,
-        priority: subtask.priority,
-        column_index: subtask.column_index,
-      };
-      updateSubtask(data);
     }
+    // if (startDate !== null && startDate !== undefined) {
+    //   const data: Subtask = {
+    //     subtask_id: subtask.subtask_id,
+    //     task_id: subtask.task_id,
+    //     name: name,
+    //     description: subtask.description,
+    //     notes: subtask.notes,
+    //     creation_date: subtask.creation_date,
+    //     start_date: startDate,
+    //     due_date: subtask.due_date,
+    //     subtask_status: subtask.subtask_status,
+    //     priority: subtask.priority,
+    //     column_index: subtask.column_index,
+    //   };
+    //   updateSubtask(data);
+    // } else if (endDate !== null && endDate !== undefined) {
+    //   const data: Subtask = {
+    //     subtask_id: subtask.subtask_id,
+    //     task_id: subtask.task_id,
+    //     name: name,
+    //     description: subtask.description,
+    //     notes: subtask.notes,
+    //     creation_date: subtask.creation_date,
+    //     start_date: subtask.start_date,
+    //     due_date: endDate,
+    //     subtask_status: subtask.subtask_status,
+    //     priority: subtask.priority,
+    //     column_index: subtask.column_index,
+    //   };
+    //   updateSubtask(data);
+    // } else {
+    //   const data: Subtask = {
+    //     subtask_id: subtask.subtask_id,
+    //     task_id: subtask.task_id,
+    //     name: name,
+    //     description: subtask.description,
+    //     notes: subtask.notes,
+    //     creation_date: subtask.creation_date,
+    //     start_date: subtask.start_date,
+    //     due_date: subtask.due_date,
+    //     subtask_status: subtask.subtask_status,
+    //     priority: subtask.priority,
+    //     column_index: subtask.column_index,
+    //   };
+    //   updateSubtask(data);
+    // }
 
     setEditingSubtask(false);
   };

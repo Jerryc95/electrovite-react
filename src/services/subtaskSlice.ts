@@ -3,6 +3,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { RootState } from './store';
+// import { Subtask } from 'src/models/subTask';
 import { Subtask } from 'src/models/subtask';
 import { subtaskAPI } from './subtaskAPI';
 
@@ -36,10 +37,10 @@ export const subtaskSlice = createSlice({
     builder.addMatcher(
       subtaskAPI.endpoints.fetchSubtasks.matchFulfilled,
       (state, action: PayloadAction<Subtask[]>) => {
-        console.log(action.payload)
+        // console.log(action.payload)
         state.loading = 'fulfilled';
         state.subtasks = action.payload;
-        console.log(state.subtasks)
+        // console.log(state.subtasks)
       },
     );
 
@@ -102,7 +103,7 @@ export const subtaskSlice = createSlice({
   },
 });
 
-export const selectedSubtasks = (state: RootState) =>
+export const getSubtasks = (state: RootState) =>
   state.subtaskReducer.subtasks;
 
 export const { clearSubtaskState } = subtaskSlice.actions;

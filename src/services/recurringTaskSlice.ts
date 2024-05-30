@@ -98,7 +98,7 @@ export const recurringTaskSlice = createSlice({
   },
 });
 
-export const selectedRecurringTasks = (state: RootState) =>
+export const getRecurringTasks = (state: RootState) =>
   state.recurringTaskReducer.recurringTasks;
 export const { clearRecurringTaskState } = recurringTaskSlice.actions;
 export default recurringTaskSlice.reducer;

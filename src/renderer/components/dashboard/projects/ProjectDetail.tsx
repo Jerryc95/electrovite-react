@@ -8,7 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import { useUpdateProjectMutation } from '../../../../services/projectAPI';
-import { clearTaskState, selectedTasks } from '../../../../services/taskSlice';
+import { getTasks } from '../../../../services/taskSlice';
 import { useFetchTasksQuery } from '../../../../services/taskAPI';
 import { Project } from '../../../../models/project';
 import NewProjectTask from './taskViews/NewProjectTask';
@@ -26,7 +26,7 @@ interface ProjectDetailProps {
 }
 
 const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
-  const tasks = useSelector(selectedTasks);
+  const tasks = useSelector(getTasks);
   const goBack = useBackClick();
 
   const [addingTask, setAddingTask] = useState(false);
@@ -89,7 +89,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
         <div className='project-detail-header-leading'>
           <div className='project-detail-back' onClick={() => toggleProject()}>
             <FontAwesomeIcon icon={faChevronLeft} />
-            <p>Projects</p>
+            <p>Back</p>
           </div>
           <h2>{project.name}</h2>
         </div>

@@ -38,7 +38,14 @@ const EditProject: React.FC<EditProjectProps> = ({
   };
 
   const handleUpdateProject = () => {
-    if (startDate !== null && startDate !== undefined) {
+    console.log(startDate);
+    console.log(endDate);
+    if (
+      startDate !== null &&
+      startDate !== undefined &&
+      endDate !== null &&
+      endDate !== undefined
+    ) {
       const data: Project = {
         id: project.id,
         account_id: project.account_id,
@@ -47,41 +54,12 @@ const EditProject: React.FC<EditProjectProps> = ({
         notes: project.notes,
         creation_date: project.creation_date,
         start_date: startDate,
-        end_date: project.end_date,
-        status: project.status,
-        completed: project.completed,
-        contact_id: project.contact_id,
-      };
-      updateProject(data);
-    } else if (endDate !== null && endDate !== undefined) {
-      const data: Project = {
-        id: project.id,
-        account_id: project.account_id,
-        name: name,
-        description: project.description,
-        notes: project.notes,
-        creation_date: project.creation_date,
-        start_date: project.start_date,
         end_date: endDate,
         status: project.status,
         completed: project.completed,
         contact_id: project.contact_id,
       };
-      updateProject(data);
-    } else {
-      const data: Project = {
-        id: project.id,
-        account_id: project.account_id,
-        name: name,
-        description: project.description,
-        notes: project.notes,
-        creation_date: project.creation_date,
-        start_date: project.start_date,
-        end_date: project.end_date,
-        status: project.status,
-        completed: project.completed,
-        contact_id: project.contact_id,
-      };
+      console.log('updated start date', data);
       updateProject(data);
     }
     setEditingProject(false);

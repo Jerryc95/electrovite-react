@@ -8,11 +8,13 @@ import { UpcomingTask } from 'src/models/UpcomingTask';
 import { UpcomingEvent } from 'src/models/upcomingEvent';
 import { BKEntry } from 'src/models/BKEntry';
 import { homeAPI } from './homeAPI';
+import { BKExpense } from 'src/models/BKExpense';
 
 interface homeState {
   upcomingTasks: UpcomingTask[];
   upcomingEvents: UpcomingEvent[];
   revenue: BKEntry[];
+  recurringExpenses: BKExpense[];
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
 }
@@ -21,6 +23,7 @@ const initialHomeState: homeState = {
   upcomingTasks: [],
   upcomingEvents: [],
   revenue: [],
+  recurringExpenses: [],
   loading: 'idle',
   error: null,
 };
@@ -61,9 +64,12 @@ export const homeSlice = createSlice({
       },
     );
 
-    builder.addMatcher(homeAPI.endpoints.fetchRevenue.matchPending, (state) => {
-      state.loading = 'pending';
-    });
+    builder.addMatcher(
+      homeAPI.endpoints.fetchExpenses.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
 
     builder.addMatcher(
       homeAPI.endpoints.fetchRevenue.matchFulfilled,
@@ -73,13 +79,38 @@ export const homeSlice = createSlice({
         state.revenue = entries;
       },
     );
+
+    builder.addMatcher(
+      homeAPI.endpoints.fetchExpenses.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
+
+    builder.addMatcher(
+      homeAPI.endpoints.fetchExpenses.matchFulfilled,
+      (state, action: PayloadAction<BKExpense[]>) => {
+        state.loading = 'fulfilled';
+        const expenses: BKExpense[] = [];
+
+        for (const expense of action.payload) {
+          if (expense.is_active) {
+            expenses.push(expense);
+          }
+        }
+
+        state.recurringExpenses = expenses;
+      },
+    );
   },
 });
 
-export const selectedUpcomingTasks = (state: RootState) =>
+export const getUpcomingTasks = (state: RootState) =>
   state.homeReducer.upcomingTasks;
-export const selectedUpcomingEvents = (state: RootState) =>
+export const getUpcomingEvents = (state: RootState) =>
   state.homeReducer.upcomingEvents;
-export const selectedRevenue = (state: RootState) => state.homeReducer.revenue;
+export const getRevenue = (state: RootState) => state.homeReducer.revenue;
+export const getExpenses = (state: RootState) =>
+  state.homeReducer.recurringExpenses;
 
 export default homeSlice.reducer;

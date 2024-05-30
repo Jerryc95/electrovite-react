@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect} from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -23,11 +23,9 @@ import TaskDetail from './dashboard/projects/taskViews/TaskDetail';
 import ContactDetail from './dashboard/contacts/ContactDetail';
 import BKEntryDetail from './dashboard/bookkeeping/BKEntryDetail';
 
-import ProtectedRoute from '../../helpers/ProtectedRoute';
-
 const App = () => {
-  const account = useSelector(
-    (state: RootState) => state.accountReducer.account,
+  const user = useSelector(
+    (state: RootState) => state.accountReducer,
   );
   const project = useSelector(
     (state: RootState) => state.projectReducer.selectedProject,
@@ -46,17 +44,19 @@ const App = () => {
     (state: RootState) => state.bookkeepingReducer.entries,
   );
 
+  const subscription = useSelector((state: RootState) => state.subscriptionReducer)
+
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    if (account == null) {
+  useEffect(() => {
+    if (user == null) {
       navigate('/sign-in');
     }
-  }, [account]);
+  }, [user]);
 
   return (
     <div>
-      {account != null && <Navbar />}
+      {user != null && subscription.loading == 'fulfilled' && <Navbar />}
       <Routes>
         <Route path='/forgot-password' element={<ForgotPasswordPage />} />
         <Route path='/register' element={<SignUpPage />} />
@@ -69,7 +69,7 @@ const App = () => {
           path='/loading-account'
           element={<CreatingAccountPage creating={false} />}
         />
-        {account != null && (
+        {user != null && (
           <>
             <Route path='/projects' element={<Projects />} />
             {project != null && (
@@ -84,7 +84,7 @@ const App = () => {
                     element={
                       <TaskDetail
                         task={task}
-                        id={account.id}
+                        id={user.account?.id}
                         project={project}
                       />
                     }
@@ -100,13 +100,13 @@ const App = () => {
                 </ProtectedRoute>
               }
             /> */}
-
-            <Route
+            <Route path='/contacts' element={<Contacts />} />
+            {/* <Route
               path='/contacts'
-              element={<ProtectedRoute subscriptionTier={3} requestedFeature='Contacts'/>}
+              element={<ProtectedRoute subscriptionTier={2} requestedFeature='Contacts'/>}
             >
               <Route path='/contacts' element={<Contacts />} />
-            </Route>
+            </Route> */}
 
             {contact != null && (
               <>
@@ -117,6 +117,13 @@ const App = () => {
               </>
             )}
             <Route path='/bookkeeping' element={<Bookkeeping />} />
+            {/* <Route
+              path='/bookkeeping'
+              element={<ProtectedRoute subscriptionTier={3} requestedFeature='Bookkeeping'/>}
+            >
+              <Route path='/bookkeeping' element={<Bookkeeping />} />
+            </Route> */}
+
             {entry != null && (
               <>
                 <Route
@@ -127,6 +134,12 @@ const App = () => {
             )}
 
             <Route path='/settings' element={<Settings />} />
+            {/* <Route
+              path='/documents'
+              element={<ProtectedRoute subscriptionTier={3} requestedFeature='Documents'/>}
+            >
+              <Route path='/documents' element={<Documents />} />
+            </Route> */}
             <Route path='/documents' element={<Documents />} />
             <Route path='/' element={<Home />} />
             <Route path='/about' element={<AboutPage />} />

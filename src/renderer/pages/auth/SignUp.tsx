@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 
 import AuthForm from '$renderer/components/AuthForm';
-import SubscriptionSelectorPage from '../SubscriptionSelectorPage';
-import ProfileSetupPage from '../ProfileSetupPage';
-import SubPlanPaymentPage from '../SubPlanPaymentPage';
+import SubscriptionSelectorPage from '../accountSetup/SubscriptionSelectorPage';
+import ProfileSetupPage from '../accountSetup/ProfileSetupPage';
+import SubPlanPaymentPage from '../accountSetup/SubPlanPaymentPage';
 import { Subscription } from 'src/models/subscription';
 import { StripeSubscription } from 'src/models/stripeSubscription';
+// import { useSelector } from 'react-redux';
+// import { getStripeCustomer } from 'src/services/subscriptionSlice';
 
 const defaultSubscription: Subscription = {
   id: 1,
@@ -19,13 +21,13 @@ const defaultSubscription: Subscription = {
 };
 
 const SignUpPage: React.FC = () => {
+  // const customer = useSelector(getStripeCustomer)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [subscription, setSubscription] = useState<Subscription | null>(
     defaultSubscription,
   );
   const [creationStep, setCreationStep] = useState(0);
-  const [customer, setCustomer] = useState('');
   const [stripeSubscription, setStripeSubscription] =
     useState<StripeSubscription | null>(null);
 
@@ -49,7 +51,7 @@ const SignUpPage: React.FC = () => {
             setSubscription={setSubscription}
             setCreationStep={setCreationStep}
             email={email}
-            setCustomer={setCustomer}
+            // setCustomer={setCustomer}
           />
         );
       case 2:
@@ -58,7 +60,6 @@ const SignUpPage: React.FC = () => {
             setCreationStep={setCreationStep}
             setStripeSubscription={setStripeSubscription}
             subscription={subscription}
-            customer={customer}
           />
         );
       case 3:
@@ -69,7 +70,6 @@ const SignUpPage: React.FC = () => {
             setCreationStep={setCreationStep}
             subscription={subscription}
             stripeSubscription={stripeSubscription}
-            customer={customer}
           />
         );
     }

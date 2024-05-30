@@ -35,7 +35,12 @@ const EditTask: React.FC<EditTaskProps> = ({ task, setEditingTask }) => {
   };
 
   const handleUpdateTask = async () => {
-    if ( startDate !== null && startDate !== undefined) {
+    if (
+      startDate !== null &&
+      startDate !== undefined &&
+      dueDate !== null &&
+      dueDate !== undefined
+    ) {
       const data: Task = {
         task_id: task.task_id,
         project_id: task.project_id,
@@ -44,47 +49,48 @@ const EditTask: React.FC<EditTaskProps> = ({ task, setEditingTask }) => {
         notes: task.notes,
         creation_date: task.creation_date,
         start_date: startDate,
-        due_date: task.due_date,
-        task_status: task.task_status,
-        priority: task.priority,
-        column_index: task.column_index,
-        subtasks: task.subtasks,
-      }
-      updateTask(data)
-    } else if (dueDate !== null && dueDate !== undefined ) {
-      const data: Task = {
-        task_id: task.task_id,
-        project_id: task.project_id,
-        name: name,
-        description: task.description,
-        notes: task.notes,
-        creation_date: task.creation_date,
-        start_date: task.start_date,
         due_date: dueDate,
         task_status: task.task_status,
         priority: task.priority,
         column_index: task.column_index,
         subtasks: task.subtasks,
-      }
-      updateTask(data)
-    } else {
-      const data: Task = {
-        task_id: task.task_id,
-        project_id: task.project_id,
-        name: name,
-        description: task.description,
-        notes: task.notes,
-        creation_date: task.creation_date,
-        start_date: task.start_date,
-        due_date: task.due_date,
-        task_status: task.task_status,
-        priority: task.priority,
-        column_index: task.column_index,
-        subtasks: task.subtasks,
-      }
-      updateTask(data)
+      };
+      updateTask(data);
     }
-   
+    // } else if (dueDate !== null && dueDate !== undefined) {
+    //   const data: Task = {
+    //     task_id: task.task_id,
+    //     project_id: task.project_id,
+    //     name: name,
+    //     description: task.description,
+    //     notes: task.notes,
+    //     creation_date: task.creation_date,
+    //     start_date: task.start_date,
+    //     due_date: dueDate,
+    //     task_status: task.task_status,
+    //     priority: task.priority,
+    //     column_index: task.column_index,
+    //     subtasks: task.subtasks,
+    //   };
+    //   updateTask(data);
+    // } else {
+    //   const data: Task = {
+    //     task_id: task.task_id,
+    //     project_id: task.project_id,
+    //     name: name,
+    //     description: task.description,
+    //     notes: task.notes,
+    //     creation_date: task.creation_date,
+    //     start_date: task.start_date,
+    //     due_date: task.due_date,
+    //     task_status: task.task_status,
+    //     priority: task.priority,
+    //     column_index: task.column_index,
+    //     subtasks: task.subtasks,
+    //   };
+    //   updateTask(data);
+    // }
+
     setEditingTask(false);
   };
 

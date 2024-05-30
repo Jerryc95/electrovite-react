@@ -217,13 +217,13 @@ export const bookkeepingSlice = createSlice({
   },
 });
 
-export const selectedEntries = (state: RootState) =>
+export const getEntries = (state: RootState) =>
   state.bookkeepingReducer.entries;
-export const selectedRevenueEntries = (state: RootState) =>
+export const getRevenueEntries = (state: RootState) =>
   state.bookkeepingReducer.revenueEntries;
-export const selectedExpenseEntries = (state: RootState) =>
+export const getExpenseEntries = (state: RootState) =>
   state.bookkeepingReducer.expenseEntries;
-export const selectedRecurringExpenses = (state: RootState) =>
+export const getRecurringExpenses = (state: RootState) =>
   state.bookkeepingReducer.recurringExpenses;
 
 export const { clearBookkeepingState, setSelectedEntry } =

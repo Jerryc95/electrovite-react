@@ -23,7 +23,7 @@ import useBackClick from '../../../../../hooks/useBackClick';
 import { useFetchSubtasksQuery } from '../../../../../services/subtaskAPI';
 import {
   clearSubtaskState,
-  selectedSubtasks,
+  getSubtasks,
 } from '../../../../../services/subtaskSlice';
 import { useUpdateTaskMutation } from '../../../../../services/taskAPI';
 
@@ -34,7 +34,7 @@ interface TaskDetailProps {
 }
 
 const TaskDetail: React.FC<TaskDetailProps> = ({ task, id, project }) => {
-  const subtasks = useSelector(selectedSubtasks);
+  const subtasks = useSelector(getSubtasks);
   const goBack = useBackClick();
 
   const [addingSubtask, setAddingSubtask] = useState(false);
@@ -90,13 +90,17 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ task, id, project }) => {
     toggleView('Board');
   }, [toggleView]);
 
+  useEffect(()=> {
+    console.log(task)
+  },[])
+
   return (
     <div className='task-detail-container'>
       <div className='task-detail-header'>
         <div className='task-detail-leading'>
           <div className='task-detail-back' onClick={() => toggleTask()}>
             <FontAwesomeIcon icon={faChevronLeft} />
-            <p>{project.name}</p>
+            <p>Back</p>
           </div>
           <h2>{task.name}</h2>
         </div>
@@ -151,7 +155,7 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ task, id, project }) => {
           <div>
             <DropdownField
               label='Task Status:'
-              field='taskStatus'
+              field='task_status'
               value={task.task_status}
               item={task}
               options={taskStatus}

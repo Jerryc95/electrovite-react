@@ -9,13 +9,11 @@ import ConfirmCancelSub from './ConfirmCancelSub';
 interface SubscriptionUpdateProps {
   setViewingPlans: React.Dispatch<React.SetStateAction<boolean>>;
   setSuccessfullySubscribedAlert: React.Dispatch<React.SetStateAction<boolean>>;
-  customer: string;
 }
 
 const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
   setViewingPlans,
   setSuccessfullySubscribedAlert,
-  customer,
 }) => {
   const subscriptionState = useSelector(
     (state: RootState) => state.subscriptionReducer,
@@ -85,7 +83,6 @@ const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
                 <li key={subscription.id}>
                   <SubDetailColumn
                     subscription={subscription}
-                    customer={customer}
                     setViewingPlans={setViewingPlans}
                     setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
                   />

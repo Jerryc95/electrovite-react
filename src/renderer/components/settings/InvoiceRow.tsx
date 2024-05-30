@@ -22,7 +22,6 @@ const InvoiceRow: React.FC<InvoiceRowProps> = ({ invoice }) => {
     anchorElement.download = formattedFileName;
     document.body.appendChild(anchorElement);
     anchorElement.click();
-    // document.body.removeChild(anchorElement);
     setTimeout(() => {
         document.body.removeChild(anchorElement);
         setIsDownloading(false);
