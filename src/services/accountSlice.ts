@@ -14,6 +14,7 @@ interface accountState {
   account: Account | null;
   accountProfile: AccountProfile | null;
   selectedPage: string;
+  signedIn: boolean;
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
   deletedAt: Date | null;
@@ -23,6 +24,7 @@ const initialAccountState: accountState = {
   account: null,
   accountProfile: null,
   selectedPage: 'home',
+  signedIn: false,
   loading: 'idle',
   error: null,
   deletedAt: null,
@@ -43,6 +45,9 @@ export const accountSlice = createSlice({
     },
     selectPage: (state, action: PayloadAction<string>) => {
       state.selectedPage = action.payload;
+    },
+    setSignIn: (state, action: PayloadAction<boolean>) => {
+      state.signedIn = action.payload;
     },
     clearAccountError: (state) => {
       state.error = null;
@@ -101,6 +106,8 @@ export const accountSlice = createSlice({
         state.loading = initialAccountState.loading;
         state.account = initialAccountState.account;
         state.accountProfile = initialAccountState.accountProfile;
+        state.selectedPage = initialAccountState.selectedPage;
+        state.signedIn = initialAccountState.signedIn;
         state.error = initialAccountState.error;
       },
     );
@@ -115,6 +122,8 @@ export const accountSlice = createSlice({
       (state) => {
         state.loading = initialAccountState.loading;
         state.account = initialAccountState.account;
+        state.selectedPage = initialAccountState.selectedPage;
+        state.signedIn = initialAccountState.signedIn;
         state.accountProfile = initialAccountState.accountProfile;
         state.error = initialAccountState.error;
       },
@@ -163,7 +172,7 @@ export const accountSlice = createSlice({
       (state, action: PayloadAction<AccountProfile>) => {
         state.loading = 'fulfilled';
         state.accountProfile = action.payload;
-        console.log(action.payload)
+        console.log(action.payload);
       },
     );
   },
@@ -176,5 +185,6 @@ export const {
   updateProfileState,
   updateEmailState,
   selectPage,
+  setSignIn,
 } = accountSlice.actions;
 export default accountSlice.reducer;

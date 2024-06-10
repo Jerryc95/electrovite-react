@@ -37,7 +37,9 @@ const Projects: React.FC = () => {
   const [addingRecurringTask, setAddingRecurringTask] = useState(false);
   const [viewingRecurringTasks, setViewingRecurringTasks] = useState(true);
 
-  useFetchProjectsQuery(user.account?.id);
+  useFetchProjectsQuery(user.account?.id, {
+    refetchOnMountOrArgChange: true,
+  });
   useFetchRecurringTasksQuery(user.account?.id);
 
   const toggleProject = (project: Project) => {

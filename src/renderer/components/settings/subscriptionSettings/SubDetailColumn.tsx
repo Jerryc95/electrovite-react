@@ -63,9 +63,9 @@ const SubDetailColumn: React.FC<SubDetailColumnProps> = ({
   }
 
   useEffect(()=> {
-    if(subscriptionState.subscription?.id == subscription.id && subscriptionState.stripeSubscription?.status != "canceled") {
+    if(subscriptionState.subscription?.id == subscription.id && subscriptionState.stripeSubscription?.cancel_at_period_end != true) {
       setButtonLabel("Subscribed")
-    } else if (subscriptionState.subscription?.id == subscription.id && subscriptionState.stripeSubscription?.status == "canceled") {
+    } else if (subscriptionState.previousSubscription?.id == subscription.id && subscriptionState.stripeSubscription?.cancel_at_period_end == true) {
       setButtonLabel("Resubscribe")
     }
   },[])
@@ -84,7 +84,7 @@ const SubDetailColumn: React.FC<SubDetailColumnProps> = ({
         disabled={
           subscriptionState.subscription?.name === subscription.name &&
           subscriptionState.subscription?.billing_cycle === subscription.billing_cycle &&
-          subscriptionState.stripeSubscription?.status !== 'canceled'
+          subscriptionState.stripeSubscription?.cancel_at_period_end !== true
             ? true
             : false
         }

@@ -5,6 +5,7 @@ import { RootState } from '../../../../services/store';
 import { Subscription } from 'src/models/subscription';
 import SubDetailColumn from './SubDetailColumn';
 import ConfirmCancelSub from './ConfirmCancelSub';
+import { getUser } from '../../../../services/accountSlice';
 
 interface SubscriptionUpdateProps {
   setViewingPlans: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,7 +19,7 @@ const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
   const subscriptionState = useSelector(
     (state: RootState) => state.subscriptionReducer,
   );
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector(getUser);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [isMonthly, setIsMonthly] = useState(true);
   const [isCancelingSub, setIsCancelingSub] = useState(false);
@@ -90,7 +91,7 @@ const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
               ))}
           </ul>
           {subscriptionState.subscription?.name !== 'Starter' &&
-            subscriptionState.stripeSubscription?.status !== 'canceled' && (
+            subscriptionState.stripeSubscription?.cancel_at_period_end !== true && (
               <button
                 className='button-brand-pink cancel-sub'
                 onClick={handleCancelSubClick}
@@ -101,8 +102,8 @@ const SubscriptionUpdate: React.FC<SubscriptionUpdateProps> = ({
 
           {isCancelingSub && (
             <ConfirmCancelSub
-              stripe_sub_id={subscriptionState.stripeSubscription?.id}
-              accountID={accountState.account?.id}
+              // stripe_sub_id={subscriptionState.stripeSubscription?.id}
+              accountID={user.account?.id}
               setIsCancelingSub={setIsCancelingSub}
               setViewingPlans={setViewingPlans}
             />

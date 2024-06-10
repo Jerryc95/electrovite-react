@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { RootState } from 'src/services/store';
@@ -12,6 +12,7 @@ import {
   useForceDeleteAccountMutation,
   useRecoverAccountMutation,
 } from '../../services/authAPI';
+import { setSignIn } from '../../services/accountSlice';
 
 interface CreatingAccountProps {
   creating: boolean;
@@ -23,7 +24,9 @@ const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
   const [fetchSubscriptionInfo] = useFetchSubscriptionInfoMutation();
   const [forceDeleteAccount] = useForceDeleteAccountMutation();
   const [recoverAccount] = useRecoverAccountMutation();
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -70,7 +73,7 @@ const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
         console.log(data);
         alert('Error deleting account.');
       } else {
-        navigate('/');
+        navigate('/sign-in');
       }
     });
   };
@@ -81,6 +84,7 @@ const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
         if (accountState.account) {
           fetchSubscriptionInfo(accountState.account.id).then(() => {
             navigate('/');
+            dispatch(setSignIn(true))
           });
         }
       });

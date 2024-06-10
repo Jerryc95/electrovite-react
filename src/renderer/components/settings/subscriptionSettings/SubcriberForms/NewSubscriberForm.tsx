@@ -33,6 +33,10 @@ function NewSubscriberForm({
     });
   }, []);
 
+  useEffect(() => {
+    console.log('new');
+  }, []);
+
   return (
     <div className='subscription-update-container'>
       <div className='subscription-columns-container'>
@@ -54,7 +58,6 @@ function NewSubscriberForm({
             <button onClick={() => setIsUpdatingPlan(false)}>close</button>
           </div>
         )}
-       
       </div>
     </div>
   );

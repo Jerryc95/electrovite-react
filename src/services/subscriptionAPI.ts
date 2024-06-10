@@ -3,6 +3,12 @@ import type { Subscription } from 'src/models/subscription';
 import type { SubscriptionInfo } from 'src/models/subscriptionInfo';
 import type { StripeSubscription } from 'src/models/stripeSubscription';
 
+interface ICustomerPortalResponse {
+  id: string;
+  return_url: string;
+  url: string;
+}
+
 export const subscriptionAPI = createApi({
   reducerPath: 'subscriptionAPI',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/subscription' }),
@@ -66,7 +72,7 @@ export const subscriptionAPI = createApi({
       }),
     }),
 
-    fetchSubscription: builder.mutation<string, string>({
+    fetchSubscription: builder.mutation<StripeSubscription, string>({
       query: (id) => ({
         url: `/stripe/retrieve-subscription/${id}`,
         method: 'GET',
@@ -74,11 +80,11 @@ export const subscriptionAPI = createApi({
     }),
 
     createSubscription: builder.mutation<
-    {
-      clientSecret: string;
-      stripeSubscription: StripeSubscription;
-      type: string;
-    },
+      {
+        clientSecret: string;
+        stripeSubscription: StripeSubscription;
+        type: string;
+      },
       { customer: string; priceID: string }
     >({
       query: (body) => ({
@@ -103,7 +109,10 @@ export const subscriptionAPI = createApi({
       }),
     }),
 
-    resumeSubscription: builder.mutation<string, object>({
+    resumeSubscription: builder.mutation<
+      { stripeSubscription: StripeSubscription; subscription: Subscription },
+      object
+    >({
       query: (body) => ({
         url: '/stripe/resume-subscription',
         method: 'POST',
@@ -124,6 +133,13 @@ export const subscriptionAPI = createApi({
         body: body,
       }),
     }),
+    createPortalSession: builder.mutation<ICustomerPortalResponse, object>({
+      query: (body) => ({
+        url: '/stripe/portal-session',
+        method: 'POST',
+        body: body,
+      }),
+    }),
   }),
 });
 
@@ -139,4 +155,5 @@ export const {
   useResumeSubscriptionMutation,
   useCancelSubscriptionMutation,
   useUpdateAccountMutation,
+  useCreatePortalSessionMutation,
 } = subscriptionAPI;

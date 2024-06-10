@@ -35,7 +35,8 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
   const [sortedContactEvents, setSortedContactEvents] = useState<
     ContactEvent[]
   >([]);
-  const pageOptions = ['Projects', 'Documents', 'Bookkeeping', 'Notes'];
+  // const pageOptions = ['Projects', 'Documents', 'Bookkeeping', 'Notes'];
+  const pageOptions = ['Projects', 'Bookkeeping', 'Notes'];
   const [componentPage, setComponentPage] = useState<JSX.Element>(
     <ContactBK contact={contact} />,
   );
@@ -49,9 +50,9 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
       case 'Projects':
         setComponentPage(<ContactProjects contact={contact} />);
         break;
-      case 'Documents':
-        setComponentPage(<ContactBK contact={contact} />);
-        break;
+      // case 'Documents':
+      //   setComponentPage(<ContactBK contact={contact} />);
+      //   break;
       case 'Bookkeeping':
         setComponentPage(<ContactBK contact={contact} />);
         break;

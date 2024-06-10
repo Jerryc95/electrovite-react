@@ -15,12 +15,13 @@ import { getUser } from '../../../services/accountSlice';
 import { Subscription } from 'src/models/subscription';
 import {
   getStripeCustomer,
+  updateSubscription,
   // updateSubscription,
 } from '../../../services/subscriptionSlice';
 import {
   useCreateSubscriptionMutation,
   useDeleteCustomerMutation,
-  useFetchSubscriptionInfoMutation,
+  // useFetchSubscriptionInfoMutation,
   useUpdateAccountMutation,
   // useUpdateSubscriptionMutation,
 } from '../../../services/subscriptionAPI';
@@ -49,7 +50,9 @@ export default function StripePaymentForm({
   const [isLoading, setisLoading] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
-  // const dispatch = useDispatch();
+
+  const dispatch = useDispatch();
+
   const subscriptionState = useSelector(
     (state: RootState) => state.subscriptionReducer,
   );
@@ -59,7 +62,7 @@ export default function StripePaymentForm({
   const [createSubscription] = useCreateSubscriptionMutation();
   const [updateAccount] = useUpdateAccountMutation();
   const [deleteCustomer] = useDeleteCustomerMutation();
-  const [fetchSubscriptionInfo] = useFetchSubscriptionInfoMutation();
+  // const [fetchSubscriptionInfo] = useFetchSubscriptionInfoMutation();
 
   const handleBackClick = () => {
     if (setCreationStep) {
@@ -101,7 +104,7 @@ export default function StripePaymentForm({
           }),
         },
       );
-      const addressData = await addressResponse.json();
+      // const addressData = await addressResponse.json();
     } catch (error) {
       console.log(error);
     }
@@ -117,39 +120,6 @@ export default function StripePaymentForm({
         if ('data' in response) {
           const { clientSecret, stripeSubscription, type } = response.data;
 
-          console.log(response.data);
-
-          // const subscribeResponse = await fetch(
-          //   'http://localhost:3000/payment/create-subscription',
-          //   {
-          //     method: 'POST',
-          //     headers: {
-          //       'Content-Type': 'application/json',
-          //     },
-          //     body: JSON.stringify({
-          //       customer: customer.toString(),
-          //       priceID: subscription.stripe_price_id.toString(),
-          //     }),
-          //   },
-          // );
-
-          // const subResponseData = await subscribeResponse.json();
-          // const newSubscription: StripeSubscription = {
-          //   id: subResponseData.subscription.id,
-          //   customer: subResponseData.subscription.customer,
-          //   start_date: subResponseData.subscription.start_date,
-          //   current_period_end: subResponseData.subscription.current_period_end,
-          //   current_period_start:
-          //     subResponseData.subscription.current_period_start,
-          //   trial_end: subResponseData.subscription.trial_end,
-          //   cancel_at: subResponseData.subscription.cancel_at,
-          //   cancel_at_period_end:
-          //     subResponseData.subscription.cancel_at_period_end,
-          //   canceled_at: subResponseData.subscription.canceled_at,
-          //   status: subResponseData.subscription.status,
-          //   default_payment_method:
-          //     subResponseData.subscription.default_payment_method,
-          // };
           const newSubscription: StripeSubscription = {
             id: stripeSubscription.id,
             customer: stripeSubscription.customer,
@@ -167,38 +137,15 @@ export default function StripePaymentForm({
           if (setStripeSubscription) {
             setStripeSubscription(newSubscription);
           } else {
-            // UPDATE HERE
+     
             updateAccount({
               accountID: user.account?.id,
               subscriptionID: subscription.id, 
               stripeSubID: newSubscription.id,
               previousSubID: subscriptionState.subscription!.id,
             });
-            console.log(323)
-          
 
-            // try {
-            //   const response = await fetch(
-            //     'http://localhost:3000/subscription/update/account',
-            //     {
-            //       method: 'PATCH',
-            //       headers: {
-            //         'Content-Type': 'application/json',
-            //       },
-            //       body: JSON.stringify({
-            //         accountID: user.account?.id,
-            //         subscriptionID: subscription.id,
-            //         stripeSubID: newSubscription.id,
-            //         previousSubID: subscriptionState.subscription!.id,
-            //       }),
-            //     },
-            //   );
-            //   if (!response.ok) {
-            //     throw new Error('Failed to update project');
-            //   }
-            // } catch (error) {
-            //   console.log(error);
-            // }
+  
           }
 
           elements.submit();
@@ -242,6 +189,7 @@ export default function StripePaymentForm({
             setSuccessfullySubscribedAlert &&
             setViewingPlans
           ) {
+            dispatch(updateSubscription(subscription))
             setViewingPlans(false);
             setIsUpdatingPlan(false);
             setSuccessfullySubscribedAlert(true);

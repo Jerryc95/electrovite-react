@@ -6,7 +6,7 @@ import { RootState } from '../../../../services/store';
 
 import NewSubscriberForm from './SubcriberForms/NewSubscriberForm';
 import ExistingSubscriberForm from './SubcriberForms/ExistingSubscriberForm';
-// import ReturningSubscriberForm from './SubcriberForms/ReturningSubscriberForm';
+import ReturningSubscriberForm from './SubcriberForms/ReturningSubscriberForm';
 
 interface ExistingAccountSubscribeFormProps {
   subscription: Subscription;
@@ -38,7 +38,7 @@ const ExistingAccountSubscribeForm: React.FC<
 
   useEffect(() => {
     if (
-      subscriptionState.subscription?.id == 1 
+      subscriptionState.subscription?.id == 1
       // &&
       // subscriptionState.stripeSubscription?.status != 'canceled'
     ) {
@@ -51,28 +51,26 @@ const ExistingAccountSubscribeForm: React.FC<
         />,
       );
     } else if (
-      // subscriptionState.subscription?.id == 1 
-      // &&
-      subscriptionState.stripeSubscription?.status == 'canceled'
+      subscriptionState.stripeSubscription?.cancel_at_period_end == true
     ) {
       setComponent(
-        <NewSubscriberForm
-        subscription={subscription}
-        setIsUpdatingPlan={setUpdatingPlan}
-        setViewingPlans={setViewingPlans}
-        setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
-      />,
         // <ReturningSubscriberForm
         //   subscription={subscription}
         //   setIsUpdatingPlan={setUpdatingPlan}
         //   setViewingPlans={setViewingPlans}
         //   setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
         // />,
+        <ExistingSubscriberForm
+        subscription={subscription}
+        setIsUpdatingPlan={setUpdatingPlan}
+        setViewingPlans={setViewingPlans}
+        setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
+        // isCanceling={false}
+      />,
       );
     } else if (
-      subscriptionState.subscription?.id != 1 
-      &&
-      subscriptionState.stripeSubscription?.status != 'canceled'
+      subscriptionState.subscription?.id != 1 &&
+      subscriptionState.stripeSubscription?.cancel_at_period_end == false
     ) {
       setComponent(
         <ExistingSubscriberForm
@@ -80,6 +78,7 @@ const ExistingAccountSubscribeForm: React.FC<
           setIsUpdatingPlan={setUpdatingPlan}
           setViewingPlans={setViewingPlans}
           setSuccessfullySubscribedAlert={setSuccessfullySubscribedAlert}
+          // isCanceling={false}
         />,
       );
     }

@@ -107,6 +107,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
             <button
               className='button-brand-light-blue'
               onClick={handleBackClick}
+              type='button'
             >
               Back
             </button>

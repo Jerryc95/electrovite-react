@@ -32,9 +32,9 @@ export const subscriptionSlice = createSlice({
   initialState: inititalSubscriptionState,
   reducers: {
     clearSubscriptionInfo: () => inititalSubscriptionState,
-    updateSubscription: (state, action: PayloadAction<subscriptionState>) => {
-      state.subscription = action.payload.subscription;
-      state.stripeSubscription = action.payload.stripeSubscription;
+    updateSubscription: (state, action: PayloadAction<Subscription>) => {
+      state.subscription = action.payload;
+      // state.stripeSubscription = action.payload.stripeSubscription;
     },
   },
   extraReducers: (builder) => {
@@ -68,12 +68,11 @@ export const subscriptionSlice = createSlice({
       (state, action: PayloadAction<SubscriptionInfo>) => {
         state.loading = 'pending';
         // state.subscription = action.payload.subscription;
-        // state.stripeSubscription = action.payload.stripeSubscription;
-        // state.stripeCustomer = action.payload.stripeSubscription.customer;
-        // state.previousSubscription = action.payload.previousSubscription;
+        state.stripeSubscription = action.payload.stripeSubscription;
+        state.stripeCustomer = action.payload.stripeSubscription.customer;
+        state.previousSubscription = action.payload.previousSubscription;
       },
     );
-
 
     // CUSTOMER AND STRIPE API
     builder.addMatcher(
@@ -98,6 +97,24 @@ export const subscriptionSlice = createSlice({
     );
 
     builder.addMatcher(
+      subscriptionAPI.endpoints.fetchSubscription.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
+
+    builder.addMatcher(
+      subscriptionAPI.endpoints.fetchSubscription.matchFulfilled,
+      (state, action: PayloadAction<StripeSubscription>) => {
+        state.loading = 'pending';
+        if (state.stripeSubscription) {
+          state.stripeSubscription.default_payment_method =
+            action.payload.default_payment_method;
+        }
+      },
+    );
+
+    builder.addMatcher(
       subscriptionAPI.endpoints.createSubscription.matchPending,
       (state) => {
         state.loading = 'pending';
@@ -115,7 +132,7 @@ export const subscriptionSlice = createSlice({
         }>,
       ) => {
         state.loading = 'fulfilled';
-        state.stripeSubscription = action.payload.stripeSubscription
+        state.stripeSubscription = action.payload.stripeSubscription;
       },
     );
 
@@ -144,6 +161,29 @@ export const subscriptionSlice = createSlice({
     );
 
     builder.addMatcher(
+      subscriptionAPI.endpoints.resumeSubscription.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
+
+    builder.addMatcher(
+      subscriptionAPI.endpoints.resumeSubscription.matchFulfilled,
+      (
+        state,
+        action: PayloadAction<{
+          stripeSubscription: StripeSubscription;
+          subscription: Subscription;
+        }>,
+      ) => {
+        console.log(action.payload);
+        state.loading = 'fulfilled';
+        state.stripeSubscription = action.payload.stripeSubscription;
+        state.subscription = action.payload.subscription;
+      },
+    );
+
+    builder.addMatcher(
       subscriptionAPI.endpoints.cancelSubscription.matchPending,
       (state) => {
         state.loading = 'pending';
@@ -161,7 +201,7 @@ export const subscriptionSlice = createSlice({
       ) => {
         state.loading = 'fulfilled';
         state.previousSubscription = state.subscription;
-        state.subscription = action.payload.subscription;
+        // state.subscription = action.payload.subscription;
         state.stripeSubscription = action.payload.stripeSubscription;
       },
     );

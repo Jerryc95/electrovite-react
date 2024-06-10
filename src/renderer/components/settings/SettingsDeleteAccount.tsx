@@ -110,7 +110,7 @@ const SettingsDeleteAccount: React.FC = () => {
               </button>
             </div>
             <p className='alert'>{alertMessage}</p>
-            <p>Deleting your account is permanent and irreversible.</p>
+            {/* <p>Deleting your account is permanent and irreversible.</p> */}
           </div>
         </div>
       )}

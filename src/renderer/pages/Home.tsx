@@ -15,19 +15,20 @@ import {
 import '../styles/Home.scss';
 import { parseDate } from '../../helpers/ParseDate';
 import { BKEntry } from 'src/models/BKEntry';
-import { Contact } from 'src/models/contact';
+// import { Contact } from 'src/models/contact';
 import UpcomingEventView from '$renderer/components/dashboard/contacts/events/UpcomingEventView';
 import UpcomingTaskView from '$renderer/components/dashboard/home/UpcomingTaskView';
 import NewClientsBox from '$renderer/components/dashboard/home/NewClientsBox';
-import InvoiceInfoBox from '$renderer/components/dashboard/home/InvoiceInfoBox';
+// import InvoiceInfoBox from '$renderer/components/dashboard/home/InvoiceInfoBox';
 import {
   useFetchExpensesQuery,
-  useFetchRevenueQuery,
+  useFetchEntriesQuery,
   useFetchUpcomingEventsQuery,
   useFetchUpcomingTasksQuery,
 } from '../../services/homeAPI';
 import {
   getExpenses,
+  getRecurringExpenses,
   getRevenue,
   getUpcomingEvents,
   getUpcomingTasks,
@@ -36,6 +37,7 @@ import { getUser } from '../../services/accountSlice';
 import RecurringExpenseBox from '$renderer/components/dashboard/home/RecurringExpenseBox';
 import BlurredOverlay from '$renderer/components/BlurredOverlay';
 import { getSubscription } from '../../services/subscriptionSlice';
+import FinanceInfoBox from '$renderer/components/dashboard/home/FinanceInfoBox';
 
 interface IRevenueEntryData {
   date: string;
@@ -54,17 +56,18 @@ const Home: React.FC = () => {
   const subscription = useSelector(getSubscription);
   const upcomingTasks = useSelector(getUpcomingTasks);
   const upcomingEvents = useSelector(getUpcomingEvents);
-  const recurringExpenses = useSelector(getExpenses);
+  const recurringExpenses = useSelector(getRecurringExpenses);
   const revenue = useSelector(getRevenue);
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const expenses = useSelector(getExpenses);
+  const [revenueEntries, setRevenueEntries] = useState(0);
+  const [profitEntries, setProfitEntries] = useState(0);
+  const [expenseEntries, setExpenseEntries] = useState(0);
+  // const [contacts, setContacts] = useState<Contact[]>([]);
   const [timeOfDay, setTimeOfDay] = useState('Morning');
   const [timeIcon, setTimeIcon] = useState(faSun);
-  // const [upcomingTasks, setUpcomingTasks] = useState<UpcomingTask[]>([]);
-  // const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
-  const [revenueEntries, setRevenueEntries] = useState<IRevenueChartData[]>([]);
-  //   const [uncompletedSubtasks, setUncompletedSubtasks] = useState(0);
-  //   const [completedSubtasks, setCompletedSubtasks] = useState(0);
-  //   const [totalSubtasks, setTotalSubtasks] = useState(uncompletedSubtasks + completedSubtasks);
+  const [revenueChartEntries, setRevenueChartEntries] = useState<
+    IRevenueChartData[]
+  >([]);
 
   const fetchTasks = useFetchUpcomingTasksQuery(user.account?.id, {
     refetchOnMountOrArgChange: true,
@@ -72,7 +75,7 @@ const Home: React.FC = () => {
   const fetchEvents = useFetchUpcomingEventsQuery(user.account?.id, {
     refetchOnMountOrArgChange: true,
   });
-  const fetchRevenue = useFetchRevenueQuery(user.account?.id, {
+  const fetchEntries = useFetchEntriesQuery(user.account?.id, {
     refetchOnMountOrArgChange: true,
   });
   const fetchExpenses = useFetchExpensesQuery(user.account?.id);
@@ -204,7 +207,7 @@ const Home: React.FC = () => {
         opacity: 1.0,
       },
     ];
-    setRevenueEntries(rawChartData);
+    setRevenueChartEntries(rawChartData);
   };
 
   useEffect(() => {
@@ -228,10 +231,27 @@ const Home: React.FC = () => {
   useEffect(() => {
     fetchEvents;
     fetchTasks;
-    fetchRevenue;
+    fetchEntries;
     fetchExpenses;
     handleSetRevenueEntries(revenue, 60);
   }, []);
+
+  useEffect(() => {
+    let expenseTotal = 0;
+    let revenueTotal = 0;
+    expenses.forEach((entry) => {
+      expenseTotal += parseInt(entry.total_amount);
+    });
+    setExpenseEntries(expenseTotal);
+    revenue.forEach((entry) => {
+      revenueTotal += parseInt(entry.total_amount);
+    });
+    setRevenueEntries(revenueTotal);
+    const totalProfit = revenueTotal - expenseTotal;
+    setProfitEntries(totalProfit);
+  }, []);
+
+
   return (
     <div className='home-container'>
       <div className='home-header'>
@@ -261,32 +281,41 @@ const Home: React.FC = () => {
         )}
       </div>
       <h3>Upcoming Events</h3>
-      <div className='home-row'>
-        {upcomingEvents.length > 0 ? (
-          <>
-            {upcomingEvents.map((event) => (
-              <div className='margin'>
-                <UpcomingEventView upcomingEvent={event} />
-              </div>
-            ))}
-          </>
-        ) : (
-          <p className='info-text'>
-            Looks like there are no upcoming events coming up.
-          </p>
-        )}
-      </div>
+      <BlurredOverlay
+        blur={subscription!.tier > 1 ? 0 : 8}
+        allowed={subscription!.tier > 1 ? true : false}
+        text='Subscribe to Flowplanr Plus to unlock Contacts & Events'
+      >
+        <div className='home-row'>
+          {upcomingEvents.length > 0 ? (
+            <>
+              {upcomingEvents.map((event) => (
+                <div className='margin'>
+                  <UpcomingEventView upcomingEvent={event} />
+                </div>
+              ))}
+            </>
+          ) : (
+            <p className='info-text'>
+              Looks like there are no upcoming events coming up.
+            </p>
+          )}
+        </div>
+      </BlurredOverlay>
+
       <h3>Finances</h3>
       <BlurredOverlay
         blur={subscription!.tier > 2 ? 0 : 8}
         allowed={subscription!.tier > 2 ? true : false}
-        text="Subscribe to Flowplanr Pro to unlock Finances"
+        text='Subscribe to Flowplanr Pro to unlock Finances'
       >
         <div className='home-row'>
           <div className='home-col'>
             <NewClientsBox id={user.account?.id} />
-            <InvoiceInfoBox label='Overdue Invoices' invoices={[]} />
-            <InvoiceInfoBox label='Paid Invoices' invoices={[]} />
+            {/* <FinanceInfoBox label='Revenue' amount={revenueEntries} /> */}
+            <FinanceInfoBox label='Profit' amount={profitEntries} />
+            <FinanceInfoBox label='Expenses' amount={expenseEntries} />
+
             <RecurringExpenseBox recurringExpenses={recurringExpenses} />
           </div>
           <div className='revenue-chart-container'>
@@ -312,7 +341,7 @@ const Home: React.FC = () => {
                 <YAxis tickFormatter={YAxisFormatter} />
                 <Tooltip />
                 <Legend />
-                {revenueEntries.map((entries) => (
+                {revenueChartEntries.map((entries) => (
                   <Line
                     type='monotoneY'
                     dataKey='amount'

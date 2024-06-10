@@ -8,7 +8,7 @@ import {
   faGrip,
   faChevronRight,
   faAddressCard,
-  faFile,
+  // faFile,
   faGear,
   faRightFromBracket,
   faCoins,
@@ -17,13 +17,13 @@ import {
 
 import flowplanrIcon from '../../../assets/flowplanrIcon.png';
 import { RootState } from '../../services/store';
-import Home from '$renderer/pages/Home';
-import Projects from '$renderer/pages/Projects';
-import Contacts from '../pages/Contacts';
-import Documents from './dashboard/documents/Documents';
-import Bookkeeping from '$renderer/pages/Bookkeeping';
-import AboutPage from '$renderer/pages/AboutPage';
-import Settings from '../pages/Settings';
+// import Home from '$renderer/pages/Home';
+// import Projects from '$renderer/pages/Projects';
+// import Contacts from '../pages/Contacts';
+// import Documents from './dashboard/documents/Documents';
+// import Bookkeeping from '$renderer/pages/Bookkeeping';
+// import AboutPage from '$renderer/pages/AboutPage';
+// import Settings from '../pages/Settings';
 // import Avatar from './Avatar';
 // import exampleAvatar from '../../../assets/Avatars/exampleAvatar.png';
 // import usePagePicker from '../../hooks/usePagePicker';
@@ -52,18 +52,17 @@ const Navbar: React.FC = () => {
     setCollapsed(!collapsed);
   };
 
-  const setPage = (component: JSX.Element, menuItem: string) => {
+  const setPage = (menuItem: string) => {
     dispatch(selectPage(menuItem));
-    // toggleComponent(component, menuItem);
   };
 
   const toggleSettings = () => {
     setShowingSettings(!showingSettings);
   };
 
-  const handleSettingsClick = (component: JSX.Element, menuItem: string) => {
+  const handleSettingsClick = (menuItem: string) => {
     toggleSettings();
-    setPage(component, menuItem);
+    setPage(menuItem);
   };
 
   const handleSignOut = () => {
@@ -104,7 +103,7 @@ const Navbar: React.FC = () => {
         </div>
         <Link to='/'>
           <li
-            onClick={() => setPage(<Home />, 'home')}
+            onClick={() => setPage('home')}
             className={`${
               accountState.selectedPage == 'home' ? 'active-menu-item' : ''
             }`}
@@ -118,7 +117,7 @@ const Navbar: React.FC = () => {
 
         <Link to='/projects'>
           <li
-            onClick={() => setPage(<Projects />, 'projects')}
+            onClick={() => setPage('projects')}
             className={`${
               accountState.selectedPage == 'projects' ? 'active-menu-item' : ''
             }`}
@@ -136,7 +135,7 @@ const Navbar: React.FC = () => {
 
         <Link to='/contacts'>
           <li
-            onClick={() => setPage(<Contacts />, 'contacts')}
+            onClick={() => setPage('contacts')}
             className={`${
               accountState.selectedPage == 'contacts' ? 'active-menu-item' : ''
             }`}
@@ -147,7 +146,7 @@ const Navbar: React.FC = () => {
             </span>
           </li>
         </Link>
-        <Link to='/documents'>
+        {/* <Link to='/documents'>
           <li
             onClick={() => setPage(<Documents />, 'documents')}
             className={`${
@@ -159,10 +158,10 @@ const Navbar: React.FC = () => {
               Documents
             </span>
           </li>
-        </Link>
+        </Link> */}
         <Link to='/bookkeeping'>
           <li
-            onClick={() => setPage(<Bookkeeping />, 'bookkeeping')}
+            onClick={() => setPage('bookkeeping')}
             className={`${
               accountState.selectedPage == 'bookkeeping'
                 ? 'active-menu-item'
@@ -220,7 +219,7 @@ const Navbar: React.FC = () => {
             </li>
             <Link to='/about'>
               <li
-                onClick={() => handleSettingsClick(<AboutPage />, 'about')}
+                onClick={() => handleSettingsClick('about')}
                 className={`${showingSettings ? '' : 'hidden'}`}
               >
                 <FontAwesomeIcon
@@ -234,7 +233,7 @@ const Navbar: React.FC = () => {
             </Link>
             <Link to='/settings'>
               <li
-                onClick={() => handleSettingsClick(<Settings />, 'settings')}
+                onClick={() => handleSettingsClick('settings')}
                 className={`${showingSettings ? '' : 'hidden'}`}
               >
                 <FontAwesomeIcon icon={faGear} className='navbar-li-icon' />

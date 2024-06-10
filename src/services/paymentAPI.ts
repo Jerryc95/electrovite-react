@@ -105,14 +105,6 @@ export const paymentAPI = createApi({
 });
 
 export const {
-  // useCreateCustomerMutation,
-  // useUpdateCustomerMutation,
-  // useDeleteCustomerMutation,
-  // useCreateSubscriptionMutation,
-  // useFetchSubscriptionMutation,
-  // useUpdateSubscriptionMutation,
-  // useResumeSubscriptionMutation,
-  // useCancelSubscriptionMutation,
   useFetchPaymentMethodMutation,
   useFetchPastInvoicesQuery,
   useFetchUpcomingInvoicesQuery,

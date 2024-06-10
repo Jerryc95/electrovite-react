@@ -370,7 +370,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
           </div>
         </div>
         <div className='detail-row jc-sb'>
-          <div className='third-detail-card pd4'>
+          <div className='third-detail-card pd4' style={{width: '49%'}}>
             {contact ? (
               <div className='detail-col pd4'>
                 <h3>
@@ -391,7 +391,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
               </div>
             )}
           </div>
-          <div className='third-detail-card pd4 ai-cen'>
+          {/* <div className='third-detail-card pd4 ai-cen'>
             {contact ? (
               <div className='detail-col'>
                 <h3>Invoice</h3>
@@ -405,12 +405,12 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
                 </button>
               </div>
             )}
-          </div>
-          <div className='third-detail-card pd4'>
+          </div> */}
+          <div className='third-detail-card pd4' style={{width: '49%'}}>
             {project ? (
               <div className='detail-col pd4'>
                 <h3>{project.name}</h3>
-                <p>{project.description}</p>
+                <p style={{fontSize: '0.80rem'}}>{project.description}</p>
               </div>
             ) : (
               <div className='detail-col ai-cen'>

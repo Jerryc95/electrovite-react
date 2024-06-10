@@ -97,6 +97,9 @@ function createMainWindow() {
     // mainWindow?.webContents.openDevTools()
   });
 
+  //open stripe customer portal
+
+
   // Close all windows when main window is closed
   mainWindow.on('close', () => {
     mainWindow = null;

@@ -7,6 +7,9 @@ interface SuccessfullySubscribedProps {
 const SuccessfullySubscribed: React.FC<SuccessfullySubscribedProps> = ({
   setSuccessfullySubscribedAlert,
 }) => {
+
+  //possibly add a fetch here for paymnet
+
   return (
     <div className='successfully-subbed-container'>
       <div className='successfully-subbed-alert-box'>

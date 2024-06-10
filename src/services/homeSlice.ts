@@ -14,6 +14,7 @@ interface homeState {
   upcomingTasks: UpcomingTask[];
   upcomingEvents: UpcomingEvent[];
   revenue: BKEntry[];
+  expenses: BKEntry[];
   recurringExpenses: BKExpense[];
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
@@ -23,6 +24,7 @@ const initialHomeState: homeState = {
   upcomingTasks: [],
   upcomingEvents: [],
   revenue: [],
+  expenses: [],
   recurringExpenses: [],
   loading: 'idle',
   error: null,
@@ -64,19 +66,21 @@ export const homeSlice = createSlice({
       },
     );
 
-    builder.addMatcher(
-      homeAPI.endpoints.fetchExpenses.matchPending,
-      (state) => {
-        state.loading = 'pending';
-      },
-    );
+    builder.addMatcher(homeAPI.endpoints.fetchEntries.matchPending, (state) => {
+      state.loading = 'pending';
+    });
 
     builder.addMatcher(
-      homeAPI.endpoints.fetchRevenue.matchFulfilled,
-      (state, action: PayloadAction<BKEntry[]>) => {
+      homeAPI.endpoints.fetchEntries.matchFulfilled,
+      (
+        state,
+        action: PayloadAction<{ revenue: BKEntry[]; expenses: BKEntry[] }>,
+      ) => {
         state.loading = 'fulfilled';
-        const entries = action.payload;
-        state.revenue = entries;
+        const revenue = action.payload.revenue;
+        const expenses = action.payload.expenses;
+        state.revenue = revenue;
+        state.expenses = expenses;
       },
     );
 
@@ -110,7 +114,8 @@ export const getUpcomingTasks = (state: RootState) =>
 export const getUpcomingEvents = (state: RootState) =>
   state.homeReducer.upcomingEvents;
 export const getRevenue = (state: RootState) => state.homeReducer.revenue;
-export const getExpenses = (state: RootState) =>
+export const getExpenses = (state: RootState) => state.homeReducer.expenses;
+export const getRecurringExpenses = (state: RootState) =>
   state.homeReducer.recurringExpenses;
 
 export default homeSlice.reducer;

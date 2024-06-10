@@ -15,13 +15,14 @@ import ProjectDetail from './dashboard/projects/ProjectDetail';
 import Contacts from '$renderer/pages/Contacts';
 import Bookkeeping from '$renderer/pages/Bookkeeping';
 import Settings from '$renderer/pages/Settings';
-import Documents from './dashboard/documents/Documents';
+// import Documents from './dashboard/documents/Documents';
 import Navbar from './Navbar';
 import Home from '$renderer/pages/Home';
 import AboutPage from '$renderer/pages/AboutPage';
 import TaskDetail from './dashboard/projects/taskViews/TaskDetail';
 import ContactDetail from './dashboard/contacts/ContactDetail';
 import BKEntryDetail from './dashboard/bookkeeping/BKEntryDetail';
+import Paywall from './Paywall';
 
 const App = () => {
   const user = useSelector(
@@ -44,7 +45,7 @@ const App = () => {
     (state: RootState) => state.bookkeepingReducer.entries,
   );
 
-  const subscription = useSelector((state: RootState) => state.subscriptionReducer)
+  // const subscription = useSelector((state: RootState) => state.subscriptionReducer)
 
   const navigate = useNavigate();
 
@@ -56,7 +57,8 @@ const App = () => {
 
   return (
     <div>
-      {user != null && subscription.loading == 'fulfilled' && <Navbar />}
+       {user.signedIn && <Navbar />}
+      {/* {user != null && subscription.loading == 'fulfilled' && <Navbar />} */}
       <Routes>
         <Route path='/forgot-password' element={<ForgotPasswordPage />} />
         <Route path='/register' element={<SignUpPage />} />
@@ -140,7 +142,7 @@ const App = () => {
             >
               <Route path='/documents' element={<Documents />} />
             </Route> */}
-            <Route path='/documents' element={<Documents />} />
+            {/* <Route path='/documents' element={<Documents />} /> */}
             <Route path='/' element={<Home />} />
             <Route path='/about' element={<AboutPage />} />
           </>

@@ -58,9 +58,7 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
 
   const getContactInfo = useCallback(
     async (id: number) => {
-      console.log(1)
       if (project.contact_id || selectedContact !== null) {
-        console.log(2)
         const url = `http://localhost:3000/contacts/details/${id}`;
         try {
           const response = await fetch(url);
@@ -75,7 +73,6 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
   );
 
   const getContacts = useCallback(() => {
-    console.log("ran with callback")
     const url = `http://localhost:3000/contacts/names/${user.account?.id}`;
     fetch(url)
       .then((response) => response.json())
@@ -91,22 +88,6 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
       });
   },[])
 
-  // const getContacts = () => {
-  //   console.log("ran without callback")
-  //   const url = `http://localhost:3000/contacts/names/${user.account?.id}`;
-  //   fetch(url)
-  //     .then((response) => response.json())
-  //     .then((data: BKClient[]) => {
-  //       const formattedData: BKClient[] = data.map((item) => ({
-  //         id: item.id,
-  //         first_name: item.first_name,
-  //         last_name: item.last_name,
-  //         type: 'contact',
-  //       }));
-  //       setContacts(formattedData);
-  //       setSelectedContact(formattedData[0])
-  //     });
-  // };
 
   const handleConnectContact = () => {
     if (selectedContact) {
@@ -178,7 +159,6 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
             next_payment_date: foundEntry.next_payment_date,
             project_id: project.id,
           };
-          console.log(updatedEntry)
           setEntries([...entries, updatedEntry])
           updateEntry(updatedEntry);
         

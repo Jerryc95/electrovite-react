@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { BKEntry } from 'src/models/BKEntry';
-import { getUser } from '../../services/accountSlice';
+import { getUser, selectPage } from '../../services/accountSlice';
 import '../styles/bookkeeping.scss';
 import BKHighlight from '$renderer/components/dashboard/bookkeeping/BKHighlight';
 import NewBKEntry from '$renderer/components/dashboard/bookkeeping/NewBKEntry';
@@ -19,11 +19,15 @@ import {
   setSelectedEntry,
 } from '../../services/bookkeepingSlice';
 import { useFetchEntriesQuery } from '../../services/bookkeepingAPI';
+import { getSubscription } from '../../services/subscriptionSlice';
+import Paywall from '$renderer/components/Paywall';
+import { parseDate } from '../../helpers/ParseDate';
 
 
 const Bookkeeping: React.FC = () => {
   const user = useSelector(getUser);
   const entries = useSelector(getEntries);
+  const subscription = useSelector(getSubscription)
   const revenueEntries = useSelector(getRevenueEntries);
   const expenseEntries = useSelector(getExpenseEntries);
   const recurringExpenses = useSelector(getRecurringExpenses);
@@ -52,14 +56,19 @@ const Bookkeeping: React.FC = () => {
   ];
   // const BKHighlights = ['Profit', 'Expenses', 'Revenue', 'Outstanding'];
 
-  const dateParser = (date: Date) => {
-    return new Date(date);
-  };
+  // const dateParser = (date: Date) => {
+  //   return new Date(date);
+  // };
 
   const toggleEntry = (entry: BKEntry) => {
     dispatch(setSelectedEntry(entry));
     navigate(`/bookkeeping/${entry.entry_name.replaceAll(' ', '-')}`);
   };
+
+  const closePaywall = () => {
+    dispatch(selectPage('home'))
+    navigate("/")
+  }
 
   const dateFilter = (entries: BKEntry[]) => {
     const currentDate = new Date();
@@ -112,8 +121,8 @@ const Bookkeeping: React.FC = () => {
     switch (selectedSort) {
       case 'Date': {
         return (
-          dateParser(b.entry_date).getTime() -
-          dateParser(a.entry_date).getTime()
+          parseDate(b.entry_date).getTime() -
+          parseDate(a.entry_date).getTime()
         );
       }
       case 'Contact': {
@@ -286,6 +295,14 @@ const Bookkeeping: React.FC = () => {
         <NewExpense
           setAddingExpense={setAddingExpense}
           accountID={user.account?.id}
+        />
+      )}
+      {subscription!.tier < 3 && (
+        <Paywall 
+        subscription={subscription!}
+        requiredTier={3}
+        requestedFeature='Bookkeeping'
+        onClose={closePaywall}
         />
       )}
     </div>

@@ -23,9 +23,12 @@ export const homeAPI = createApi({
       }),
     }),
 
-    fetchRevenue: builder.query<BKEntry[], number | undefined>({
+    fetchEntries: builder.query<
+      { revenue: BKEntry[]; expenses: BKEntry[] },
+      number | undefined
+    >({
       query: (accountID) => ({
-        url: `/revenue/${accountID}`,
+        url: `/entries/${accountID}`,
         method: 'GET',
       }),
     }),
@@ -39,7 +42,7 @@ export const homeAPI = createApi({
 });
 
 export const {
-  useFetchRevenueQuery,
+  useFetchEntriesQuery,
   useFetchUpcomingEventsQuery,
   useFetchUpcomingTasksQuery,
   useFetchExpensesQuery,

@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
+// import { shell } from 'electron';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronUp,
   faChevronDown,
   faCircleCheck,
+  faPenToSquare,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../../services/store';
-// import { StripeInvoice } from 'src/models/stripeInvoice';
 import InvoiceRow from './InvoiceRow';
-// import { StripeSubscription } from 'src/models/stripeSubscription';
 import InvoiceRowLabel from './InvoiceRowLabel';
 import SubscriptionUpdate from './subscriptionSettings/subscriptionUpdate';
 import SuccessfullySubscribed from './subscriptionSettings/SuccessfullySubscribed';
@@ -21,6 +21,10 @@ import {
   getStripeCustomer,
   getStripeSubscription,
 } from '../../../services/subscriptionSlice';
+import {
+  useCreatePortalSessionMutation,
+  useFetchSubscriptionMutation,
+} from '../../../services/subscriptionAPI';
 
 const SettingsBilling: React.FC = () => {
   const subscription = useSelector(
@@ -33,9 +37,10 @@ const SettingsBilling: React.FC = () => {
   const { data } = useFetchPastInvoicesQuery(customer, {
     refetchOnMountOrArgChange: true,
   });
-  // const invoices = useMemo(() => {
-  //   data || [];
-  // }, [data]);
+
+  const [createPortalURL] = useCreatePortalSessionMutation();
+  const [fetchSubscription] = useFetchSubscriptionMutation();
+
   const invoices = data || [];
   const recentInvoices = data?.slice(0, 3) || [];
 
@@ -50,6 +55,20 @@ const SettingsBilling: React.FC = () => {
     setEditing: React.Dispatch<React.SetStateAction<boolean>>,
   ) => {
     setEditing((value) => !value);
+  };
+
+  const handleGetCustomerPortal = () => {
+    const data = {
+      customer_id: customer,
+      return_url: 'http://localhost:5173',
+    };
+    createPortalURL(data).then((res) => {
+      if ('data' in res) {
+        const url = res.data.url;
+        console.log(url);
+        window.open(url, '_blank');
+      }
+    });
   };
 
   let planClass = 'Starter';
@@ -68,9 +87,7 @@ const SettingsBilling: React.FC = () => {
   }
 
   useEffect(() => {
-    if (
-      subscription.stripeSubscription?.current_period_end 
-    ) {
+    if (subscription.stripeSubscription?.current_period_end) {
       const billingDate = new Date(
         subscription.stripeSubscription.current_period_end * 1000,
       );
@@ -86,9 +103,19 @@ const SettingsBilling: React.FC = () => {
     }
   }, []);
 
+  // Used to get the users payment info if it hasn't loaded in
   useEffect(() => {
-    console.log(subscription);
-  }, []);
+    if (
+      subscription.stripeSubscription?.default_payment_method == null &&
+      subscription.stripeSubscription?.id != null
+    ) {
+      fetchSubscription(subscription.stripeSubscription.id);
+    }
+  }, [
+    fetchSubscription,
+    subscription.stripeSubscription?.default_payment_method,
+    subscription.stripeSubscription?.id,
+  ]);
 
   return (
     <div className='sub-settings-container'>
@@ -105,9 +132,8 @@ const SettingsBilling: React.FC = () => {
                 {stripeSubscription?.status === 'trialing' && (
                   <span>TRIAL</span>
                 )}
-                {subscription.stripeSubscription?.status === 'canceled' && (
-                  <span>CANCELED</span>
-                )}
+                {subscription.stripeSubscription?.cancel_at_period_end ===
+                  true && <span>CANCELED</span>}
               </span>
             )}
           </span>
@@ -133,7 +159,7 @@ const SettingsBilling: React.FC = () => {
           </div>
           <div className='settings-section-column'>
             <div>
-              {subscription.stripeSubscription?.status == 'canceled'  ? (
+              {subscription.stripeSubscription?.cancel_at_period_end == true ? (
                 <p className='header'>Subscription Ends</p>
               ) : (
                 <p className='header'>Next Billing Date</p>
@@ -159,17 +185,17 @@ const SettingsBilling: React.FC = () => {
         <div className='settings-section bottom-border'>
           <div className='settings-section-header'>
             <h4>Billing Info</h4>
-            {/* <div
+            <div
               className='settings-section-edit'
-              onClick={() => toggleEdit(setShowingUpdatingPayment)}
+              onClick={handleGetCustomerPortal}
             >
-              <span>Update</span>
+              <span id='customer-portal'>Update</span>
               <FontAwesomeIcon
                 icon={faPenToSquare}
                 className='edit-icon'
                 size='sm'
               />
-            </div> */}
+            </div>
           </div>
           <div className='settings-section-row billing'>
             <div className='setttings-section-column '>

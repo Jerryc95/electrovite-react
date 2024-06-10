@@ -20,10 +20,8 @@ const RecurringExpenseBox: React.FC<RecurringExpenseBoxProps> = ({
   return (
     <div className='client-overview-container'>
       <div className='overview-row'>
-        <h4>Recurring Expenses: ${totalExpenses}</h4>
-        {/* <div className={`client-overview-percent-container`}>
-          <p>{totalExpenses}</p>
-        </div> */}
+        <h4>Recurring Expenses: </h4>
+        <h4>${totalExpenses}</h4>
       </div>
     </div>
   );

@@ -11,10 +11,13 @@ import NewContact from '$renderer/components/dashboard/contacts/NewContact';
 import '../styles/contacts.scss';
 import { ContactEvent } from 'src/models/contactEvent';
 import UpcomingEventView from '$renderer/components/dashboard/contacts/events/UpcomingEventView';
-import { getUser } from '../../services/accountSlice';
+import { getUser, selectPage } from '../../services/accountSlice';
 
 import { useFetchContactsQuery } from '../../services/contactAPI';
 import { selectContact, getContacts } from '../../services/contactSlice';
+import { getSubscription } from '../../services/subscriptionSlice';
+import { parseDate } from '../../helpers/ParseDate';
+import Paywall from '$renderer/components/Paywall';
 
 interface UpcomingEvent {
   contact: Contact;
@@ -24,6 +27,7 @@ interface UpcomingEvent {
 const Contacts: React.FC = () => {
   const user = useSelector(getUser);
   const contacts = useSelector(getContacts);
+  const subscription = useSelector(getSubscription);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -54,9 +58,14 @@ const Contacts: React.FC = () => {
     );
   };
 
-  const dateParser = (date: Date) => {
-    return new Date(date);
+  const closePaywall = () => {
+    dispatch(selectPage('home'));
+    navigate(-1);
   };
+
+  // const dateParser = (date: Date) => {
+  //   return new Date(date);
+  // };
 
   const sortedContacts = [...contacts].sort((a, b) => {
     if (sortingOption === 'firstName') {
@@ -65,8 +74,8 @@ const Contacts: React.FC = () => {
       return a.last_name.localeCompare(b.last_name);
     } else if (sortingOption === 'created') {
       return (
-        dateParser(b.creation_date).getTime() -
-        dateParser(a.creation_date).getTime()
+        parseDate(b.creation_date).getTime() -
+        parseDate(a.creation_date).getTime()
       );
     } else if (sortingOption === 'lastContactDate') {
       if (a.last_contact_date === null && b.last_contact_date === null) {
@@ -79,8 +88,8 @@ const Contacts: React.FC = () => {
         return -1;
       }
       return (
-        dateParser(a.last_contact_date).getTime() -
-        dateParser(b.last_contact_date).getTime()
+        parseDate(a.last_contact_date).getTime() -
+        parseDate(b.last_contact_date).getTime()
       );
     } else if (sortingOption === 'nextContactDate') {
       if (a.next_contact_date === null && b.next_contact_date === null) {
@@ -93,8 +102,8 @@ const Contacts: React.FC = () => {
         return -1;
       }
       return (
-        dateParser(a.next_contact_date).getTime() -
-        dateParser(b.next_contact_date).getTime()
+        parseDate(a.next_contact_date).getTime() -
+        parseDate(b.next_contact_date).getTime()
       );
     }
     return 0;
@@ -110,7 +119,7 @@ const Contacts: React.FC = () => {
     contacts.forEach((contact) => {
       if (contact.events.length !== 0) {
         contact.events.forEach((event) => {
-          if (dateParser(event.event_date) > today) {
+          if (parseDate(event.event_date) > today) {
             const upcomingEvent: UpcomingEvent = {
               contact: contact,
               event: event,
@@ -122,8 +131,8 @@ const Contacts: React.FC = () => {
     });
 
     const sortedUpcomingEvents = upcomingEventsArray.sort((a, b) => {
-      const dateA = dateParser(a.event.event_date);
-      const dateB = dateParser(b.event.event_date);
+      const dateA = parseDate(a.event.event_date);
+      const dateB = parseDate(b.event.event_date);
       if (dateA.getTime() < dateB.getTime()) {
         return -1;
       }
@@ -139,9 +148,7 @@ const Contacts: React.FC = () => {
     <div className='contacts-container'>
       <div className='contacts-header'>
         <h2>Contacts</h2>
-        <button onClick={() => setAddingContact(true)}>
-          Add Contact
-        </button>
+        <button onClick={() => setAddingContact(true)}>Add Contact</button>
       </div>
       <div className='contacts-top-container'>
         <div className='contacts-upcoming-events'>
@@ -194,12 +201,14 @@ const Contacts: React.FC = () => {
         )}
       </div>
       {addingContact && (
-        <NewContact
-          setAddingContact={setAddingContact}
-          // addingContact={addingContact}
-          id={user.account?.id}
-          // setContacts={setContacts}
-          // contacts={contacts}
+        <NewContact setAddingContact={setAddingContact} id={user.account?.id} />
+      )}
+      {subscription!.tier < 2 && (
+        <Paywall
+          subscription={subscription!}
+          requiredTier={2}
+          requestedFeature='CRM'
+          onClose={closePaywall}
         />
       )}
     </div>

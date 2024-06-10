@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, {useEffect} from 'react';
+import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 
@@ -31,7 +31,7 @@ const ExistingSubscriberForm: React.FC<SubscriberFormProps> = ({
   );
   const user = useSelector(getUser);
   const [updateSubscription] = useUpdateSubscriptionMutation();
-  const [cancelledSubscription] = useCancelSubscriptionMutation();
+  const [cancelSubscription] = useCancelSubscriptionMutation();
 
   // const dispatch = useDispatch();
 
@@ -57,26 +57,23 @@ const ExistingSubscriberForm: React.FC<SubscriberFormProps> = ({
         previousSubID: subscriptionState.subscription?.id,
         accountID: user.account?.id,
       };
-      console.log(data)
       updateSubscription(data);
-    } else {
+    } 
+    else {
       const data = {
         stripe_sub_id: subscriptionState.stripeSubscription?.id,
         accountID: user.account?.id,
-        previous_sub_id: subscriptionState.subscription?.id
+        previous_sub_id: subscriptionState.subscription?.id,
       };
       console.log(data);
-      cancelledSubscription(data);
+      cancelSubscription(data)
     }
-
-    // add api to get payment method here
-
-    // dispatch(updateSubscription(updatedSubscription));
 
     setIsUpdatingPlan(false);
     setViewingPlans(false);
     setSuccessfullySubscribedAlert(true);
   };
+
 
   return (
     <div className='subscription-update-container'>

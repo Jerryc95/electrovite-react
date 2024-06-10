@@ -1,12 +1,11 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../../../../services/store';
-import { updateSubscription } from '../../../../../services/subscriptionSlice';
 import { Subscription } from 'src/models/subscription';
-import { StripeSubscription } from 'src/models/stripeSubscription';
+import { useResumeSubscriptionMutation } from '../../../../../services/subscriptionAPI';
 import { getUser } from 'src/services/accountSlice';
 
 interface SubscriberFormProps {
@@ -27,7 +26,7 @@ const ReturningSubscriberForm: React.FC<SubscriberFormProps> = ({
   );
   const user = useSelector(getUser);
 
-  const dispatch = useDispatch();
+  const [resumeSubscription] = useResumeSubscriptionMutation();
 
   const getPlanColorClass = (plan: string | undefined) => {
     switch (plan) {
@@ -43,54 +42,21 @@ const ReturningSubscriberForm: React.FC<SubscriberFormProps> = ({
   };
 
   const handleUpdatePlan = async () => {
-    const url = 'http://localhost:3000/payment/resume-subscription';
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          currentSubscriptionID: subscriptionState.stripeSubscription?.id,
-          priceID: subscription.stripe_price_id,
-          subscriptionID: subscription.id,
-          accountID: user.account?.id,
-        }),
-      });
-      const responseData = await response.json();
+    const data = {
+      stripeSubscriptionID: subscriptionState.stripeSubscription?.id,
+      priceID: subscription.stripe_price_id,
+      subscriptionID: subscription.id,
+      accountID: user.account?.id
+    };
+    resumeSubscription(data);
+    setIsUpdatingPlan(false);
+    setViewingPlans(false);
+    setSuccessfullySubscribedAlert(true);
+  };
 
-      const updatedStripeSubscription: StripeSubscription = {
-        id: responseData.subscription.id,
-        customer: responseData.subscription.customer,
-        start_date: responseData.subscriptionstart_date,
-        current_period_end: responseData.subscription.current_period_end,
-        current_period_start: responseData.subscription.current_period_start,
-        trial_end: responseData.subscription.trial_end,
-        cancel_at: responseData.subscription.cancel_at,
-        cancel_at_period_end: responseData.subscription.cancel_at_period_end,
-        canceled_at: responseData.subscription.canceled_at,
-        status: responseData.subscription.status,
-        default_payment_method: responseData.subscription.default_payment_method,
-      };
-
-      const updatedSubscription = {
-        subscription: subscription,
-        stripeSubscription: updatedStripeSubscription,
-        stripeCustomer: subscriptionState.stripeCustomer,
-        previousSubscription: subscription,
-        loading: subscriptionState.loading,
-        error: subscriptionState.error,
-      };
-
-      dispatch(updateSubscription(updatedSubscription));
-
-      setIsUpdatingPlan(false);
-      setViewingPlans(false);
-      setSuccessfullySubscribedAlert(true);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  useEffect(() => {
+    console.log('resume');
+  }, []);
 
   return (
     <div className='subscription-update-container'>

@@ -1,5 +1,14 @@
 import React from 'react';
 
+/**
+ * Props for the BlurredOverlay component.
+ * 
+ * @property {React.ReactNode} children - The content to be displayed inside the overlay.
+ * @property {number} blur - The amount of blur to apply to the content.
+ * @property {boolean} allowed - Whether interaction with the content is allowed.
+ * @property {string} text - The text to display when interaction is not allowed.
+ */
+
 interface BlurredOverlayProps {
   children: React.ReactNode;
   blur: number;
@@ -14,7 +23,7 @@ const BlurredOverlay: React.FC<BlurredOverlayProps> = ({
   text,
 }) => {
   return (
-    <div>
+    <div  style={{ position: 'relative' }}>
       <div
         style={{
           top: 0,
