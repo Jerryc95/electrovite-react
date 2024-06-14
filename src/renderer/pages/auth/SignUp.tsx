@@ -6,6 +6,7 @@ import ProfileSetupPage from '../accountSetup/ProfileSetupPage';
 import SubPlanPaymentPage from '../accountSetup/SubPlanPaymentPage';
 import { Subscription } from 'src/models/subscription';
 import { StripeSubscription } from 'src/models/stripeSubscription';
+import VerifyEmailForm from './VerifyEmailForm';
 // import { useSelector } from 'react-redux';
 // import { getStripeCustomer } from 'src/services/subscriptionSlice';
 
@@ -17,7 +18,7 @@ const defaultSubscription: Subscription = {
   billing_cycle: '',
   features: [],
   stripe_price_id: '',
-  tier: 0
+  tier: 0,
 };
 
 const SignUpPage: React.FC = () => {
@@ -35,10 +36,28 @@ const SignUpPage: React.FC = () => {
     email: string;
     password: string;
   }) => {
-    
     setEmail(formData.email);
     setPassword(formData.password);
-    setCreationStep(1);
+    // update verify email db here
+    const url = 'http://localhost:3000/auth/send-verification-email';
+    const data = {
+      email: formData.email
+    };
+    try {
+       await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      // const responseData = await response.json();
+    //  console.log(responseData)
+     setCreationStep(1);
+    } catch (error) {
+      console.log(error)
+    }
+    // setCreationStep(1);
   };
 
   const renderComponent = () => {
@@ -47,14 +66,17 @@ const SignUpPage: React.FC = () => {
         return <AuthForm type='signup' onSubmit={handleSignUp} />;
       case 1:
         return (
+          <VerifyEmailForm email={email} setCreationStep={setCreationStep} />
+        );
+      case 2:
+        return (
           <SubscriptionSelectorPage
             setSubscription={setSubscription}
             setCreationStep={setCreationStep}
             email={email}
-            // setCustomer={setCustomer}
           />
         );
-      case 2:
+      case 3:
         return (
           <SubPlanPaymentPage
             setCreationStep={setCreationStep}
@@ -62,7 +84,7 @@ const SignUpPage: React.FC = () => {
             subscription={subscription}
           />
         );
-      case 3:
+      case 4:
         return (
           <ProfileSetupPage
             email={email}

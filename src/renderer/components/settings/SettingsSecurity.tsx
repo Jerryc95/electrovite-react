@@ -10,12 +10,16 @@ import {
 import { getUser, updateEmailState } from '../../../services/accountSlice';
 import { checkEmail } from '../../../helpers/CheckEmail';
 import { checkPassword } from '../../../helpers/CheckPassword';
+import TwoFactorSetup from './TwoFactorSetup';
+import TwoFactorDisableForm from './TwoFactorDisable';
 
 const SettingsSecurity: React.FC = () => {
   const user = useSelector(getUser);
 
   const [editingSecurity, setEditingSecurity] = useState(false);
   const [editingTwoFactor, setEditingTwoFactor] = useState(false);
+  const [showingTwoFactorSetup, setShowingTwoFactorSetup] = useState(false);
+  const [showingTwoFactorDisable, setShowingTwoFactorDisable] = useState(false);
 
   const [email, setEmail] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');
@@ -90,16 +94,17 @@ const SettingsSecurity: React.FC = () => {
         password: currentPassword,
         newPassword: password,
       }).then((data) => {
-        if(data) {
-          console.log(data)
+        if (data) {
+          console.log(data);
         } else {
-          console.log("correct password")
+          console.log('correct password');
         }
       });
-      setPasswordAlertMessage("")
-      toggleEdit(setEditingSecurity)
+      setPasswordAlertMessage('');
+      toggleEdit(setEditingSecurity);
     }
   };
+
 
   return (
     <div className='sub-settings-container'>
@@ -198,7 +203,7 @@ const SettingsSecurity: React.FC = () => {
                   onChange={handleInputChange}
                 />
               </label>
-            <p>{passwordAlertMessage}</p>
+              <p>{passwordAlertMessage}</p>
               <button
                 className='button-brand-blue'
                 onClick={handleUpdatePassword}
@@ -235,9 +240,7 @@ const SettingsSecurity: React.FC = () => {
         </p>
         <h5>
           Two-factor authentication is
-          <span
-            className={user.account?.two_factor_enabled ? 'on' : 'off'}
-          >
+          <span className={user.account?.two_factor_enabled ? 'on' : 'off'}>
             {user.account?.two_factor_enabled ? ' ON' : ' OFF'}
           </span>
         </h5>
@@ -252,27 +255,31 @@ const SettingsSecurity: React.FC = () => {
                   Authenticator, Authy, or Microsoft Authenticator
                 </p>
               </div>
-              <button className='button-brand-light-blue'>Setup</button>
+              {user.account?.two_factor_enabled ? (
+                <button
+                  className='button-brand-pink'
+                  onClick={() => setShowingTwoFactorDisable(true)}
+                >
+                  Disable
+                </button>
+              ) : (
+                <button
+                  className='button-brand-light-blue'
+                  onClick={() => setShowingTwoFactorSetup(true)}
+                >
+                  Setup
+                </button>
+              )}
             </div>
-            {/* <div className='two-factor-option'>
-              <div>
-                <h5>Phone Number</h5>
-                <p>
-                  Add a phone number to receive a one-time code, ensuring secure
-                  access to your account with added verification.
-                </p>
-              </div>
-              <button className='button-brand-light-blue'>Setup</button>
-            </div> */}
-            {user.account?.two_factor_enabled ? (
-              <button>Disable</button>
-            ) : (
-              <></>
-              // <button>Disable</button>
-            )}
           </div>
         )}
       </div>
+      {showingTwoFactorSetup && (
+        <TwoFactorSetup setShowingTwoFactorSetup={setShowingTwoFactorSetup} />
+      )}
+      {showingTwoFactorDisable && (
+        <TwoFactorDisableForm  setShowingTwoFactorDisable={setShowingTwoFactorDisable}/>
+      )}
     </div>
   );
 };

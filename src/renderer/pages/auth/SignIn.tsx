@@ -6,10 +6,12 @@ import AuthForm from '$renderer/components/AuthForm';
 import { useSignInAccountMutation } from '../../../services/authAPI';
 import Onboarding from '../onboarding/Onboarding';
 import { getSettings } from '../../../services/settingsSlice';
+import { getUser } from '../../../services/accountSlice';
 
 // import { useFetchProfileMutation } from '../../../services/profileAPI';
 
 const SignInPage: React.FC = () => {
+  const user = useSelector(getUser)
   const settings = useSelector(getSettings)
   const [signInUser] = useSignInAccountMutation();
   const navigate = useNavigate();
@@ -31,7 +33,7 @@ const SignInPage: React.FC = () => {
     <div>
       <AuthForm type='signin' onSubmit={handleSignIn} />
       {settings.isOnboarded == false && <Onboarding />}
-      
+    
     </div>
   );
 };

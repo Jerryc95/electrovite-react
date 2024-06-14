@@ -49,6 +49,11 @@ export const accountSlice = createSlice({
     setSignIn: (state, action: PayloadAction<boolean>) => {
       state.signedIn = action.payload;
     },
+    setTwoFactorEnabled: (state, action: PayloadAction<boolean>) => {
+      if (state.account) {
+        state.account.two_factor_enabled = action.payload;
+      }
+    },
     clearAccountError: (state) => {
       state.error = null;
       state.deletedAt = null;
@@ -186,5 +191,6 @@ export const {
   updateEmailState,
   selectPage,
   setSignIn,
+  setTwoFactorEnabled,
 } = accountSlice.actions;
 export default accountSlice.reducer;

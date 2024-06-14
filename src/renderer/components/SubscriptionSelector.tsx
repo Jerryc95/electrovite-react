@@ -61,9 +61,9 @@ const SubscriptionSelector: React.FC<SubscriptionSelectorProps> = ({
     setSubscription(subscription);
     createCustomer({email});
     if (planType == 'free' && subscription !== null) {
-      setCreationStep(3);
+      setCreationStep(4);
     } else {
-      setCreationStep(2);
+      setCreationStep(3);
     }
   };
 

@@ -110,6 +110,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             />
           </label>
         )}
+        {/* add spinner for loading */}
         <button
           className='auth-form-button'
           disabled={!isEmailAvailable && type == 'signup'}
@@ -153,7 +154,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
           <>
             <p className='auth-form-callout'>
               Already have an account?{' '}
-              <Link to='/'>
+              <Link to='/sign-in'>
                 <span className='auth-form-link'>Sign in here.</span>
               </Link>
             </p>

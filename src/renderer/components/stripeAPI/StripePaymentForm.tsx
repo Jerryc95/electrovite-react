@@ -67,7 +67,7 @@ export default function StripePaymentForm({
   const handleBackClick = () => {
     if (setCreationStep) {
       deleteCustomer({ customer: customer });
-      setCreationStep(1);
+      setCreationStep(2);
     } else if (setIsUpdatingPlan) {
       setIsUpdatingPlan(false);
     }

@@ -22,7 +22,9 @@ import AboutPage from '$renderer/pages/AboutPage';
 import TaskDetail from './dashboard/projects/taskViews/TaskDetail';
 import ContactDetail from './dashboard/contacts/ContactDetail';
 import BKEntryDetail from './dashboard/bookkeeping/BKEntryDetail';
-import Paywall from './Paywall';
+import TwoFactorForm from '$renderer/pages/auth/TwoFactorForm';
+import AccountRecovery from '$renderer/pages/auth/AccountRecovery';
+// import VerifyEmailForm from '$renderer/pages/auth/VerifyEmailForm';
 
 const App = () => {
   const user = useSelector(
@@ -50,7 +52,7 @@ const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user == null) {
+    if (user.signedIn == false) {
       navigate('/sign-in');
     }
   }, [user]);
@@ -58,11 +60,13 @@ const App = () => {
   return (
     <div>
        {user.signedIn && <Navbar />}
-      {/* {user != null && subscription.loading == 'fulfilled' && <Navbar />} */}
       <Routes>
         <Route path='/forgot-password' element={<ForgotPasswordPage />} />
         <Route path='/register' element={<SignUpPage />} />
         <Route path='/sign-in' element={<SignInPage />} />
+        <Route path='/security' element={<TwoFactorForm />} />
+        <Route path='/security/lost-code' element={<AccountRecovery />} />
+
         <Route
           path='/creating-account'
           element={<CreatingAccountPage creating={true} />}
@@ -71,7 +75,7 @@ const App = () => {
           path='/loading-account'
           element={<CreatingAccountPage creating={false} />}
         />
-        {user != null && (
+        {user.signedIn && (
           <>
             <Route path='/projects' element={<Projects />} />
             {project != null && (

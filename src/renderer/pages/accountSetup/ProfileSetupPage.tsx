@@ -67,10 +67,10 @@ const ProfileSetupPage: React.FC<ProfileSetupPageProps> = ({
 
   const handleBackClick = () => {
     if (subscription?.id !== 1) {
-      setCreationStep(2);
+      setCreationStep(3);
     } else {
       deleteCustomer({customer: customer});
-      setCreationStep(1);
+      setCreationStep(2);
     }
   };
 

@@ -1,0 +1,307 @@
+.two-factor-setup-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .two-factor-setup-form {
+    display: flex;
+    flex-direction: column;
+    // justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    width: 60%;
+    height: 75%;
+    border-radius: 25px;
+    padding-top: 20px;
+
+    button {
+      margin-top: 10px;
+      align-items: center;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 10px 15px;
+      // width: 95px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .two-factor-setup-heading {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+
+      h2 {
+        margin-left: 55px;
+        margin-top: 10px;
+      }
+
+      button {
+        width: 95px;
+        margin-right: 55px;
+        font-size: 0.75rem;
+      }
+    }
+    .two-factor-setup-content-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 55px;
+
+      .two-factor-setup-column {
+        display: flex;
+        flex-direction: column;
+        width: 48%;
+        h3 {
+          padding-top: 5px;
+          padding-bottom: 5px;
+        }
+
+        ol {
+          list-style: decimal;
+          padding-left: 15px;
+
+          li {
+            font-size: 0.95rem;
+            padding-bottom: 5px;
+          }
+        }
+        .two-factor-setup-secret-key {
+          font-size: 0.95rem;
+          font-weight: bold;
+        }
+        .two-factor-setup-qr-container {
+          display: flex;
+          justify-content: center;
+          padding-top: 15px;
+          padding-bottom: 15px;
+        }
+        .two-factor-form-input {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 10px;
+          font-size: 1rem;
+          margin-bottom: 15px;
+          outline-color: #f72585;
+        }
+      }
+      .two-factor-error {
+        text-align: center;
+        font-size: 0.85rem;
+        font-weight: bold;
+        color: #f72585;
+      }
+    }
+  }
+}
+
+.two-factor-confirmation-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .two-factor-confirmation-field {
+    display: flex;
+    flex-direction: column;
+    // justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    width: 50%;
+    height: 45%;
+    border-radius: 25px;
+    padding-top: 20px;
+
+    h2 {
+      padding: 15px;
+    }
+
+    p {
+      padding: 20px;
+      font-size: 0.95rem;
+    }
+
+    .two-factor-recovery-key {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+    button {
+      margin-top: 10px;
+      align-items: center;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 10px 15px;
+      width: 95px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+  }
+}
+
+.two-factor-login-container {
+  max-width: 500px;
+  margin: 200px auto;
+  padding: 20px;
+  border-radius: 15px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 30px rgba(107, 107, 107, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+
+  p {
+    font-size: 0.85rem;
+    padding: 10px;
+    text-align: center;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    outline-color: #f72585;
+  }
+
+  button {
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 1rem;
+    width: 300px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 15px;
+  }
+
+  .token-error {
+    font-weight: bold;
+    color: #f72585;
+  }
+
+  .lost-2fa-callout {
+    font-size: 0.75rem;
+    color: #f72585;
+    text-decoration: underline;
+    cursor: pointer;
+    &:hover {
+        color: #cd1367;
+    }
+  }
+}
+
+.two-factor-disable-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .two-factor-disable-form {
+    display: flex;
+    flex-direction: column;
+    // justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    width: 55%;
+    height: 45%;
+    border-radius: 25px;
+    padding-top: 20px;
+
+    button {
+        margin-top: 10px;
+        align-items: center;
+        color: #fff;
+        border: none;
+        border-radius: 15px;
+        padding: 10px 15px;
+        width: 125px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+    .two-factor-disable-heading {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      padding-bottom: 25px;
+
+      h2 {
+        margin-left: 55px;
+        margin-top: 10px;
+      }
+
+      button {
+        width: 95px;
+        margin-right: 55px;
+        font-size: 0.75rem;
+      }
+    }
+
+    p {
+        font-size: 0.85rem;
+        margin-bottom: 25px;
+    }
+
+    input {
+        width: 50%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 1rem;
+        outline-color: #f72585;
+        margin: 15px;
+    }
+    .token-error {
+        color:#f72585;
+        font-weight: bold;
+    }
+  }
+}
+
+.recovery-code-container {
+    max-width: 500px;
+    margin: 200px auto;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #fefefe;
+    box-shadow: 0px 0px 30px rgba(107, 107, 107, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+
+}

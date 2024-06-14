@@ -19,7 +19,7 @@ interface CreatingAccountProps {
 }
 
 const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector((state: RootState) => state.accountReducer);
   const [fetchProfile] = useFetchProfileMutation();
   const [fetchSubscriptionInfo] = useFetchSubscriptionInfoMutation();
   const [forceDeleteAccount] = useForceDeleteAccountMutation();
@@ -79,19 +79,23 @@ const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
   };
 
   useEffect(() => {
-    if (accountState.account) {
-      fetchProfile(accountState.account.id).then(() => {
-        if (accountState.account) {
-          fetchSubscriptionInfo(accountState.account.id).then(() => {
-            navigate('/');
-            dispatch(setSignIn(true))
-          });
+    if (user.account) {
+      fetchProfile(user.account.id).then(() => {
+        if (user.account) {
+          if (user.account.two_factor_enabled) {
+            navigate("/security")
+          } else {
+            fetchSubscriptionInfo(user.account.id).then(() => {
+              navigate('/');
+              dispatch(setSignIn(true));
+            });
+          }
         }
       });
-    } else if (accountState.error == 'Account Deleted') {
+    } else if (user.error == 'Account Deleted') {
       const today = new Date();
-      if (accountState.deletedAt) {
-        const deletedDate = parseDate(accountState.deletedAt);
+      if (user.deletedAt) {
+        const deletedDate = parseDate(user.deletedAt);
         deletedDate.setDate(deletedDate.getDate() + 30);
         const timeDifference = deletedDate.getTime() - today.getTime();
         setDaysRemaining(
@@ -102,9 +106,9 @@ const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
       setShowingAccountRecovery(true);
     }
   }, [
-    accountState.account,
-    accountState.deletedAt,
-    accountState.error,
+    user.account,
+    user.deletedAt,
+    user.error,
     fetchProfile,
     fetchSubscriptionInfo,
     navigate,
