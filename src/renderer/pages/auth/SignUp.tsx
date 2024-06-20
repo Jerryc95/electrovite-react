@@ -7,6 +7,7 @@ import SubPlanPaymentPage from '../accountSetup/SubPlanPaymentPage';
 import { Subscription } from 'src/models/subscription';
 import { StripeSubscription } from 'src/models/stripeSubscription';
 import VerifyEmailForm from './VerifyEmailForm';
+import { useSendVerificationCodeMutation } from '../../../services/authAPI';
 // import { useSelector } from 'react-redux';
 // import { getStripeCustomer } from 'src/services/subscriptionSlice';
 
@@ -32,38 +33,37 @@ const SignUpPage: React.FC = () => {
   const [stripeSubscription, setStripeSubscription] =
     useState<StripeSubscription | null>(null);
 
+  const [sendVerificationCode, { isLoading }] =
+    useSendVerificationCodeMutation();
+
   const handleSignUp = async (formData: {
     email: string;
     password: string;
   }) => {
     setEmail(formData.email);
     setPassword(formData.password);
-    // update verify email db here
-    const url = 'http://localhost:3000/auth/send-verification-email';
     const data = {
-      email: formData.email
+      email: formData.email,
     };
-    try {
-       await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      // const responseData = await response.json();
-    //  console.log(responseData)
-     setCreationStep(1);
-    } catch (error) {
-      console.log(error)
-    }
-    // setCreationStep(1);
+    sendVerificationCode(data).then((res) => {
+      if ('data' in res) {
+        if (res.data.isSent == true) {
+          setCreationStep(1);
+        }
+      }
+    });
   };
 
   const renderComponent = () => {
     switch (creationStep) {
       case 0:
-        return <AuthForm type='signup' onSubmit={handleSignUp} />;
+        return (
+          <AuthForm
+            type='signup'
+            isLoading={isLoading}
+            onSubmit={handleSignUp}
+          />
+        );
       case 1:
         return (
           <VerifyEmailForm email={email} setCreationStep={setCreationStep} />

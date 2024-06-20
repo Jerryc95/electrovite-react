@@ -11,9 +11,9 @@ const OBPageFour: React.FC = () => {
           src={flowplanrIcon}
         />
       </div>
-      <h2>Get Started</h2>
+      <h1>Get Started</h1>
       <p className='onboarding-subheader'>
-        Create an account and get started today
+        Create an account for free and get started today
       </p>
     </div>
   );

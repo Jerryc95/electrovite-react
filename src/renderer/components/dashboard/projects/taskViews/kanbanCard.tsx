@@ -5,11 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { Draggable } from 'react-beautiful-dnd';
 
-import { selectTask } from '../../../../../services/taskSlice';
+import {  selectTask } from '../../../../../services/taskSlice';
 import ProgressBar from '$renderer/components/ProgressBar';
 import { Task } from 'src/models/task';
 import { taskStatus } from '../../../../../statuses/taskStatus';
 import { parseDate } from '../../../../../helpers/ParseDate';
+
 
 interface KanbanCardProps {
   index: number;
@@ -21,6 +22,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ index, task }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { projectName } = useParams();
+
 
   const [uncompletedSubtasks, setUncompletedSubtasks] = useState(0);
   const [completedSubTask, setCompletedSubTasks] = useState(0);

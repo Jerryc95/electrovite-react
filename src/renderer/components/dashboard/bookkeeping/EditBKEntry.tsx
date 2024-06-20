@@ -190,6 +190,7 @@ const EditBKEntry: React.FC<EditBKDetailProps> = ({
         paid: entry.paid,
         next_payment_date: entry.next_payment_date,
       };
+      console.log(updatedEntry)
       updateEntry(updatedEntry);
       setEditingEntry(false);
     }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { StrictModeDroppable } from '../../../../../../StrictModeDroppable';
 
-import { Subtask } from 'src/models/subTask';
+import { Subtask } from 'src/models/subtask';
 // import { Task } from 'src/models/task';
 
 import { taskStatus } from '../../../../../../statuses/taskStatus';
@@ -135,7 +135,7 @@ const STKanbanBoard: React.FC<KanbanProps> = ({ subtasks }) => {
     setNotStartedSubtasks(notStarted);
     setInProgSubtasks(inProg);
     setCompletedSubtasks(completed);
-  }, []);
+  }, [subtasks]);
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>

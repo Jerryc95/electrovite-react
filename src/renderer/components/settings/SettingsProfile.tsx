@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
-
 import { AccountProfile } from 'src/models/accountProfile';
 import { useUpdateProfileMutation } from '../../../services/profileAPI';
-import { getUser, updateProfileState } from '../../../services/accountSlice';
+import { getUser } from '../../../services/accountSlice';
 import EmojiPicker from '../EmojiPicker';
 
 const SettingsProfile: React.FC = () => {
-  // this prob can be updated
   const user = useSelector(getUser);
   const [accountProfile, setAccountProfile] = useState<AccountProfile | null>(
     user.accountProfile,
@@ -19,20 +17,13 @@ const SettingsProfile: React.FC = () => {
   const [editingBusiness, setEditingBusiness] = useState(false);
   const [editedLabel, setEditedlabel] = useState('');
   const [editedValue, setEditedValue] = useState('');
-  const [selectedEmoji, setSelectedEmoji] = useState(
-    user.accountProfile!.profile_pic,
-  );
 
-  const dispatch = useDispatch();
   const [updateProfile] = useUpdateProfileMutation();
 
   const personalOnSubmit = () => {
     if (editedValue != '' && editedLabel != '') {
-      if (user) {
-        user.accountProfile!.profile_pic = selectedEmoji;
-        // dispatch(updateProfileState(accountProfile));
-        updateProfile(user.accountProfile!);
-        console.log("changed")
+      if (accountProfile) {
+        updateProfile(accountProfile);
       }
     }
 
@@ -42,7 +33,6 @@ const SettingsProfile: React.FC = () => {
   const businessOnSubmit = () => {
     if (editedValue != '' && editedLabel != '') {
       if (accountProfile) {
-        dispatch(updateProfileState(accountProfile));
         updateProfile(accountProfile);
       }
     }
@@ -58,16 +48,27 @@ const SettingsProfile: React.FC = () => {
   };
 
   const handleEmojiChange = (emoji: string) => {
-    setSelectedEmoji(emoji);
-    setAccountProfile((prevProfile) => ({
-      ...prevProfile!,
+    const updatedProfile: AccountProfile = {
+      id: user.accountProfile!.id,
+      account_id: user.accountProfile!.account_id,
+      first_name: user.accountProfile!.first_name,
+      last_name: user.accountProfile!.last_name,
+      phone: user.accountProfile!.phone,
+      address: user.accountProfile!.address,
       profile_pic: emoji,
-    }));
-    if (accountProfile) {
-      console.log(accountProfile)
-      dispatch(updateProfileState(accountProfile));
-      updateProfile(accountProfile);
-    }
+      theme: user.accountProfile!.theme,
+      company: user.accountProfile!.company,
+      title: user.accountProfile!.title,
+      business_phone: user.accountProfile!.business_phone,
+      business_address: user.accountProfile!.business_address,
+    };
+
+    updateProfile(updatedProfile);
+
+    // if (accountProfile) {
+    //   // dispatch(updateProfileState(accountProfile));
+    //    updateProfile(accountProfile);
+    // }
   };
 
   const toggleEdit = (
@@ -95,6 +96,7 @@ const SettingsProfile: React.FC = () => {
           </div>
         </div>
         <form className='settings-form'>
+        {editingPersonal && <EmojiPicker onChange={handleEmojiChange} />}
           <div className='edit-settings-row'>
             <label className='edit-settings-label'>
               First Name
@@ -104,8 +106,8 @@ const SettingsProfile: React.FC = () => {
                   type='text'
                   name='first_name'
                   placeholder={
-                    accountProfile?.first_name
-                      ? accountProfile.first_name
+                    user.accountProfile?.first_name
+                      ? user.accountProfile.first_name
                       : 'First Name'
                   }
                   value={accountProfile?.first_name}
@@ -113,7 +115,7 @@ const SettingsProfile: React.FC = () => {
                 />
               ) : (
                 <span className='edit-settings-field'>
-                  {accountProfile?.first_name}
+                  {user.accountProfile?.first_name}
                 </span>
               )}
             </label>
@@ -124,8 +126,8 @@ const SettingsProfile: React.FC = () => {
                   className='edit-settings-input'
                   name='last_name'
                   placeholder={
-                    accountProfile?.last_name
-                      ? accountProfile.last_name
+                    user.accountProfile?.last_name
+                      ? user.accountProfile.last_name
                       : 'Last Name'
                   }
                   type='text'
@@ -134,7 +136,7 @@ const SettingsProfile: React.FC = () => {
                 />
               ) : (
                 <span className='edit-settings-field'>
-                  {accountProfile?.last_name}
+                  {user.accountProfile?.last_name}
                 </span>
               )}
             </label>
@@ -147,14 +149,18 @@ const SettingsProfile: React.FC = () => {
                 type='text'
                 name='phone'
                 placeholder={
-                  accountProfile?.phone ? accountProfile.phone : '(123)456-7890'
+                  user.accountProfile?.phone
+                    ? user.accountProfile.phone
+                    : '(123) 456-7890'
                 }
                 value={accountProfile?.phone || ''}
                 onChange={handleInputChange}
               />
             ) : (
               <span className='edit-settings-field'>
-                {accountProfile?.phone ? accountProfile.phone : 'No Phone'}
+                {user.accountProfile?.phone
+                  ? user.accountProfile.phone
+                  : 'No Phone'}
               </span>
             )}
           </label>
@@ -166,8 +172,8 @@ const SettingsProfile: React.FC = () => {
                 type='text'
                 name='address'
                 placeholder={
-                  accountProfile?.address
-                    ? accountProfile.address
+                  user.accountProfile?.address
+                    ? user.accountProfile.address
                     : 'Enter Address'
                 }
                 value={accountProfile?.address || ''}
@@ -175,8 +181,8 @@ const SettingsProfile: React.FC = () => {
               />
             ) : (
               <span className='edit-settings-field'>
-                {accountProfile?.address
-                  ? accountProfile.address
+                {user.accountProfile?.address
+                  ? user.accountProfile.address
                   : 'No Address'}
               </span>
             )}
@@ -187,7 +193,7 @@ const SettingsProfile: React.FC = () => {
             </button>
           )}
         </form>
-        <EmojiPicker onChange={handleEmojiChange} />
+      
       </div>
       <div className='settings-section'>
         <div className='settings-section-header'>
@@ -215,15 +221,17 @@ const SettingsProfile: React.FC = () => {
                   type='text'
                   name='company'
                   placeholder={
-                    accountProfile?.company ? accountProfile.company : 'Company'
+                    user.accountProfile?.company
+                      ? user.accountProfile.company
+                      : 'Company'
                   }
                   value={accountProfile?.company || ''}
                   onChange={handleInputChange}
                 />
               ) : (
                 <span className='edit-settings-field'>
-                  {accountProfile?.company
-                    ? accountProfile.company
+                  {user.accountProfile?.company
+                    ? user.accountProfile.company
                     : 'No Company'}
                 </span>
               )}
@@ -235,8 +243,8 @@ const SettingsProfile: React.FC = () => {
                   className='edit-settings-input'
                   name='title'
                   placeholder={
-                    accountProfile?.title
-                      ? accountProfile.title
+                    user.accountProfile?.title
+                      ? user.accountProfile.title
                       : 'Role or Title'
                   }
                   type='text'
@@ -245,8 +253,8 @@ const SettingsProfile: React.FC = () => {
                 />
               ) : (
                 <span className='edit-settings-field'>
-                  {accountProfile?.title
-                    ? accountProfile.title
+                  {user.accountProfile?.title
+                    ? user.accountProfile.title
                     : 'No Role or Title'}
                 </span>
               )}
@@ -260,8 +268,8 @@ const SettingsProfile: React.FC = () => {
                 type='text'
                 name='business_phone'
                 placeholder={
-                  accountProfile?.business_phone
-                    ? accountProfile.business_phone
+                  user.accountProfile?.business_phone
+                    ? user.accountProfile.business_phone
                     : 'Enter Business Phone Number'
                 }
                 value={accountProfile?.business_phone || ''}
@@ -269,8 +277,8 @@ const SettingsProfile: React.FC = () => {
               />
             ) : (
               <span className='edit-settings-field'>
-                {accountProfile?.business_phone
-                  ? accountProfile.business_phone
+                {user.accountProfile?.business_phone
+                  ? user.accountProfile.business_phone
                   : 'No Business Phone'}
               </span>
             )}
@@ -283,8 +291,8 @@ const SettingsProfile: React.FC = () => {
                 type='text'
                 name='business_address'
                 placeholder={
-                  accountProfile?.business_address
-                    ? accountProfile.business_address
+                  user.accountProfile?.business_address
+                    ? user.accountProfile.business_address
                     : 'Enter Business Address'
                 }
                 value={accountProfile?.business_address || ''}
@@ -292,8 +300,8 @@ const SettingsProfile: React.FC = () => {
               />
             ) : (
               <span className='edit-settings-field'>
-                {accountProfile?.business_address
-                  ? accountProfile.business_address
+                {user.accountProfile?.business_address
+                  ? user.accountProfile.business_address
                   : 'No Business Address'}
               </span>
             )}

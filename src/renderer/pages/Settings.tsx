@@ -6,6 +6,7 @@ import {
   faLock,
   faFileInvoiceDollar,
   faTrash,
+  faSliders
 } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../services/store';
@@ -58,6 +59,13 @@ const Settings: React.FC = () => {
         <h4>Settings and options for your account.</h4>
       </div>
       <ul className='settings-navbar'>
+      {/* <li
+          onClick={() => toggleComponent(<SettingsProfile />, 'profile')}
+          className={`${activeMenuItem == 'profile' ? 'active' : ''}`}
+        >
+          <FontAwesomeIcon icon={faSliders} className='li-icon' />
+          <span>Preferences</span>
+        </li> */}
         <li
           onClick={() => toggleComponent(<SettingsProfile />, 'profile')}
           className={`${activeMenuItem == 'profile' ? 'active' : ''}`}

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 import AuthForm from '$renderer/components/AuthForm';
 import { useForgotPasswordMutation } from '../../../services/authAPI';
 
 const ForgotPasswordPage: React.FC = () => {
-  const [ForgotPassword] = useForgotPasswordMutation();
+  const [ForgotPassword, { isLoading }] = useForgotPasswordMutation();
   const handleResetPassword = async (formData: {
     email: string;
     password: string;
@@ -22,7 +22,11 @@ const ForgotPasswordPage: React.FC = () => {
   return (
     <div>
       <div>
-        <AuthForm type='forgot' onSubmit={handleResetPassword} />
+        <AuthForm
+          type='forgot'
+          isLoading={isLoading}
+          onSubmit={handleResetPassword}
+        />
       </div>
     </div>
   );

@@ -86,8 +86,9 @@ const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
             navigate("/security")
           } else {
             fetchSubscriptionInfo(user.account.id).then(() => {
-              navigate('/');
               dispatch(setSignIn(true));
+              navigate('/');
+              
             });
           }
         }

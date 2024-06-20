@@ -9,6 +9,7 @@ import {
   setSignIn,
 } from '../../../services/accountSlice';
 import { useFetchSubscriptionInfoMutation } from '../../../services/subscriptionAPI';
+import { useVerifyTokenMutation } from '../../../services/authAPI';
 
 const TwoFactorForm: React.FC = () => {
   const user = useSelector(getUser);
@@ -18,6 +19,7 @@ const TwoFactorForm: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [verifyToken] = useVerifyTokenMutation();
   const [fetchSubscriptionInfo] = useFetchSubscriptionInfoMutation();
 
   const handleBackClick = () => {
@@ -26,38 +28,26 @@ const TwoFactorForm: React.FC = () => {
   };
 
   const handleLostCodeClick = () => {
-    navigate("/security/lost-code")
-  }
+    navigate('/security/lost-code');
+  };
 
   const handleVerifyToken = async () => {
-    const url = 'http://localhost:3000/auth/security/verify-token';
     const data = {
       id: user.account?.id,
       token: token,
     };
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      const responseData = await response.json();
-      if (responseData.isValid == true) {
-        fetchSubscriptionInfo(user.account!.id).then(() => {
-          dispatch(setSignIn(true));
-          navigate('/');
-        });
-      } else {
-        setIsValid(false);
+    verifyToken(data).then((res) => {
+      if ('data' in res) {
+        if (res.data.isValid == true) {
+          fetchSubscriptionInfo(user.account!.id).then(() => {
+            dispatch(setSignIn(true));
+            navigate('/');
+          });
+        } else {
+            setIsValid(false)
+        }
       }
-      if (!response.ok) {
-        setIsValid(false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
   return (

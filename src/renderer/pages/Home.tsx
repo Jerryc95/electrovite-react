@@ -59,7 +59,7 @@ const Home: React.FC = () => {
   const recurringExpenses = useSelector(getRecurringExpenses);
   const revenue = useSelector(getRevenue);
   const expenses = useSelector(getExpenses);
-  const [revenueEntries, setRevenueEntries] = useState(0);
+  // const [revenueEntries, setRevenueEntries] = useState(0);
   const [profitEntries, setProfitEntries] = useState(0);
   const [expenseEntries, setExpenseEntries] = useState(0);
   // const [contacts, setContacts] = useState<Contact[]>([]);
@@ -240,17 +240,21 @@ const Home: React.FC = () => {
     let expenseTotal = 0;
     let revenueTotal = 0;
     expenses.forEach((entry) => {
-      expenseTotal += parseInt(entry.total_amount);
+      if (today.getTime() - parseDate(entry.entry_date).getTime() <= 30 * 24 * 60 * 60 * 1000) {
+        expenseTotal += parseInt(entry.total_amount);
+      }
     });
     setExpenseEntries(expenseTotal);
+
     revenue.forEach((entry) => {
-      revenueTotal += parseInt(entry.total_amount);
+      if (today.getTime() - parseDate(entry.entry_date).getTime() <= 30 * 24 * 60 * 60 * 1000) {
+        revenueTotal += parseInt(entry.total_amount);
+      }
     });
-    setRevenueEntries(revenueTotal);
+    // setRevenueEntries(revenueTotal);
     const totalProfit = revenueTotal - expenseTotal;
     setProfitEntries(totalProfit);
   }, []);
-
 
   return (
     <div className='home-container'>

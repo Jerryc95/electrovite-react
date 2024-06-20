@@ -4,7 +4,7 @@
   "version": "1.2.0",
   "description": "A project and task management software",
   "main": ".vite/build/main.js",
-  "license": "MIT",
+  "license": "",
   "author": {
     "name": "Jerry Cox"
   },

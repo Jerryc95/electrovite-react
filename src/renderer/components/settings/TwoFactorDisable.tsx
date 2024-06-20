@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getUser, setTwoFactorEnabled } from '../../../services/accountSlice';
+import {
+  useDisableTwoFactorMutation,
+  useVerifyTokenMutation,
+} from '../../../services/authAPI';
 
 interface TwoFactorDisableProps {
   setShowingTwoFactorDisable: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,57 +19,34 @@ const TwoFactorDisableForm: React.FC<TwoFactorDisableProps> = ({
   const [token, setToken] = useState('');
   const [isValid, setIsValid] = useState<boolean | null>(null);
 
+  const [verifyToken] = useVerifyTokenMutation();
+  const [disableTwoFactor] = useDisableTwoFactorMutation();
+
   const dispatch = useDispatch();
 
   const handleDisableTwoFactor = async () => {
-    const url = 'http://localhost:3000/auth/security/verify-token';
     const data = {
       id: user.account?.id,
       token: token,
     };
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      const responseData = await response.json();
-      if (responseData.isValid == true) {
-        // DB update here
-        const disableUrl =
-          'http://localhost:3000/auth/security/disable-two-factor';
-        const disableData = {
-          id: user.account?.id,
-        };
-        try {
-          const disableResponse = await fetch(disableUrl, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(disableData),
+    verifyToken(data).then((res) => {
+      if ('data' in res) {
+        if (res.data.isValid == true) {
+          disableTwoFactor({ id: user.account?.id }).then((disableRes) => {
+            if ('data' in disableRes) {
+              if (disableRes.data.isDisabled == true) {
+                dispatch(setTwoFactorEnabled(false));
+                setShowingTwoFactorDisable(false);
+              } else {
+                setIsValid(false);
+              }
+            }
           });
-          const disableResponseData = await disableResponse.json();
-          if (disableResponseData.isDisabled == true) {
-            dispatch(setTwoFactorEnabled(false));
-            setShowingTwoFactorDisable(false)
-          } else {
-            setIsValid(false)
-          }
-        } catch (error) {
-          console.log(error);
+        } else {
+          setIsValid(false);
         }
-      } else {
-        setIsValid(false)
       }
-      if (!response.ok) {
-        throw new Error('Failed to update token');
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
   return (
     <div className='two-factor-disable-container'>
@@ -95,7 +76,9 @@ const TwoFactorDisableForm: React.FC<TwoFactorDisableProps> = ({
         {isValid != null && isValid == false && (
           <p className='token-error'>Invalid Token</p>
         )}
-        <button className='button-brand-pink' onClick={handleDisableTwoFactor}>Disable</button>
+        <button className='button-brand-pink' onClick={handleDisableTwoFactor}>
+          Disable
+        </button>
       </div>
     </div>
   );

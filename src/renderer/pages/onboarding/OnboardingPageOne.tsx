@@ -5,7 +5,7 @@ import flowplanrIcon from '../../../../assets/flowplanrIcon.png';
 const OBPageOne: React.FC = () => {
   const [currentFeature, setCurrentFeature] = useState(0);
   const features = useMemo(
-    () => ['Project Management', 'CRM', 'Bookkeeping', 'Document Management'],
+    () => ['Project Management', 'CRM', 'Bookkeeping'],
     [],
   );
 

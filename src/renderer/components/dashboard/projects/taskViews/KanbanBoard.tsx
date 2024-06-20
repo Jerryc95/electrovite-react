@@ -21,7 +21,6 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
 
   const [updateTask] = useUpdateTaskMutation();
 
-  // this may need to loop through the tasks to update the index
   const handleUpdateTask = async (
     tasks: Task[],
     liftedTask: Task,
@@ -35,8 +34,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
     if (foundTask) {
       switch (updatedStatus) {
         case 'not-started': {
-          // foundTask.task_status = taskStatus.NotStarted;
-          updateTask({
+          await updateTask({
             task_id: foundTask.task_id,
             project_id: foundTask.project_id,
             name: foundTask.name,
@@ -50,12 +48,10 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
             column_index: updatedIndex,
             subtasks: foundTask.subtasks,
           })
-          
           break;
         }
         case 'in-progress': {
-          // foundTask.task_status = taskStatus.InProgress;
-          updateTask({
+         await updateTask({
             task_id: foundTask.task_id,
             project_id: foundTask.project_id,
             name: foundTask.name,
@@ -72,8 +68,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
           break;
         }
         case 'completed': {
-          // foundTask.task_status = taskStatus.Completed;
-          updateTask({
+          await updateTask({
             task_id: foundTask.task_id,
             project_id: foundTask.project_id,
             name: foundTask.name,
@@ -95,8 +90,6 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
 
   const handleOnDragEnd = (result: DropResult) => {
     const { source, destination } = result;
-    // console.log("soruce:",source)
-    // console.log("destination:", destination)
     if (!destination) {
       return;
     }
@@ -114,7 +107,6 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
     if (source.droppableId === 'not-started') {
       liftedTask = notStarted[source.index];
       notStarted.splice(source.index, 1);
-      // console.log("array:", notStarted)
     } else if (source.droppableId === 'in-progress') {
       liftedTask = inProg[source.index];
       inProg.splice(source.index, 1);
@@ -150,10 +142,9 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
         'completed',
         destination.index,
       );
-      // console.log(completedTasks)
     }
     // combined the 3 arrays together and set the state to that new array
-    console.log(notStarted)
+   
   };
 
 
@@ -174,7 +165,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
     setNotStartedTasks(notStarted);
     setInProgTasks(inProg);
     setCompletedTasks(completed);
-  }, []);
+  }, [tasks]);
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>

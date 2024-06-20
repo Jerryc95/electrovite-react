@@ -1,31 +1,37 @@
 import React, { useState } from 'react';
+
 import {
   useSendVerificationCodeMutation,
+  useUpdateEmailMutation,
   useVerifyEmailMutation,
 } from '../../../services/authAPI';
 
-interface VerifyEmailFormProps {
-  email: string;
-  setCreationStep: React.Dispatch<React.SetStateAction<number>>;
+interface ConfirmEmailModalProps {
+  setShowingConfirmEmailModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditingSecurity: React.Dispatch<React.SetStateAction<boolean>>;
+  newEmail: string;
+  id: number | undefined;
 }
 
-const VerifyEmailForm: React.FC<VerifyEmailFormProps> = ({
-  email,
-  setCreationStep,
+const ConfirmEmailModal: React.FC<ConfirmEmailModalProps> = ({
+  setShowingConfirmEmailModal,
+  setEditingSecurity,
+  newEmail,
+  id,
 }) => {
   const [verificationCode, setVerificationCode] = useState('');
   const [isValid, setIsValid] = useState<boolean | null>(null);
-  //   const [sendingCode, setSendingCode] = useState(false)
   const [reachedLimit, setReachedLimit] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const [updateEmail] = useUpdateEmailMutation();
   const [sendVerificationCode, { isLoading }] =
     useSendVerificationCodeMutation();
   const [verifyEmail] = useVerifyEmailMutation();
 
   const handleSendNewVerificationCode = async () => {
     const data = {
-      email: email,
+      email: newEmail,
     };
 
     sendVerificationCode(data).then((res) => {
@@ -40,9 +46,9 @@ const VerifyEmailForm: React.FC<VerifyEmailFormProps> = ({
     });
   };
 
-  const handleEmailVerifcation = async () => {
+  const handleUpdateEmail = () => {
     const data = {
-      email: email,
+      email: newEmail,
       code: verificationCode,
     };
     verifyEmail(data).then((res) => {
@@ -50,26 +56,30 @@ const VerifyEmailForm: React.FC<VerifyEmailFormProps> = ({
         setIsValid(res.data.isValid);
         setErrorMessage(res.data.message);
         if (res.data.isValid == true) {
-          setCreationStep(2);
+          updateEmail({ id: id, email: newEmail });
+          setShowingConfirmEmailModal(false);
+          setEditingSecurity(false);
         }
       } else {
         setIsValid(false);
       }
     });
+
+    
   };
 
   const handleBackClick = () => {
-    setCreationStep(0);
+    setShowingConfirmEmailModal(false);
+    setEditingSecurity(false);
   };
 
   return (
-    <div>
-      <h1 className='flowplanr-header'>Flowplanr</h1>
+    <div className='confirm-email-container'>
       <div className='auth-form'>
-        <h2 className='auth-form-heading'>Verify your email</h2>
+        <h2 className='auth-form-heading'>Verify your new email</h2>
         <p className='auth-form-info'>
           We've sent a one-time use 6-digit code to verify your email address at{' '}
-          {email}. It expires in 15 minutes. Don't see it? Check your spam
+          {newEmail}. It expires in 15 minutes. Don't see it? Check your spam
           folder or{' '}
           <span
             className='auth-form-link'
@@ -90,12 +100,12 @@ const VerifyEmailForm: React.FC<VerifyEmailFormProps> = ({
         </label>
         <button
           className='auth-form-button button-brand-light-blue'
-          onClick={handleEmailVerifcation}
+          onClick={handleUpdateEmail}
         >
           Verify
         </button>
         <button className='auth-form-button' onClick={handleBackClick}>
-          Back
+          Cancel
         </button>
         {isValid != null && isValid == false && (
           <p className='email-check-alert'>{errorMessage}</p>
@@ -110,4 +120,4 @@ const VerifyEmailForm: React.FC<VerifyEmailFormProps> = ({
   );
 };
 
-export default VerifyEmailForm;
+export default ConfirmEmailModal;

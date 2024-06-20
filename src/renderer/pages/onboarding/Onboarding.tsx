@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import '../../styles/onboarding.scss';
 import OBPageOne from './OnboardingPageOne';
@@ -12,6 +13,7 @@ const Onboarding: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const renderStepComponent = () => {
     switch (currentStep) {
@@ -36,7 +38,7 @@ const Onboarding: React.FC = () => {
   };
 
   const handleFinishOnboarding = () => {
-    console.log("done")
+    navigate("/register")
    dispatch(completeOnboarding())
   };
 

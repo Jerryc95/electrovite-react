@@ -11,7 +11,7 @@ import { BKEntry } from 'src/models/BKEntry';
 import EditField from '$renderer/components/EditField';
 import ProgressBar from '$renderer/components/ProgressBar';
 import { Contact } from 'src/models/contact';
-import CurrencyField from '$renderer/components/CurrencyField';
+// import CurrencyField from '$renderer/components/CurrencyField';
 import CalendarField from '$renderer/components/CalendarField';
 import UpdateModal from '$renderer/components/UpdateModal';
 import '../../../styles/detailPage.scss';
@@ -24,6 +24,7 @@ import { parseDate } from '../../../../helpers/ParseDate';
 import { Project } from 'src/models/project';
 import EditBKEntry from './EditBKEntry';
 import { getUser } from '../../../../services/accountSlice';
+import UpdateBKPaymentModal from './UpdateBKPaymentModal';
 
 interface BKEntryDetailProps {
   entry: BKEntry;
@@ -59,11 +60,11 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
 
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalClientRevenue, setTotalClientRevenue] = useState(0);
-  const [outstandingAmount, setOutstandingAmount] = useState(
-    entry.outstanding_amount,
-  );
-  const [paidAmount, setPaidAmount] = useState(entry.paid_amount);
-  const [nextPayment, setNextPayment] = useState(entry.next_payment_date);
+  // const [outstandingAmount, setOutstandingAmount] = useState(
+  //   entry.outstanding_amount,
+  // );
+  // const [paidAmount, setPaidAmount] = useState(entry.paid_amount);
+  // const [nextPayment, setNextPayment] = useState(entry.next_payment_date);
   const [contact, setContact] = useState<Contact>();
   const [contacts, setContacts] = useState<BKClient[]>([]);
   const [selectedContact, setSelectedContact] = useState<BKData | null>(null);
@@ -71,6 +72,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   const [projects, setProjects] = useState<BKProject[]>([]);
   const [selectedProject, setSelectedProject] = useState<BKData | null>(null);
   const [editingEntry, setEditingEntry] = useState(false);
+  const [showingPaymentModal, setShowingPaymentModal] = useState(false);
   const [showingContactModal, setShowingContactModal] = useState(false);
   const [showingProjectModal, setShowingProjectModal] = useState(false);
 
@@ -96,7 +98,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
     [entry.contact_id, selectedContact],
   );
 
-  const getContacts = useCallback(()=> {
+  const getContacts = useCallback(() => {
     const url = `http://localhost:3000/contacts/names/${user.account?.id}`;
     fetch(url)
       .then((response) => response.json())
@@ -108,12 +110,11 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
           type: 'contact',
         }));
         setContacts(formattedData);
-        setSelectedContact(formattedData[0])
+        setSelectedContact(formattedData[0]);
       });
-  },[])
+  }, []);
 
   const handleConnectContact = () => {
-    console.log(selectedContact)
     if (selectedContact) {
       const updatedEntry: BKEntry = {
         entry_name: entry.entry_name,
@@ -153,7 +154,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
     [entry.project_id, selectedProject],
   );
 
-  const getProjects = useCallback(()=> {
+  const getProjects = useCallback(() => {
     const url = `http://localhost:3000/projects/names/${user.account?.id}`;
     fetch(url)
       .then((response) => response.json())
@@ -164,24 +165,9 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
           type: 'project',
         }));
         setProjects(formattedData);
-        setSelectedProject(formattedData[0])
+        setSelectedProject(formattedData[0]);
       });
-  },[])
-
-  // const getProjects = () => {
-  //   const url = `http://localhost:3000/projects/names/${user.account?.id}`;
-  //   fetch(url)
-  //     .then((response) => response.json())
-  //     .then((data: BKProject[]) => {
-  //       const formattedData: BKProject[] = data.map((item) => ({
-  //         id: item.id,
-  //         name: item.name,
-  //         type: 'project',
-  //       }));
-  //       setProjects(formattedData);
-  //       setSelectedProject(formattedData[0])
-  //     });
-  // };
+  }, []);
 
   const handleConnectProject = () => {
     if (selectedProject) {
@@ -209,6 +195,29 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
 
   const handleUpdateEntry = async (data: any) => {
     updateEntry(data);
+  };
+
+  const handleMarkAsPaid = () => {
+    const updatedEntry: BKEntry = {
+      entry_name: entry.entry_name,
+      bookkeeping_id: entry.bookkeeping_id,
+      contact_id: entry.contact_id,
+      account_id: entry.account_id,
+      total_amount: entry.total_amount,
+      paid_amount: entry.total_amount,
+      outstanding_amount: entry.outstanding_amount,
+      category: entry.category,
+      transaction_type: entry.transaction_type,
+      description: entry.description,
+      entry_date: entry.entry_date,
+      first_name: entry.first_name,
+      last_name: entry.last_name,
+      paid: entry.paid,
+      next_payment_date: entry.next_payment_date,
+      project_id: entry.project_id,
+    };
+    updateEntry(updatedEntry);
+    console.log('updated');
   };
 
   useEffect(() => {
@@ -274,22 +283,36 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
             <h3>{entry.category}</h3>
           </div>
         </div>
-        <div style={{ width: `60%` }}>
-          <EditField
-            label='Description:'
-            field='description'
-            value={entry.description}
-            item={entry}
-            onEdit={handleUpdateEntry}
-            isInput={false}
-          />
+        <div className='detail-row jc-sb'>
+          <div style={{ width: `60%` }}>
+            <EditField
+              label='Description:'
+              field='description'
+              value={entry.description}
+              item={entry}
+              onEdit={handleUpdateEntry}
+              isInput={false}
+            />
+          </div>
+          <button
+            className='button-brand-purple update-payment-button'
+            onClick={() => setShowingPaymentModal(true)}
+          >
+            Update Payment
+          </button>
         </div>
 
         <div className='detail-row jc-sb'>
           <div className='long-detail-card'>
             <div className='detail-row jc-sb pd4'>
               <h3>Paid:</h3>
-              <div className='detail-row'>
+              <h3>
+                $
+                {parseFloat(entry.paid_amount).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                })}
+              </h3>
+              {/* <div className='detail-row'>
                 <CurrencyField
                   label=''
                   field='paid_amount'
@@ -301,26 +324,29 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
                   setPaidAmount={setPaidAmount}
                   setOutstandingAmount={setOutstandingAmount}
                 />
-              </div>
+              </div> */}
             </div>
             <div className='detail-row jc-sb pd4'>
               <h3>Outstanding:</h3>
               <h3>
                 $
-                {parseFloat(outstandingAmount).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                })}
+                {parseFloat(entry.outstanding_amount).toLocaleString(
+                  undefined,
+                  {
+                    minimumFractionDigits: 2,
+                  },
+                )}
               </h3>
             </div>
             <ProgressBar
               height={30}
               total={parseFloat(entry.total_amount)}
-              current={parseFloat(paidAmount)}
+              current={parseFloat(entry.paid_amount)}
             />
           </div>
           <div className='third-detail-card'>
             <div className='detail-col ai-cen'>
-              {parseFloat(outstandingAmount) === 0 ? (
+              {parseFloat(entry.outstanding_amount) === 0 ? (
                 <div className='detail-col ai-cen'>
                   <h2>Paid</h2>
                   <FontAwesomeIcon
@@ -339,6 +365,9 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
                     item={entry}
                     onEdit={handleUpdateEntry}
                   />
+                  <button className='card-button' onClick={handleMarkAsPaid}>
+                    Mark as paid
+                  </button>
                 </div>
               )}
             </div>
@@ -370,7 +399,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
           </div>
         </div>
         <div className='detail-row jc-sb'>
-          <div className='third-detail-card pd4' style={{width: '49%'}}>
+          <div className='third-detail-card pd4' style={{ width: '49%' }}>
             {contact ? (
               <div className='detail-col pd4'>
                 <h3>
@@ -406,11 +435,11 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
               </div>
             )}
           </div> */}
-          <div className='third-detail-card pd4' style={{width: '49%'}}>
+          <div className='third-detail-card pd4' style={{ width: '49%' }}>
             {project ? (
               <div className='detail-col pd4'>
                 <h3>{project.name}</h3>
-                <p style={{fontSize: '0.80rem'}}>{project.description}</p>
+                <p style={{ fontSize: '0.80rem' }}>{project.description}</p>
               </div>
             ) : (
               <div className='detail-col ai-cen'>
@@ -457,6 +486,12 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
           setData={setSelectedProject}
           height='200px'
           width='400px'
+        />
+      )}
+      {showingPaymentModal && (
+        <UpdateBKPaymentModal
+          setShowingProjectModal={setShowingPaymentModal}
+          entry={entry}
         />
       )}
     </div>

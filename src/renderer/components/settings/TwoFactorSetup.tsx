@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { QRCodeSVG } from 'qrcode.react';
 
 import { getUser, setTwoFactorEnabled } from '../../../services/accountSlice';
 import TwoFactorCompletion from './TwoFactorCompletion';
+import {
+  useDisableTwoFactorMutation,
+  useGenerateSecretMutation,
+  useVerifyTokenMutation,
+} from '../../../services/authAPI';
 
 interface TwoFactorSetupProps {
   setShowingTwoFactorSetup: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,81 +26,59 @@ const TwoFactorSetup: React.FC<TwoFactorSetupProps> = ({
   const [token, setToken] = useState('');
   const [isValid, setIsValid] = useState<boolean | null>(null);
 
+  const [generateSecret] = useGenerateSecretMutation();
+  const [verifyToken, { isLoading }] = useVerifyTokenMutation();
+  const [disableTwoFactor] = useDisableTwoFactorMutation();
+
   const dispatch = useDispatch();
 
-  const generateSecret = async () => {
-    const url = 'http://localhost:3000/auth/security/generate-secret';
+  const handleGenerateSecret = useCallback(async () => {
     const data = {
       id: user.account?.id,
       email: user.account?.email,
     };
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      const responseData = await response.json();
-      setSecretKey(responseData.secret);
-      setOtpAuthUrl(responseData.otpAuthUrl);
-      setRecoveryKey(responseData.recoveryCode);
-      if (!response.ok) {
-        throw new Error('Failed to update value');
+    console.log(data);
+    generateSecret(data).then((res) => {
+      if ('data' in res) {
+        setSecretKey(res.data.secret);
+        setOtpAuthUrl(res.data.otpAuthUrl);
+        setRecoveryKey(res.data.recoveryCode);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    });
+  }, [generateSecret, user.account?.email, user.account?.id]);
 
-  const verifyToken = async () => {
-    const url = 'http://localhost:3000/auth/security/verify-token';
+  const handleVerifyToken = async () => {
     const data = {
       id: user.account?.id,
       token: token,
     };
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      const responseData = await response.json();
-      if (responseData.isValid == true) {
-        dispatch(setTwoFactorEnabled(true));
-        setShowingTwoFactorComplete(true);
-      } else {
-        setIsValid(false);
+    verifyToken(data).then((res) => {
+      if ('data' in res) {
+        if (res.data.isValid == true) {
+          dispatch(setTwoFactorEnabled(true));
+          setShowingTwoFactorComplete(true);
+        } else {
+          setIsValid(false);
+        }
       }
-      if (!response.ok) {
-        throw new Error('Failed to update token');
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
   const cancelSetup = () => {
-    // deleted secret that was added to the DB
+    disableTwoFactor({ id: user.account?.id });
     setShowingTwoFactorSetup(false);
   };
 
   useEffect(() => {
-    generateSecret();
-  }, []);
+    handleGenerateSecret();
+  }, [handleGenerateSecret]);
 
   return (
     <div className='two-factor-setup-container'>
       <div className='two-factor-setup-form'>
         <div className='two-factor-setup-heading'>
           <h2>Enable Two-Factor Authenication</h2>
-          <button
-            className='button-brand-pink'
-            onClick={cancelSetup}
-          >
+          <button className='button-brand-pink' onClick={cancelSetup}>
             Cancel
           </button>
         </div>
@@ -140,8 +123,18 @@ const TwoFactorSetup: React.FC<TwoFactorSetupProps> = ({
             )}
           </div>
         </div>
-        <button className='button-brand-purple' onClick={verifyToken}>
-          Verify & Activate
+        <button
+          className='button-brand-purple'
+          onClick={handleVerifyToken}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className='spinner-container'>
+              <div className='spinner'></div>
+            </div>
+          ) : (
+            <p>Verify & Activate</p>
+          )}
         </button>
       </div>
       {showingTwoFactorComplete && (

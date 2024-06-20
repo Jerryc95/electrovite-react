@@ -37,7 +37,7 @@ export const authAPI = createApi({
         body: account,
       }),
     }),
-    
+
     recoverAccount: builder.mutation<Account, object>({
       query: (account) => ({
         url: '/recover',
@@ -55,7 +55,7 @@ export const authAPI = createApi({
     }),
 
     updateEmail: builder.mutation<
-      Account,
+      { email: string },
       { id: number | undefined; email: string }
     >({
       query: (account) => ({
@@ -93,6 +93,88 @@ export const authAPI = createApi({
         body: email,
       }),
     }),
+    //////////////////////
+    ////   2FA API  /////
+    ////////////////////
+    generateSecret: builder.mutation<
+      {
+        secret: string;
+        recoveryCode: string;
+        otpAuthUrl: string;
+      },
+      object
+    >({
+      query: (body) => ({
+        url: '/security/generate-secret',
+        method: 'POST',
+        body: body,
+      }),
+    }),
+    verifyToken: builder.mutation<
+      {
+        isValid: boolean;
+      },
+      object
+    >({
+      query: (body) => ({
+        url: '/security/verify-token',
+        method: 'POST',
+        body: body,
+      }),
+    }),
+    disableTwoFactor: builder.mutation<
+      {
+        isDisabled: boolean;
+      },
+      object
+    >({
+      query: (body) => ({
+        url: '/security/disable-two-factor',
+        method: 'PUT',
+        body: body,
+      }),
+    }),
+    ResetTwoFactor: builder.mutation<
+      {
+        isValid: boolean;
+      },
+      object
+    >({
+      query: (body) => ({
+        url: '/security/recover',
+        method: 'POST',
+        body: body,
+      }),
+    }),
+
+    /////////////////////////////////
+    ////   email verification  /////
+    ///////////////////////////////
+    sendVerificationCode: builder.mutation<
+      {
+        isSent: boolean;
+      },
+      object
+    >({
+      query: (body) => ({
+        url: '/send-verification-email',
+        method: 'POST',
+        body: body,
+      }),
+    }),
+    verifyEmail: builder.mutation<
+      {
+        message: string;
+        isValid: boolean;
+      },
+      object
+    >({
+      query: (body) => ({
+        url: '/verify-email',
+        method: 'POST',
+        body: body,
+      }),
+    }),
   }),
 });
 
@@ -106,4 +188,12 @@ export const {
   useUpdateEmailMutation,
   useUpdatePasswordMutation,
   useForgotPasswordMutation,
+
+  useGenerateSecretMutation,
+  useVerifyTokenMutation,
+  useDisableTwoFactorMutation,
+  useResetTwoFactorMutation,
+
+  useSendVerificationCodeMutation,
+  useVerifyEmailMutation,
 } = authAPI;

@@ -68,10 +68,8 @@ function createMainWindow() {
     backgroundColor: '#202020',
     show: false,
     autoHideMenuBar: true,
-    icon: path.resolve('assets/favicon.ico'),
+    icon: path.resolve('assets/flowplanrIcon.png'),
     title: 'Flowplanr',
-    // titleBarStyle: "hidden",
-    // focusable: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

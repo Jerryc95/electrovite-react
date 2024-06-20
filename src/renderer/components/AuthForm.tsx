@@ -7,10 +7,11 @@ import { checkEmail } from '../../helpers/CheckEmail';
 
 interface AuthFormProps {
   type: 'signin' | 'signup' | 'forgot';
+  isLoading: boolean;
   onSubmit: (formData: { email: string; password: string }) => void;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ type, isLoading, onSubmit }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -57,7 +58,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
     onSubmit({ email, password });
   };
 
-  const sumbitTexts = {
+  const submitTexts = {
     signup: 'Create Account',
     signin: 'Sign In',
     forgot: 'Send Email',
@@ -71,7 +72,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
 
   return (
     <>
-      <h1>Flowplanr</h1>
+      <h1 className='flowplanr-header'>Flowplanr</h1>
       <form className='auth-form' onSubmit={handleSubmit}>
         <h2 className='auth-form-heading'>{headingTexts[type]}</h2>
         <label className='auth-form-label'>
@@ -110,12 +111,19 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             />
           </label>
         )}
-        {/* add spinner for loading */}
         <button
           className='auth-form-button'
-          disabled={!isEmailAvailable && type == 'signup'}
+          disabled={
+            (!isEmailAvailable && type == 'signup') || isLoading == true
+          }
         >
-          {sumbitTexts[type]}
+          {isLoading ? (
+            <div className='spinner-container'>
+              <div className='spinner'></div>
+            </div>
+          ) : (
+            submitTexts[type]
+          )}
         </button>
         {type === 'signup' && (
           <>

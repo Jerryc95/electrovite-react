@@ -38,11 +38,12 @@ export const accountSlice = createSlice({
     updateProfileState: (state, action: PayloadAction<AccountProfile>) => {
       state.accountProfile = action.payload;
     },
-    updateEmailState: (state, action: PayloadAction<string>) => {
-      if (state.account != null) {
-        state.account.email = action.payload;
-      }
-    },
+    // updateEmailState: (state, action: PayloadAction<string>) => {
+    //   if (state.account != null) {
+    //     state.account.email = action.payload;
+    //   }
+    // },
+   
     selectPage: (state, action: PayloadAction<string>) => {
       state.selectedPage = action.payload;
     },
@@ -149,6 +150,33 @@ export const accountSlice = createSlice({
       },
     );
 
+    //update Email
+    builder.addMatcher(
+      authAPI.endpoints.updateEmail.matchPending,
+      (state) => {
+        state.loading = 'pending';
+      },
+    );
+
+    builder.addMatcher(
+      authAPI.endpoints.updateEmail.matchRejected,
+      (state) => {
+        state.loading = 'pending';
+        console.log("rejected")
+      },
+    );
+
+    builder.addMatcher(
+      authAPI.endpoints.updateEmail.matchFulfilled,
+      (state, action: PayloadAction<{email: string}>) => {
+        state.loading = 'fulfilled';
+
+        if (state.account != null) {
+          state.account.email = action.payload.email;
+        }
+      },
+    );
+
     //PROFILE API
     builder.addMatcher(
       profileAPI.endpoints.fetchProfile.matchPending,
@@ -188,7 +216,7 @@ export const getUser = (state: RootState) => state.accountReducer;
 export const {
   resetAccountState,
   updateProfileState,
-  updateEmailState,
+  // updateEmailState,
   selectPage,
   setSignIn,
   setTwoFactorEnabled,

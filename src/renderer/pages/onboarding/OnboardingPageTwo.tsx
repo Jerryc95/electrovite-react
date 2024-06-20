@@ -17,11 +17,11 @@ const OBPageTwo: React.FC = () => {
       description:
         'Gain insights with an overview of profits, revenue, expenses, and outstanding payments. Easily categorize entries into all, income, or expenses, track recurring expenses, and delve into each entry for detailed information such as total revenue, next payment, and associated projects.',
     },
-    {
-      title: 'Centralized Document Management',
-      description:
-        'Say goodbye to scattered documents. Store invoices, contracts, and more for each contact efficiently. Keep everything organized and accessible, making retrieval and management a breeze.',
-    },
+    // {
+    //   title: 'Centralized Document Management',
+    //   description:
+    //     'Say goodbye to scattered documents. Store invoices, contracts, and more for each contact efficiently. Keep everything organized and accessible, making retrieval and management a breeze.',
+    // },
   ];
   return (
     <div className='onboarding-page-container'>

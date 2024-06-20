@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 import {
-  useUpdateEmailMutation,
+  useSendVerificationCodeMutation,
   useUpdatePasswordMutation,
 } from '../../../services/authAPI';
-import { getUser, updateEmailState } from '../../../services/accountSlice';
+import { getUser } from '../../../services/accountSlice';
 import { checkEmail } from '../../../helpers/CheckEmail';
 import { checkPassword } from '../../../helpers/CheckPassword';
 import TwoFactorSetup from './TwoFactorSetup';
 import TwoFactorDisableForm from './TwoFactorDisable';
+import ConfirmEmailModal from './ComfirmEmailModal';
 
 const SettingsSecurity: React.FC = () => {
   const user = useSelector(getUser);
@@ -20,6 +21,8 @@ const SettingsSecurity: React.FC = () => {
   const [editingTwoFactor, setEditingTwoFactor] = useState(false);
   const [showingTwoFactorSetup, setShowingTwoFactorSetup] = useState(false);
   const [showingTwoFactorDisable, setShowingTwoFactorDisable] = useState(false);
+  const [showingConfirmEmailModal, setShowingConfirmEmailModal] =
+    useState(false);
 
   const [email, setEmail] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');
@@ -29,9 +32,7 @@ const SettingsSecurity: React.FC = () => {
   const [emailAlertMessage, setEmailAlertMessage] = useState('');
   const [passwordAlertMessage, setPasswordAlertMessage] = useState('');
 
-  const dispatch = useDispatch();
-
-  const [updateEmail] = useUpdateEmailMutation();
+  const [sendVerificationCode] = useSendVerificationCodeMutation();
   const [updatePassword] = useUpdatePasswordMutation();
 
   const toggleEdit = (
@@ -75,10 +76,13 @@ const SettingsSecurity: React.FC = () => {
     } else if (!checkEmail(email)) {
       setEmailAlertMessage('Email is not a valid Email address.');
     } else {
-      dispatch(updateEmailState(email));
-      updateEmail({ id: user.account?.id, email: email });
-      setEmailAlertMessage('');
-      toggleEdit(setEditingSecurity);
+      sendVerificationCode({ email: email }).then((res) => {
+        if ('data' in res) {
+          if (res.data.isSent == true) {
+            setShowingConfirmEmailModal(true);
+          }
+        }
+      });
     }
   };
 
@@ -104,7 +108,6 @@ const SettingsSecurity: React.FC = () => {
       toggleEdit(setEditingSecurity);
     }
   };
-
 
   return (
     <div className='sub-settings-container'>
@@ -136,8 +139,11 @@ const SettingsSecurity: React.FC = () => {
                 onChange={handleInputChange}
               />
             ) : (
-              <span className='edit-settings-field'>
-                {user?.account?.email}
+              <span
+                className='edit-settings-field'
+                onClick={() => console.log(user.account)}
+              >
+                {user.account?.email}
               </span>
             )}
           </label>
@@ -278,7 +284,17 @@ const SettingsSecurity: React.FC = () => {
         <TwoFactorSetup setShowingTwoFactorSetup={setShowingTwoFactorSetup} />
       )}
       {showingTwoFactorDisable && (
-        <TwoFactorDisableForm  setShowingTwoFactorDisable={setShowingTwoFactorDisable}/>
+        <TwoFactorDisableForm
+          setShowingTwoFactorDisable={setShowingTwoFactorDisable}
+        />
+      )}
+      {showingConfirmEmailModal && (
+        <ConfirmEmailModal
+          setShowingConfirmEmailModal={setShowingConfirmEmailModal}
+          setEditingSecurity={setEditingSecurity}
+          newEmail={email}
+          id={user.account?.id}
+        />
       )}
     </div>
   );
