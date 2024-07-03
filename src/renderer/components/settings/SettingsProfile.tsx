@@ -7,74 +7,151 @@ import { AccountProfile } from 'src/models/accountProfile';
 import { useUpdateProfileMutation } from '../../../services/profileAPI';
 import { getUser } from '../../../services/accountSlice';
 import EmojiPicker from '../EmojiPicker';
+import { checkPhone } from '../../../helpers/CheckPhone';
 
 const SettingsProfile: React.FC = () => {
   const user = useSelector(getUser);
-  const [accountProfile, setAccountProfile] = useState<AccountProfile | null>(
-    user.accountProfile,
+  const [accountProfile, setAccountProfile] = useState<AccountProfile>(
+    user.accountProfile!,
   );
   const [editingPersonal, setEditingPersonal] = useState(false);
   const [editingBusiness, setEditingBusiness] = useState(false);
   const [editedLabel, setEditedlabel] = useState('');
   const [editedValue, setEditedValue] = useState('');
+  const [personalAlertMessage, setPersonalAlertMessage] = useState('');
+  const [businessAlertMessage, setBusinessAlertMessage] = useState('');
 
   const [updateProfile] = useUpdateProfileMutation();
+  
 
   const personalOnSubmit = () => {
-    if (editedValue != '' && editedLabel != '') {
+    if (editedLabel != '') {
       if (accountProfile) {
+        switch (editedLabel) {
+          case 'first_name':
+            if (editedValue.length > 50) {
+              setPersonalAlertMessage(
+                'First name can only be 50 characters long.',
+              );
+              return;
+            }
+            if (editedValue.length == 0) {
+              setPersonalAlertMessage(
+                'First name cannot be blank.',
+              );
+              return;
+            }
+            break;
+          case 'last_name':
+            if (editedValue.length > 50) {
+              setPersonalAlertMessage(
+                'Last name can only be 50 characters long.',
+              );
+              return;
+            }
+            if (editedValue.length == 0) {
+              setPersonalAlertMessage(
+                'Last name cannot be blank.',
+              );
+              return;
+            }
+            break;
+          case 'address':
+            if (editedValue.length > 255) {
+              setPersonalAlertMessage(
+                'Address can only be 255 characters long.',
+              );
+              return;
+            }
+            break;
+          case 'phone':
+            if (!checkPhone(editedValue)) {
+              setPersonalAlertMessage(
+                'Invalid phone number. Valid formats are 123-456-7890 or (123) 456-7890',
+              );
+              return;
+            }
+            break;
+        }
         updateProfile(accountProfile);
       }
     }
 
     setEditingPersonal(!editingPersonal);
+    setPersonalAlertMessage('');
   };
 
   const businessOnSubmit = () => {
-    if (editedValue != '' && editedLabel != '') {
+    if (editedLabel != '') {
       if (accountProfile) {
+        switch (editedLabel) {
+          case 'company':
+            if (editedValue.length > 100) {
+              setBusinessAlertMessage(
+                'Company name can only be 100 characters long.',
+              );
+              return;
+            }
+            break;
+          case 'title':
+            if (editedValue.length > 100) {
+              setBusinessAlertMessage(
+                'Business title can only be 100 characters long.',
+              );
+              return;
+            }
+            break;
+          case 'business_address':
+            if (editedValue.length > 255) {
+              setBusinessAlertMessage(
+                'Address can only be 255 characters long.',
+              );
+              return;
+            }
+            break;
+          case 'business_phone':
+            if (!checkPhone(editedValue)) {
+              setBusinessAlertMessage(
+                'Invalid phone number. Valid formats are 123-456-7890 or (123) 456-7890',
+              );
+              return;
+            }
+            break;
+        }
         updateProfile(accountProfile);
       }
     }
     setEditingBusiness(!editingBusiness);
+    setBusinessAlertMessage('');
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
+
     const { name, value } = event.target;
     setEditedlabel(name);
     setEditedValue(value);
-    setAccountProfile((prevProfile) => ({ ...prevProfile!, [name]: value }));
+    
+    setAccountProfile((prevProfile) => ({ ...prevProfile, [name]: value }));
   };
 
   const handleEmojiChange = (emoji: string) => {
-    const updatedProfile: AccountProfile = {
-      id: user.accountProfile!.id,
-      account_id: user.accountProfile!.account_id,
-      first_name: user.accountProfile!.first_name,
-      last_name: user.accountProfile!.last_name,
-      phone: user.accountProfile!.phone,
-      address: user.accountProfile!.address,
-      profile_pic: emoji,
-      theme: user.accountProfile!.theme,
-      company: user.accountProfile!.company,
-      title: user.accountProfile!.title,
-      business_phone: user.accountProfile!.business_phone,
-      business_address: user.accountProfile!.business_address,
-    };
-
-    updateProfile(updatedProfile);
-
-    // if (accountProfile) {
-    //   // dispatch(updateProfileState(accountProfile));
-    //    updateProfile(accountProfile);
-    // }
+    if(user.accountProfile) {
+      const updatedProfile: AccountProfile = {
+        ...user.accountProfile,
+        profile_pic: emoji,
+      }
+      setAccountProfile(updatedProfile)
+      updateProfile(updatedProfile);
+    }
   };
 
   const toggleEdit = (
     setEditing: React.Dispatch<React.SetStateAction<boolean>>,
+    setAlertMessage: React.Dispatch<React.SetStateAction<string>>,
   ) => {
     setEditing((value) => !value);
+    setAlertMessage('');
   };
 
   return (
@@ -84,7 +161,9 @@ const SettingsProfile: React.FC = () => {
           <h4>Personal Information</h4>
           <div
             className='settings-section-edit'
-            onClick={() => toggleEdit(setEditingPersonal)}
+            onClick={() =>
+              toggleEdit(setEditingPersonal, setPersonalAlertMessage)
+            }
           >
             {editingPersonal ? <span>Cancel</span> : <span>Edit</span>}
 
@@ -95,8 +174,8 @@ const SettingsProfile: React.FC = () => {
             />
           </div>
         </div>
-        <form className='settings-form'>
-        {editingPersonal && <EmojiPicker onChange={handleEmojiChange} />}
+        <div className='settings-form'>
+          {editingPersonal && <EmojiPicker onChange={handleEmojiChange} />}
           <div className='edit-settings-row'>
             <label className='edit-settings-label'>
               First Name
@@ -188,19 +267,23 @@ const SettingsProfile: React.FC = () => {
             )}
           </label>
           {editingPersonal && (
-            <button className='button-brand-blue' onClick={personalOnSubmit}>
-              Update
-            </button>
+            <div>
+              <button className='button-brand-blue' onClick={personalOnSubmit}>
+                Update
+              </button>
+              <h5 className='brand-pink'>{personalAlertMessage}</h5>
+            </div>
           )}
-        </form>
-      
+        </div>
       </div>
       <div className='settings-section'>
         <div className='settings-section-header'>
           <h4>Business Information</h4>
           <div
             className='settings-section-edit'
-            onClick={() => toggleEdit(setEditingBusiness)}
+            onClick={() =>
+              toggleEdit(setEditingBusiness, setBusinessAlertMessage)
+            }
           >
             {editingBusiness ? <span>Cancel</span> : <span>Edit</span>}
 
@@ -211,7 +294,7 @@ const SettingsProfile: React.FC = () => {
             />
           </div>
         </div>
-        <form className='settings-form'>
+        <div className='settings-form'>
           <div className='edit-settings-row'>
             <label className='edit-settings-label'>
               Company
@@ -307,14 +390,18 @@ const SettingsProfile: React.FC = () => {
             )}
           </label>
           {editingBusiness && (
-            <button
-              className='button-brand-dark-blue'
-              onClick={businessOnSubmit}
-            >
-              Update
-            </button>
+            <div>
+              {' '}
+              <button
+                className='button-brand-dark-blue'
+                onClick={businessOnSubmit}
+              >
+                Update
+              </button>
+              <h5 className='brand-pink'>{businessAlertMessage}</h5>
+            </div>
           )}
-        </form>
+        </div>
       </div>
     </div>
   );

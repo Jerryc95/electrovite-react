@@ -7,16 +7,12 @@ interface SubtaskListProps {
   subtasks: Subtask[];
 }
 
-const SubtaskList: React.FC<SubtaskListProps> = ({
-  subtasks
-}) => {
-
+const SubtaskList: React.FC<SubtaskListProps> = ({ subtasks }) => {
   return (
     <div className='task-list-container'>
       <SubtaskListLabel />
       {subtasks.map((subtask) => (
-    <SubtaskListItem subtask={subtask}
-    />
+        <SubtaskListItem key={subtask.task_id} subtask={subtask} />
       ))}
     </div>
   );

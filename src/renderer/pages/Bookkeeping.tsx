@@ -54,11 +54,6 @@ const Bookkeeping: React.FC = () => {
     'YTD',
     'Last Year',
   ];
-  // const BKHighlights = ['Profit', 'Expenses', 'Revenue', 'Outstanding'];
-
-  // const dateParser = (date: Date) => {
-  //   return new Date(date);
-  // };
 
   const toggleEntry = (entry: BKEntry) => {
     dispatch(setSelectedEntry(entry));
@@ -66,8 +61,8 @@ const Bookkeeping: React.FC = () => {
   };
 
   const closePaywall = () => {
-    dispatch(selectPage('home'))
-    navigate("/")
+    dispatch(selectPage(user.previousPage))
+    navigate(-1)
   }
 
   const dateFilter = (entries: BKEntry[]) => {

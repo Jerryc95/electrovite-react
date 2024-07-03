@@ -305,8 +305,8 @@
     display: flex;
     flex-direction: column;
     background-color: #fff;
-    width: 75%;
-    height: 55%;
+    width: var(--card-width, 75%);
+    height: var(--card-height, 55%);
     border-radius: 25px;
     justify-content: flex-start;
     padding-top: 20px;
@@ -423,6 +423,15 @@
     display: flex;
     justify-content: space-between;
 
+    h2 {
+      &:hover {
+        cursor: pointer;
+        background: linear-gradient(to right, #f72585, #480ca8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+
     button {
       margin-right: 20px;
       margin-left: 15px;
@@ -470,6 +479,7 @@
       .delete-contact-button {
         color: #a5a5a5;
         &:hover {
+          cursor: pointer;
           color: #f72585;
         }
       }
@@ -578,6 +588,7 @@
   border-radius: 15px;
   background-color: #fefefe;
   box-shadow: 0px 0px 15px rgba(107, 107, 107, 0.1);
+  cursor: pointer;
 
   .contact-event-header {
     display: flex;
@@ -648,4 +659,24 @@
   text-align: center;
   color: #909090;
   font-size: 0.85rem;
+}
+
+.contact-component-page-heading {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 15px;
+  padding-right: 25px;
+ 
+  button {
+    align-items: center;
+    color: #fff;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    width: 100px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
 }

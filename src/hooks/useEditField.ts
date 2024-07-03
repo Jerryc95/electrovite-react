@@ -15,17 +15,12 @@ export const useEditField = (initialValue: string | null) => {
     onEdit: (data: any) => Promise<void>,
   ) => {
     const updatedItem = { ...item };
-    // const data = {
-    //   [field]: editedValue,
-    // };
-    console.log(updatedItem);
     for (const key in updatedItem) {
       if (key == field) {
         updatedItem[field] = editedValue;
       }
     }
 
-    console.log(updatedItem);
     onEdit(updatedItem);
     setIsEditing(false);
   };

@@ -80,7 +80,6 @@ export const projectSlice = createSlice({
       projectAPI.endpoints.updateProject.matchFulfilled,
       (state, action: PayloadAction<Project>) => {
         state.loading = 'fulfilled';
-        console.log('update Project Payload:', action.payload);
         const updatedProject = action.payload;
 
         const index = state.projects.findIndex(
@@ -113,14 +112,14 @@ export const projectSlice = createSlice({
       },
     );
     builder.addMatcher(
-      projectAPI.endpoints.fetchContactProjects.matchPending,
+      projectAPI.endpoints.fetchProjectsByContact.matchPending,
       (state) => {
         state.loading = 'pending';
       },
     );
 
     builder.addMatcher(
-      projectAPI.endpoints.fetchContactProjects.matchFulfilled,
+      projectAPI.endpoints.fetchProjectsByContact.matchFulfilled,
       (state, action: PayloadAction<Project[]>) => {
         state.loading = 'fulfilled';
         const projects = action.payload;

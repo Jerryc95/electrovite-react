@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-import useBackClick from '../../../../../hooks/useBackClick';
+// import useBackClick from '../../../../../hooks/useBackClick';
 import { ContactEvent } from 'src/models/contactEvent';
 import {
   useRemoveContactEventMutation,
@@ -19,7 +19,7 @@ const EditContactEvent: React.FC<EditContactEventProps> = ({
   contactEvent,
   setEditingContactEvent,
 }) => {
-  const goBack = useBackClick();
+  // const goBack = useBackClick();
   const [updateContactEvent] = useUpdateContactEventMutation();
   const [removeContactEvent] = useRemoveContactEventMutation();
 
@@ -34,6 +34,7 @@ const EditContactEvent: React.FC<EditContactEventProps> = ({
   const [showingDeleteAlert, setShowingDeleteAlert] = useState(false);
 
   const handleUpdateContactEvent = () => {
+    console.log("update")
     if (eventDate !== null && eventDate !== undefined) {
       const updatedEvent: ContactEvent = {
         event_id: contactEvent.event_id,
@@ -53,7 +54,6 @@ const EditContactEvent: React.FC<EditContactEventProps> = ({
   };
 
   const handleDeleteContactEvent = () => {
-    console.log(contactEvent)
     removeContactEvent(contactEvent);
     setEditingContactEvent(false)
     setShowingDeleteAlert(false);
@@ -67,15 +67,6 @@ const EditContactEvent: React.FC<EditContactEventProps> = ({
   };
 
   return (
-    // <div className='edit-project-container'>
-    //   <div className='edit-project-form'>
-    //     <div className='edit-project-heading'>
-    //       <h2>Edit Event</h2>
-    //       <button onClick={() => setEditingContactEvent(false)}>Cancel</button>
-    //     </div>
-
-    //   </div>
-    // </div>
     <div className='new-project-container'>
       <div className='new-project-form'>
         <div className='new-project-heading'>

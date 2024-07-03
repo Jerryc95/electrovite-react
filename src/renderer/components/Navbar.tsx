@@ -16,7 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import flowplanrIcon from '../../../assets/flowplanrIcon.png';
-import { RootState } from '../../services/store';
+// import { RootState } from '../../services/store';
 // import Home from '$renderer/pages/Home';
 // import Projects from '$renderer/pages/Projects';
 // import Contacts from '../pages/Contacts';
@@ -31,7 +31,11 @@ import { useSignOutAccountMutation } from '../../services/authAPI';
 import { clearSubscriptionInfo } from '../../services/subscriptionSlice';
 import { clearPaymentState } from '../../services/paymentSlice';
 import '../styles/navbar.scss';
-import { resetAccountState, selectPage } from '../../services/accountSlice';
+import {
+  getUser,
+  resetAccountState,
+  selectPage,
+} from '../../services/accountSlice';
 import { clearBookkeepingState } from '../../services/bookkeepingSlice';
 import { clearContactState } from '../../services/contactSlice';
 import Emoji from './Emoji';
@@ -46,7 +50,7 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const accountState = useSelector((state: RootState) => state.accountReducer);
+  const user = useSelector(getUser);
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -66,13 +70,13 @@ const Navbar: React.FC = () => {
   };
 
   const handleSignOut = () => {
-    signOutAccount(accountState);
+    signOutAccount(user);
     dispatch(clearSubscriptionInfo());
     dispatch(clearPaymentState());
     dispatch(clearBookkeepingState());
     dispatch(clearContactState());
     dispatch(resetAccountState());
-    navigate('/sign-in');
+    navigate('/');
   };
 
   const capitalize = (str: string | undefined) => {
@@ -101,11 +105,11 @@ const Navbar: React.FC = () => {
             />
           </div>
         </div>
-        <Link to='/'>
+        <Link to='/dashboard'>
           <li
             onClick={() => setPage('home')}
             className={`${
-              accountState.selectedPage == 'home' ? 'active-menu-item' : ''
+              user.selectedPage == 'home' ? 'active-menu-item' : ''
             }`}
           >
             <FontAwesomeIcon icon={faHome} className='navbar-li-icon' />
@@ -119,7 +123,7 @@ const Navbar: React.FC = () => {
           <li
             onClick={() => setPage('projects')}
             className={`${
-              accountState.selectedPage == 'projects' ? 'active-menu-item' : ''
+              user.selectedPage == 'projects' ? 'active-menu-item' : ''
             }`}
           >
             <FontAwesomeIcon
@@ -137,7 +141,7 @@ const Navbar: React.FC = () => {
           <li
             onClick={() => setPage('contacts')}
             className={`${
-              accountState.selectedPage == 'contacts' ? 'active-menu-item' : ''
+              user.selectedPage == 'contacts' ? 'active-menu-item' : ''
             }`}
           >
             <FontAwesomeIcon icon={faAddressCard} className='navbar-li-icon' />
@@ -163,9 +167,7 @@ const Navbar: React.FC = () => {
           <li
             onClick={() => setPage('bookkeeping')}
             className={`${
-              accountState.selectedPage == 'bookkeeping'
-                ? 'active-menu-item'
-                : ''
+              user.selectedPage == 'bookkeeping' ? 'active-menu-item' : ''
             }`}
           >
             <FontAwesomeIcon icon={faCoins} className='navbar-li-icon' />
@@ -177,17 +179,13 @@ const Navbar: React.FC = () => {
       </ul>
       <ul className='navbar-bottom'>
         <li onClick={toggleSettings}>
-          {/* <    <Avatar
-            cName='nav-avatar'
-            src={}
-            alt='Selected Avatar'
-            onClick={() => {
-              console.log(exampleAvatar);
-            }}
-          />> */}
           <Emoji
             cName='nav-avatar'
-            symbol={accountState.accountProfile?.profile_pic != null ? accountState.accountProfile.profile_pic : "❓"}
+            symbol={
+              user.accountProfile?.profile_pic != null
+                ? user.accountProfile.profile_pic
+                : '❓'
+            }
             onClick={() => console.log()}
           />
           <div
@@ -195,11 +193,13 @@ const Navbar: React.FC = () => {
             onClick={toggleSettings}
           >
             <p>
-              {capitalize(accountState.accountProfile?.first_name)}{' '}
-              {capitalize(accountState.accountProfile?.last_name)}
+              {capitalize(user.accountProfile?.first_name)}{' '}
+              {user.accountProfile?.last_name &&
+                (user.accountProfile?.last_name.length > 10
+                  ? capitalize(user.accountProfile.last_name[0])
+                  : capitalize(user.accountProfile.last_name))}
             </p>
-            {/* {accountState?.account?.email} */}
-            {accountState.accountProfile?.title}
+            {user.accountProfile?.title}
           </div>
         </li>
         <div className={`${showingSettings ? 'settings-menu' : 'nav-drawer'}`}>

@@ -1,4 +1,4 @@
-// Used to check is a password has at least 1 uppercase letter,
+// Used to check if a password has at least 1 uppercase letter,
 // a number nad is 8 characters long.
 
 export const checkPassword = (password: string) => {

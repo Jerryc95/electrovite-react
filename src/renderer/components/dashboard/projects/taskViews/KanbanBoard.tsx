@@ -165,7 +165,7 @@ const KanbanBoard: React.FC<KanbanProps> = ({ tasks }) => {
     setNotStartedTasks(notStarted);
     setInProgTasks(inProg);
     setCompletedTasks(completed);
-  }, [tasks]);
+  }, []);
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>

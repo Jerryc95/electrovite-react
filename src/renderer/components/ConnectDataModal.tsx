@@ -1,7 +1,6 @@
 import React, { useEffect, ChangeEvent } from 'react';
 
 import '../styles/modal.scss';
-import { BKEntry } from 'src/models/BKEntry';
 
 interface BKClient {
   id: number;
@@ -13,13 +12,14 @@ interface BKClient {
 interface BKProject {
   id: number;
   name: string;
+  contact_id: number,
   type: 'project';
 }
 
 interface IEntry {
   id: number;
   entry_name: string;
-  type: 'entry'
+  type: 'entry';
 }
 
 type BKData = BKClient | BKProject | IEntry;
@@ -36,8 +36,7 @@ interface UpdateModalProps {
   width: string;
 }
 
-//UPDATE THIS
-const UpdateModal: React.FC<UpdateModalProps> = ({
+const ConnectDataModal: React.FC<UpdateModalProps> = ({
   onSubmit,
   onLoad,
   setShowingModal,
@@ -49,7 +48,6 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
   width,
 }) => {
   const getItemListOptions = (item: BKData) => {
-
     switch (item.type) {
       case 'contact':
         return `${item.first_name} ${item.last_name}`;
@@ -60,7 +58,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
     }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleDropdownChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const foundData = data.find((i) => {
       if (i.type === 'contact') {
         return i.first_name + ' ' + i.last_name === e.target.value;
@@ -68,14 +66,14 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
       if (i.type === 'project') {
         return i.name === e.target.value;
       }
-      if(i.type === 'entry') {
-        
-        return i.entry_name === e.target.value
+      if (i.type === 'entry') {
+        return i.entry_name === e.target.value;
       }
     });
-    console.log(foundData)
     if (foundData) {
       setData(foundData);
+    } else {
+      setData(null);
     }
   };
 
@@ -90,18 +88,18 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
 
   useEffect(() => {
     onLoad();
-  }, [onLoad]);
+  }, []);
 
   return (
     <div className='modal-container'>
       <div className='modal-content' style={{ width: width, height: height }}>
         <h3>{`Connecting ${currentItem} to ${connectingItem}...`}</h3>
         <div className='input-row'>
-          <select className='dropdown-input' onChange={handleChange}>
+          <select className='dropdown-input' onChange={handleDropdownChange}>
+            {/* <select className='dropdown-input' onChange={()=>handleChange(setData)}> */}
+            <option>None</option>
             {data.map((item) => (
-              <option key={item.id}>
-                {getItemListOptions(item)}
-              </option>
+              <option key={item.id}>{getItemListOptions(item)}</option>
             ))}
           </select>
         </div>
@@ -118,4 +116,4 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
   );
 };
 
-export default UpdateModal;
+export default ConnectDataModal;

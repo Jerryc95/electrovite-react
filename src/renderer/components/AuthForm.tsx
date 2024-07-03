@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import '../styles/authForm.scss';
 import { checkPassword } from '../../helpers/CheckPassword';
 import { checkEmail } from '../../helpers/CheckEmail';
+import { useSelector } from 'react-redux';
+import { getUser } from '../../services/accountSlice';
+import { SignInStatus } from '../../statuses/signInStatus';
 
 interface AuthFormProps {
   type: 'signin' | 'signup' | 'forgot';
@@ -12,6 +15,8 @@ interface AuthFormProps {
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ type, isLoading, onSubmit }) => {
+  const user = useSelector(getUser)
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -117,7 +122,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, isLoading, onSubmit }) => {
             (!isEmailAvailable && type == 'signup') || isLoading == true
           }
         >
-          {isLoading ? (
+          {isLoading || user.signedIn == SignInStatus.Loading ? (
             <div className='spinner-container'>
               <div className='spinner'></div>
             </div>
@@ -129,7 +134,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, isLoading, onSubmit }) => {
           <>
             <p className='auth-form-callout'>
               Already have an account?{' '}
-              <Link to='/sign-in'>
+              <Link to='/'>
                 <span className='auth-form-link'>Sign in here.</span>
               </Link>
             </p>
@@ -162,7 +167,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, isLoading, onSubmit }) => {
           <>
             <p className='auth-form-callout'>
               Already have an account?{' '}
-              <Link to='/sign-in'>
+              <Link to='/'>
                 <span className='auth-form-link'>Sign in here.</span>
               </Link>
             </p>

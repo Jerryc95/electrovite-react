@@ -11,20 +11,18 @@ import { BKEntry } from 'src/models/BKEntry';
 import EditField from '$renderer/components/EditField';
 import ProgressBar from '$renderer/components/ProgressBar';
 import { Contact } from 'src/models/contact';
-// import CurrencyField from '$renderer/components/CurrencyField';
 import CalendarField from '$renderer/components/CalendarField';
-import UpdateModal from '$renderer/components/UpdateModal';
+import ConnectDataModal from '$renderer/components/ConnectDataModal';
 import '../../../styles/detailPage.scss';
 import useBackClick from '../../../../hooks/useBackClick';
-import {
-  // useRemoveEntryMutation,
-  useUpdateEntryMutation,
-} from '../../../../services/bookkeepingAPI';
+import { useUpdateEntryMutation } from '../../../../services/bookkeepingAPI';
 import { parseDate } from '../../../../helpers/ParseDate';
 import { Project } from 'src/models/project';
 import EditBKEntry from './EditBKEntry';
 import { getUser } from '../../../../services/accountSlice';
 import UpdateBKPaymentModal from './UpdateBKPaymentModal';
+import useToggleContact from '../../../../hooks/useToggleContact';
+import useToggleProject from '../../../../hooks/useToggleProject';
 
 interface BKEntryDetailProps {
   entry: BKEntry;
@@ -41,6 +39,7 @@ interface BKClient {
 interface BKProject {
   id: number;
   name: string;
+  contact_id: number;
   type: 'project';
 }
 
@@ -54,17 +53,13 @@ type BKData = BKClient | BKProject | IEntry;
 
 const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   const goBack = useBackClick();
+  const toggleContact = useToggleContact();
+  const toggleProject = useToggleProject();
 
   const [updateEntry] = useUpdateEntryMutation();
-  // const [removeEntry] = useRemoveEntryMutation();
 
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalClientRevenue, setTotalClientRevenue] = useState(0);
-  // const [outstandingAmount, setOutstandingAmount] = useState(
-  //   entry.outstanding_amount,
-  // );
-  // const [paidAmount, setPaidAmount] = useState(entry.paid_amount);
-  // const [nextPayment, setNextPayment] = useState(entry.next_payment_date);
   const [contact, setContact] = useState<Contact>();
   const [contacts, setContacts] = useState<BKClient[]>([]);
   const [selectedContact, setSelectedContact] = useState<BKData | null>(null);
@@ -117,22 +112,23 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   const handleConnectContact = () => {
     if (selectedContact) {
       const updatedEntry: BKEntry = {
-        entry_name: entry.entry_name,
-        bookkeeping_id: entry.bookkeeping_id,
+        ...entry,
+        // entry_name: entry.entry_name,
+        // bookkeeping_id: entry.bookkeeping_id,
         contact_id: selectedContact.id,
-        account_id: entry.account_id,
-        total_amount: entry.total_amount,
-        paid_amount: entry.paid_amount,
-        outstanding_amount: entry.outstanding_amount,
-        category: entry.category,
-        transaction_type: entry.transaction_type,
-        description: entry.description,
-        entry_date: entry.entry_date,
-        first_name: entry.first_name,
-        last_name: entry.last_name,
-        paid: entry.paid,
-        next_payment_date: entry.next_payment_date,
-        project_id: entry.project_id,
+        // account_id: entry.account_id,
+        // total_amount: entry.total_amount,
+        // paid_amount: entry.paid_amount,
+        // outstanding_amount: entry.outstanding_amount,
+        // category: entry.category,
+        // transaction_type: entry.transaction_type,
+        // description: entry.description,
+        // entry_date: entry.entry_date,
+        // first_name: entry.first_name,
+        // last_name: entry.last_name,
+        // paid: entry.paid,
+        // next_payment_date: entry.next_payment_date,
+        // project_id: entry.project_id,
       };
       updateEntry(updatedEntry);
     }
@@ -162,6 +158,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
         const formattedData: BKProject[] = data.map((item) => ({
           id: item.id,
           name: item.name,
+          contact_id: item.contact_id,
           type: 'project',
         }));
         setProjects(formattedData);
@@ -172,21 +169,22 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   const handleConnectProject = () => {
     if (selectedProject) {
       const updatedEntry: BKEntry = {
-        entry_name: entry.entry_name,
-        bookkeeping_id: entry.bookkeeping_id,
-        contact_id: entry.contact_id,
-        account_id: entry.account_id,
-        total_amount: entry.total_amount,
-        paid_amount: entry.paid_amount,
-        outstanding_amount: entry.outstanding_amount,
-        category: entry.category,
-        transaction_type: entry.transaction_type,
-        description: entry.description,
-        entry_date: entry.entry_date,
-        first_name: entry.first_name,
-        last_name: entry.last_name,
-        paid: entry.paid,
-        next_payment_date: entry.next_payment_date,
+        // entry_name: entry.entry_name,
+        // bookkeeping_id: entry.bookkeeping_id,
+        // contact_id: entry.contact_id,
+        // account_id: entry.account_id,
+        // total_amount: entry.total_amount,
+        // paid_amount: entry.paid_amount,
+        // outstanding_amount: entry.outstanding_amount,
+        // category: entry.category,
+        // transaction_type: entry.transaction_type,
+        // description: entry.description,
+        // entry_date: entry.entry_date,
+        // first_name: entry.first_name,
+        // last_name: entry.last_name,
+        // paid: entry.paid,
+        // next_payment_date: entry.next_payment_date,
+        ...entry,
         project_id: selectedProject.id,
       };
       updateEntry(updatedEntry);
@@ -199,25 +197,26 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
 
   const handleMarkAsPaid = () => {
     const updatedEntry: BKEntry = {
-      entry_name: entry.entry_name,
-      bookkeeping_id: entry.bookkeeping_id,
-      contact_id: entry.contact_id,
-      account_id: entry.account_id,
-      total_amount: entry.total_amount,
+      ...entry,
       paid_amount: entry.total_amount,
-      outstanding_amount: entry.outstanding_amount,
-      category: entry.category,
-      transaction_type: entry.transaction_type,
-      description: entry.description,
-      entry_date: entry.entry_date,
-      first_name: entry.first_name,
-      last_name: entry.last_name,
-      paid: entry.paid,
-      next_payment_date: entry.next_payment_date,
-      project_id: entry.project_id,
+      // entry_name: entry.entry_name,
+      // bookkeeping_id: entry.bookkeeping_id,
+      // contact_id: entry.contact_id,
+      // account_id: entry.account_id,
+      // total_amount: entry.total_amount,
+      // paid_amount: entry.total_amount,
+      // outstanding_amount: entry.outstanding_amount,
+      // category: entry.category,
+      // transaction_type: entry.transaction_type,
+      // description: entry.description,
+      // entry_date: entry.entry_date,
+      // first_name: entry.first_name,
+      // last_name: entry.last_name,
+      // paid: entry.paid,
+      // next_payment_date: entry.next_payment_date,
+      // project_id: entry.project_id,
     };
     updateEntry(updatedEntry);
-    console.log('updated');
   };
 
   useEffect(() => {
@@ -312,19 +311,6 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
                   minimumFractionDigits: 2,
                 })}
               </h3>
-              {/* <div className='detail-row'>
-                <CurrencyField
-                  label=''
-                  field='paid_amount'
-                  value={paidAmount}
-                  item={entry}
-                  onEdit={handleUpdateEntry}
-                  totalAmount={entry.total_amount}
-                  outstandingAmount={outstandingAmount}
-                  setPaidAmount={setPaidAmount}
-                  setOutstandingAmount={setOutstandingAmount}
-                />
-              </div> */}
             </div>
             <div className='detail-row jc-sb pd4'>
               <h3>Outstanding:</h3>
@@ -399,14 +385,25 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
           </div>
         </div>
         <div className='detail-row jc-sb'>
-          <div className='third-detail-card pd4' style={{ width: '49%' }}>
-            {contact ? (
+          <div
+            className={`third-detail-card pd4 ${
+              entry.contact_id ? 'hoverable' : ''
+            }`}
+            style={{ width: '49%' }}
+            onClick={
+              contact && entry.contact_id
+                ? () => toggleContact(contact)
+                : undefined
+            }
+          >
+            {contact && entry.contact_id ? (
               <div className='detail-col pd4'>
                 <h3>
                   {contact.first_name} {contact.last_name}
                 </h3>
                 <h4>{contact.email}</h4>
                 <h4>{contact.phone}</h4>
+                <h4>Upcoming Events: {contact.events.length}</h4>
               </div>
             ) : (
               <div className='detail-col ai-cen'>
@@ -435,8 +432,18 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
               </div>
             )}
           </div> */}
-          <div className='third-detail-card pd4' style={{ width: '49%' }}>
-            {project ? (
+          <div
+            className={`third-detail-card pd4 ${
+              entry.project_id ? 'hoverable' : ''
+            }`}
+            style={{ width: '49%' }}
+            onClick={
+              project && entry.project_id
+                ? () => toggleProject(project, project.id)
+                : undefined
+            }
+          >
+            {project && entry.project_id ? (
               <div className='detail-col pd4'>
                 <h3>{project.name}</h3>
                 <p style={{ fontSize: '0.80rem' }}>{project.description}</p>
@@ -463,7 +470,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
         />
       )}
       {showingContactModal && (
-        <UpdateModal
+        <ConnectDataModal
           onSubmit={handleConnectContact}
           onLoad={getContacts}
           setShowingModal={setShowingContactModal}
@@ -476,7 +483,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
         />
       )}
       {showingProjectModal && (
-        <UpdateModal
+        <ConnectDataModal
           onSubmit={handleConnectProject}
           onLoad={getProjects}
           setShowingModal={setShowingProjectModal}

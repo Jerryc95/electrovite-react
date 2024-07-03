@@ -45,7 +45,6 @@ export const contactSlice = createSlice({
       (state, action: PayloadAction<Contact[]>) => {
         state.loading = 'fulfilled';
         state.contacts = action.payload;
-        // state.contacts.forEach((contact) => contact.events = [])
       },
     );
     builder.addMatcher(

@@ -1,5 +1,4 @@
-import React, { useEffect} from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import SignInPage from '$renderer/pages/auth/SignIn';
@@ -24,12 +23,11 @@ import ContactDetail from './dashboard/contacts/ContactDetail';
 import BKEntryDetail from './dashboard/bookkeeping/BKEntryDetail';
 import TwoFactorForm from '$renderer/pages/auth/TwoFactorForm';
 import AccountRecovery from '$renderer/pages/auth/AccountRecovery';
+import { SignInStatus } from '../../statuses/signInStatus';
 // import VerifyEmailForm from '$renderer/pages/auth/VerifyEmailForm';
 
 const App = () => {
-  const user = useSelector(
-    (state: RootState) => state.accountReducer,
-  );
+  const user = useSelector((state: RootState) => state.accountReducer);
   const project = useSelector(
     (state: RootState) => state.projectReducer.selectedProject,
   );
@@ -47,23 +45,13 @@ const App = () => {
     (state: RootState) => state.bookkeepingReducer.entries,
   );
 
-  // const subscription = useSelector((state: RootState) => state.subscriptionReducer)
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user.signedIn == false) {
-      navigate('/sign-in');
-    }
-  }, [user]);
-
   return (
     <div>
-       {user.signedIn && <Navbar />}
+      {user.signedIn === SignInStatus.True && <Navbar />}
       <Routes>
         <Route path='/forgot-password' element={<ForgotPasswordPage />} />
         <Route path='/register' element={<SignUpPage />} />
-        <Route path='/sign-in' element={<SignInPage />} />
+        <Route path='/' element={<SignInPage />} />
         <Route path='/security' element={<TwoFactorForm />} />
         <Route path='/security/lost-code' element={<AccountRecovery />} />
 
@@ -75,7 +63,7 @@ const App = () => {
           path='/loading-account'
           element={<CreatingAccountPage creating={false} />}
         />
-        {user.signedIn && (
+        {user.signedIn == SignInStatus.True && (
           <>
             <Route path='/projects' element={<Projects />} />
             {project != null && (
@@ -87,32 +75,13 @@ const App = () => {
                 {task != null && (
                   <Route
                     path='/projects/:projectName/:taskName'
-                    element={
-                      <TaskDetail
-                        task={task}
-                        id={user.account?.id}
-                        project={project}
-                      />
-                    }
+                    element={<TaskDetail task={task} id={user.account?.id} />}
                   />
                 )}
               </>
             )}
-            {/* <Route
-              path='/contacts'
-              element={
-                <ProtectedRoute subscriptionID={3}>
-                  <Contacts />
-                </ProtectedRoute>
-              }
-            /> */}
+
             <Route path='/contacts' element={<Contacts />} />
-            {/* <Route
-              path='/contacts'
-              element={<ProtectedRoute subscriptionTier={2} requestedFeature='Contacts'/>}
-            >
-              <Route path='/contacts' element={<Contacts />} />
-            </Route> */}
 
             {contact != null && (
               <>
@@ -123,12 +92,6 @@ const App = () => {
               </>
             )}
             <Route path='/bookkeeping' element={<Bookkeeping />} />
-            {/* <Route
-              path='/bookkeeping'
-              element={<ProtectedRoute subscriptionTier={3} requestedFeature='Bookkeeping'/>}
-            >
-              <Route path='/bookkeeping' element={<Bookkeeping />} />
-            </Route> */}
 
             {entry != null && (
               <>
@@ -140,14 +103,9 @@ const App = () => {
             )}
 
             <Route path='/settings' element={<Settings />} />
-            {/* <Route
-              path='/documents'
-              element={<ProtectedRoute subscriptionTier={3} requestedFeature='Documents'/>}
-            >
-              <Route path='/documents' element={<Documents />} />
-            </Route> */}
+
             {/* <Route path='/documents' element={<Documents />} /> */}
-            <Route path='/' element={<Home />} />
+            <Route path='/dashboard' element={<Home />} />
             <Route path='/about' element={<AboutPage />} />
           </>
         )}

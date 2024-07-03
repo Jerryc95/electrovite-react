@@ -1,6 +1,9 @@
 import React from 'react';
+
 import { Contact } from 'src/models/contact';
 import { ContactEvent } from 'src/models/contactEvent';
+import { parseDate } from '../../../../../helpers/ParseDate';
+import useToggleContact from '../../../../../hooks/useToggleContact';
 
 interface UpcomingEvent {
   contact: Contact;
@@ -10,15 +13,17 @@ interface UpcomingEvent {
 interface UpcomingEventViewProps {
   upcomingEvent: UpcomingEvent;
 }
-const dateParser = (date: Date) => {
-  return new Date(date);
-};
 
 const UpcomingEventView: React.FC<UpcomingEventViewProps> = ({
   upcomingEvent,
 }) => {
+  const toggleContact = useToggleContact();
+
   return (
-    <div className='contact-event-container'>
+    <div
+      className='contact-event-container hoverable'
+      onClick={() => toggleContact(upcomingEvent.contact)}
+    >
       <div>
         <h5>
           {upcomingEvent.contact.first_name} {upcomingEvent.contact.last_name}
@@ -36,7 +41,7 @@ const UpcomingEventView: React.FC<UpcomingEventViewProps> = ({
         </div>
         <div className='contact-event-info'>
           <p className='contact-event-date'>
-            {dateParser(upcomingEvent.event.event_date).toLocaleDateString()}
+            {parseDate(upcomingEvent.event.event_date).toLocaleDateString()}
           </p>
           <p className='contact-event-time'></p>
         </div>

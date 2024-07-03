@@ -41,7 +41,7 @@ const ContactEventView: React.FC<ContactEventProps> = ({ event }) => {
             })}
           </p>
         </div>
-        <p className='contact-event-desciption'>{event.description}</p>
+        <p className='contact-event-description'>{event.description}</p>
       </div>
       <div
         className='edit-event-icon-container'

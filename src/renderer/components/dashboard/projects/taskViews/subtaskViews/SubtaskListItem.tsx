@@ -77,13 +77,13 @@ const SubtaskListItem: React.FC<SubtaskListItemProps> = ({ subtask }) => {
               </button>
             </div>
           ) : (
-            <p
+            <span
               className='edit-field-content'
               onClick={handleEditClick}
               style={{ cursor: 'pointer' }}
             >
               {status}
-            </p>
+            </span>
           )}
         </div>
       </p>

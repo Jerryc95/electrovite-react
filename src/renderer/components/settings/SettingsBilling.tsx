@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import { shell } from 'electron';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -65,7 +64,6 @@ const SettingsBilling: React.FC = () => {
     createPortalURL(data).then((res) => {
       if ('data' in res) {
         const url = res.data.url;
-        console.log(url);
         window.open(url, '_blank');
       }
     });

@@ -105,7 +105,7 @@ const EditBKEntry: React.FC<EditBKDetailProps> = ({
     setCategory(event.target.value);
   };
 
-  const getClients = () => {
+  const getContacts = () => {
     const url = `http://localhost:3000/contacts/names/${id}`;
     fetch(url)
       .then((response) => response.json())
@@ -137,7 +137,7 @@ const EditBKEntry: React.FC<EditBKDetailProps> = ({
 
 
   const handleDropdownChange = <T extends ListItem<T>>(
-    setDataID: (id: number) => void,
+    setDataID: (id: number | null) => void,
     setCurrentItem: (item: T | null) => void,
     items: T[],
     event: ChangeEvent<HTMLSelectElement>,
@@ -148,6 +148,9 @@ const EditBKEntry: React.FC<EditBKDetailProps> = ({
     );
     if (foundIndex != -1) {
       setCurrentItem(items[foundIndex]);
+    } else {
+      setCurrentItem(null) 
+      setDataID(null)
     }
   };
 
@@ -190,7 +193,6 @@ const EditBKEntry: React.FC<EditBKDetailProps> = ({
         paid: entry.paid,
         next_payment_date: entry.next_payment_date,
       };
-      console.log(updatedEntry)
       updateEntry(updatedEntry);
       setEditingEntry(false);
     }
@@ -208,7 +210,7 @@ const EditBKEntry: React.FC<EditBKDetailProps> = ({
 
   useEffect(() => {
     getProjects();
-    getClients();
+    getContacts();
   }, []);
 
   return (

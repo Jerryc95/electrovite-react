@@ -37,10 +37,8 @@ export const subtaskSlice = createSlice({
     builder.addMatcher(
       subtaskAPI.endpoints.fetchSubtasks.matchFulfilled,
       (state, action: PayloadAction<Subtask[]>) => {
-        // console.log(action.payload)
         state.loading = 'fulfilled';
         state.subtasks = action.payload;
-        // console.log(state.subtasks)
       },
     );
 
@@ -54,7 +52,6 @@ export const subtaskSlice = createSlice({
       subtaskAPI.endpoints.addSubtask.matchFulfilled,
       (state, action: PayloadAction<Subtask>) => {
         state.loading = 'fulfilled';
-        console.log(action.payload)
         state.subtasks.push(action.payload);
       },
     );
@@ -70,7 +67,7 @@ export const subtaskSlice = createSlice({
       (state, action: PayloadAction<Subtask>) => {
         state.loading = 'fulfilled';
         const updatedSubtask = action.payload;
-        console.log(updatedSubtask)
+
         const index = state.subtasks.findIndex(
           (subtasks) => subtasks.subtask_id === action.payload.subtask_id,
         );

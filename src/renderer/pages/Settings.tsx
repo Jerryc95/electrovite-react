@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -6,7 +6,7 @@ import {
   faLock,
   faFileInvoiceDollar,
   faTrash,
-  faSliders
+  // faSliders
 } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../services/store';

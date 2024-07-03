@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 
 import ProgressBar from '$renderer/components/ProgressBar';
 import { taskStatus } from '../../../../statuses/taskStatus';
+import { parseDate } from '../../../../helpers/ParseDate';
+import useToggleProject from '../../../../hooks/useToggleProject';
 
 interface ISubtask {
   subtask_id: number;
@@ -12,6 +16,7 @@ interface ISubtask {
 }
 
 interface UpcomingTask {
+  project_id: number;
   project_name: string;
   task_id: number;
   name: string;
@@ -26,12 +31,11 @@ interface UpcomingTaskProps {
 }
 
 const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
+  const toggleProject = useToggleProject();
+
   const [completedSubtasks, setCompletedSubtasks] = useState(0);
   const [totalSubtasks, setTotalSubtasks] = useState(0);
 
-  const dateParser = (date: Date) => {
-    return new Date(date);
-  };
   const getDaysRemaining = (date: Date) => {
     const currentDate = new Date();
     const dueDate = new Date(date);
@@ -44,7 +48,7 @@ const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
     };
 
     if (daysRemaining > 7) {
-      return `Due: ${dateParser(upcomingTask.due_date).toLocaleDateString(
+      return `Due: ${parseDate(upcomingTask.due_date).toLocaleDateString(
         undefined,
         options,
       )}`;
@@ -63,7 +67,6 @@ const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
     let uncompleted = 0;
     let completed = 0;
     if (upcomingTask.subtasks) {
-        
       upcomingTask.subtasks.forEach((subtask) => {
         if (subtask.subtask_status === taskStatus.Completed) {
           completed += 1;
@@ -77,7 +80,11 @@ const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
   }, []);
 
   return (
-    <div className='kanban-card-container'style={{height: "150px"}}>
+    <div
+      className='kanban-card-container hoverable'
+      style={{ height: '150px' }}
+      onClick={() => toggleProject(null, upcomingTask.project_id)}
+    >
       <div>
         <h5>{upcomingTask.project_name}</h5>
         <div className='row space-between'>
@@ -93,20 +100,20 @@ const UpcomingTaskView: React.FC<UpcomingTaskProps> = ({ upcomingTask }) => {
           </p>
         </div>
       </div>
-       {totalSubtasks !== 0 ? (
-            <div className='row'>
-              <ProgressBar
-                current={completedSubtasks}
-                total={totalSubtasks}
-                height={15}
-              />
-              <span className='progress-count'>
-                {completedSubtasks}/{totalSubtasks}
-              </span>
-            </div>
-          ) : (
-            <span className='no-tasks'>No subtasks added</span>
-          )}
+      {totalSubtasks !== 0 ? (
+        <div className='row'>
+          <ProgressBar
+            current={completedSubtasks}
+            total={totalSubtasks}
+            height={15}
+          />
+          <span className='progress-count'>
+            {completedSubtasks}/{totalSubtasks}
+          </span>
+        </div>
+      ) : (
+        <span className='no-tasks'>No subtasks added</span>
+      )}
     </div>
   );
 };

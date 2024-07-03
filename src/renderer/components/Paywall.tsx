@@ -99,7 +99,7 @@ const Paywall: React.FC<PaywallProps> = ({
     }
   };
 
-  const fetchSubscriptions = () => {
+  // const fetchSubscriptions = () => {
     // fetch('http://localhost:3000/subscription')
     //   .then((response) => response.json())
     //   .then((data: Subscription[]) => {
@@ -114,10 +114,10 @@ const Paywall: React.FC<PaywallProps> = ({
     //     }, []);
     //     setSubscriptions(filteredSubscriptions);
     //   });
-  };
+  // };
 
   useEffect(() => {
-    fetchSubscriptions();
+    // fetchSubscriptions();
     handleSetRequiredSubscription();
   }, []);
 

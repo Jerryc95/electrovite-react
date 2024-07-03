@@ -2,7 +2,10 @@ import React from 'react';
 
 import '../../styles/policies.scss';
 
-const FPEULA: React.FC = () => {
+const FpEULA: React.FC = () => {
+  const handleOpenLink = (url: string) => {
+    window.open(url, '_blank');
+  };
   return (
     <div className='policy-container'>
       <h2 className='policy-header'>End-User License Agreement (EULA)</h2>
@@ -44,9 +47,14 @@ const FPEULA: React.FC = () => {
           <p className='policy-section-details'>
             Flowplanr utilizes Stripe as its payment processor. By using
             Flowplanr, you agree to be bound by Stripe's{' '}
-            <a href='https://stripe.com/legal'>Terms of Service</a> and{' '}
-            <a href='https://stripe.com/privacy'>Privacy Policy</a>. Your
-            payment information, such as credit card details, is securely
+            <span onClick={() => handleOpenLink('https://stripe.com/legal')}>
+              Terms of Service
+            </span>{' '}
+            and{' '}
+            <span onClick={() => handleOpenLink('https://stripe.com/privacy')}>
+              Privacy Policy
+            </span>
+            . Your payment information, such as credit card details, is securely
             handled by Stripe. Flowplanr does not store or directly process any
             payment information.
           </p>
@@ -62,7 +70,9 @@ const FPEULA: React.FC = () => {
           </p>
         </li>
         <li>
-          <h3 className='policy-section-header'>5. Feedback and Suggestions:</h3>
+          <h3 className='policy-section-header'>
+            5. Feedback and Suggestions:
+          </h3>
           <p className='policy-section-details'>
             User acknowledges that any feedback or suggestions provided to
             Company regarding the App may be used by Company without any
@@ -78,7 +88,7 @@ const FPEULA: React.FC = () => {
             Flowplanr retains all rights, title, and interest in and to the
             software, including all intellectual property rights. This Agreement
             does not grant you any rights to patents, copyrights, trade secrets,
-            or trademarks owned by FLowplanr.
+            or trademarks owned by Flowplanr.
           </p>
         </li>
         <li>
@@ -156,20 +166,19 @@ const FPEULA: React.FC = () => {
           <p className='policy-section-details'>
             For any inquiries or support related to the App, User may contact
             Company via email at{' '}
-            <a href='mailto:support@playnexus.app'>support@flowplanr.com</a>.
+            <a href='mailto:support@flowplanr.com'>support@flowplanr.com</a>.
             Company will make reasonable efforts to respond to User's inquiries
             within a reasonable timeframe.
           </p>
         </li>
         <p className='policy-section-details'>
-        By using FLowplanr, you agree to the terms outlined in this End-User
-        License Agreement.
-      </p>
-      <p className='policy-section-details'>Flowplanr</p>
+          By using Flowplanr, you agree to the terms outlined in this End-User
+          License Agreement.
+        </p>
+        <p className='policy-section-details'>Flowplanr</p>
       </ul>
-     
     </div>
   );
 };
 
-export default FPEULA;
+export default FpEULA;

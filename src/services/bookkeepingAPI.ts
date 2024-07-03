@@ -22,6 +22,16 @@ export const bookkeepingAPI = createApi({
       }),
     }),
 
+    fetchEntriesByContact: builder.query<
+      BKEntry[],
+      { accountID: number | undefined; contactID: number }
+    >({
+      query: (params) => ({
+        url: `/contact?accountID=${params.accountID}&contactID=${params.contactID}`,
+        method: 'GET',
+      }),
+    }),
+
     addEntry: builder.mutation<
       { newEntry: BKEntry; firstName: string; lastName: string },
       { newEntry: object; firstName: string; lastName: string }
@@ -47,6 +57,10 @@ export const bookkeepingAPI = createApi({
         method: 'DELETE',
       }),
     }),
+
+    ////////////////////////////////
+    //// RECURRING ENTRIES API ////
+    //////////////////////////////
     addRecurringExpense: builder.mutation<BKExpense, object>({
       query: (body) => ({
         url: '/add/expense',
@@ -72,6 +86,7 @@ export const bookkeepingAPI = createApi({
 
 export const {
   useFetchEntriesQuery,
+  useFetchEntriesByContactQuery,
   useAddEntryMutation,
   useUpdateEntryMutation,
   useRemoveEntryMutation,

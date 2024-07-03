@@ -9,12 +9,14 @@ import { authAPI } from './authAPI';
 import { profileAPI } from './profileAPI';
 import { AccountProfile } from 'src/models/accountProfile';
 import { Account } from 'src/models/account';
+import { SignInStatus } from '../statuses/signInStatus';
 
 interface accountState {
   account: Account | null;
   accountProfile: AccountProfile | null;
   selectedPage: string;
-  signedIn: boolean;
+  previousPage: string;
+  signedIn: SignInStatus;
   loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
   error: string | null;
   deletedAt: Date | null;
@@ -24,7 +26,8 @@ const initialAccountState: accountState = {
   account: null,
   accountProfile: null,
   selectedPage: 'home',
-  signedIn: false,
+  previousPage: 'home',
+  signedIn: SignInStatus.False,
   loading: 'idle',
   error: null,
   deletedAt: null,
@@ -38,16 +41,12 @@ export const accountSlice = createSlice({
     updateProfileState: (state, action: PayloadAction<AccountProfile>) => {
       state.accountProfile = action.payload;
     },
-    // updateEmailState: (state, action: PayloadAction<string>) => {
-    //   if (state.account != null) {
-    //     state.account.email = action.payload;
-    //   }
-    // },
    
     selectPage: (state, action: PayloadAction<string>) => {
+      state.previousPage = state.selectedPage
       state.selectedPage = action.payload;
     },
-    setSignIn: (state, action: PayloadAction<boolean>) => {
+    setSignIn: (state, action: PayloadAction<SignInStatus>) => {
       state.signedIn = action.payload;
     },
     setTwoFactorEnabled: (state, action: PayloadAction<boolean>) => {
@@ -205,7 +204,6 @@ export const accountSlice = createSlice({
       (state, action: PayloadAction<AccountProfile>) => {
         state.loading = 'fulfilled';
         state.accountProfile = action.payload;
-        console.log(action.payload);
       },
     );
   },

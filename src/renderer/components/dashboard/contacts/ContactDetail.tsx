@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faTrash } from '@fortawesome/free-solid-svg-icons';
 
@@ -22,6 +22,7 @@ import {
 } from '../../../../services/contactAPI';
 import { parseDate } from '../../../../helpers/ParseDate';
 import ContactProjects from './componentPages/ContactProjects';
+import EditContactName from './EditContactName';
 
 interface ContactDetailProps {
   contact: Contact;
@@ -29,16 +30,16 @@ interface ContactDetailProps {
 
 const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
   const goBack = useBackClick();
-  const [selectedPage, setSelectedPage] = useState('Bookkeeping');
+  const [selectedPage, setSelectedPage] = useState('Projects');
   const [showingDeleteContact, setShowingDeleteContact] = useState(false);
   const [addingEvent, setAddingEvent] = useState(false);
   const [sortedContactEvents, setSortedContactEvents] = useState<
     ContactEvent[]
   >([]);
-  // const pageOptions = ['Projects', 'Documents', 'Bookkeeping', 'Notes'];
+  const [showingEditName, setShowingEditName] = useState(false);
   const pageOptions = ['Projects', 'Bookkeeping', 'Notes'];
   const [componentPage, setComponentPage] = useState<JSX.Element>(
-    <ContactBK contact={contact} />,
+    <ContactProjects contact={contact} />,
   );
 
   const [updateContact] = useUpdateContactMutation();
@@ -66,7 +67,7 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
     goBack();
   };
 
-  const handleSortContacts = () => {
+  const handleSortContacts = useCallback(() => {
     if (contact.events.length !== 0) {
       const today = new Date();
 
@@ -76,13 +77,12 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
 
       const sortedEvents = futureEvents.sort((a, b) => {
         return (
-          parseDate(a.event_date).getTime() -
-          parseDate(b.event_date).getTime()
+          parseDate(a.event_date).getTime() - parseDate(b.event_date).getTime()
         );
       });
       setSortedContactEvents(sortedEvents);
     }
-  };
+  }, [contact.events]);
 
   const handleUpdateContact = async (data: any) => {
     updateContact(data);
@@ -95,7 +95,7 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
 
   useEffect(() => {
     handleSortContacts();
-  }, []);
+  }, [handleSortContacts]);
 
   return (
     <div className='contact-detail-container'>
@@ -105,7 +105,7 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
             <FontAwesomeIcon icon={faChevronLeft} />
             <p>Back</p>
           </div>
-          <h2>
+          <h2 onClick={() => setShowingEditName(true)}>
             {contact.first_name} {contact.last_name}
           </h2>
         </div>
@@ -202,7 +202,7 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
           <div className='contact-detail-details-column'>
             <DropdownField
               label='Contact Status:'
-              field='contactStatus'
+              field='contact_status'
               value={contact.contact_status}
               options={contactStatus}
               item={contact}
@@ -269,21 +269,16 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
               </div>
             ))}
           </div>
-          <h3>{selectedPage}</h3>
+          {/* <h3>{selectedPage}</h3> */}
           {componentPage}
         </div>
-        <div
-          className='contact-detail-activities'
-          onClick={() => {
-            console.log(sortedContactEvents);
-          }}
-        >
+        <div className='contact-detail-activities'>
           <h3>Events</h3>
           {contact.events.length === 0 ? (
             <p className='info-text'>Added events will appear here</p>
           ) : (
             <div className='contact-detail-activity-column'>
-              {contact.events.map((event) => (
+              {sortedContactEvents.map((event) => (
                 <ContactEventView key={event.event_id} event={event} />
               ))}
             </div>
@@ -291,18 +286,19 @@ const ContactDetail: React.FC<ContactDetailProps> = ({ contact }) => {
         </div>
       </div>
       {addingEvent && (
-        <NewContactEvent
-          setAddingEvent={setAddingEvent}
-          // addingEvent={addingEvent}
-          id={contact.id}
-          // setSortedEvents={setSortedContactEvents}
-        />
+        <NewContactEvent setAddingEvent={setAddingEvent} id={contact.id} />
       )}
       {showingDeleteContact && (
         <DeleteModal
           onDelete={handleDeleteContact}
           setShowingModal={setShowingDeleteContact}
           item='contact'
+        />
+      )}
+      {showingEditName && (
+        <EditContactName
+          contact={contact}
+          setShowingEditName={setShowingEditName}
         />
       )}
     </div>

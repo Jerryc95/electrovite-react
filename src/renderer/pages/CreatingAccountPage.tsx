@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { RootState } from 'src/services/store';
 import { useFetchProfileMutation } from '../../services/profileAPI';
-import '../styles/spinner.scss';
 import '../styles/components/recoverAccount.scss';
 import { useFetchSubscriptionInfoMutation } from '../../services/subscriptionAPI';
 import { parseDate } from '../../helpers/ParseDate';
@@ -13,6 +12,7 @@ import {
   useRecoverAccountMutation,
 } from '../../services/authAPI';
 import { setSignIn } from '../../services/accountSlice';
+import { SignInStatus } from '../../statuses/signInStatus';
 
 interface CreatingAccountProps {
   creating: boolean;
@@ -80,18 +80,20 @@ const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
 
   useEffect(() => {
     if (user.account) {
+      dispatch(setSignIn(SignInStatus.Loading));
       fetchProfile(user.account.id).then(() => {
         if (user.account) {
           if (user.account.two_factor_enabled) {
-            navigate("/security")
+            navigate('/security');
           } else {
             fetchSubscriptionInfo(user.account.id).then(() => {
-              dispatch(setSignIn(true));
-              navigate('/');
-              
+              dispatch(setSignIn(SignInStatus.True));
+              navigate('/dashboard');
             });
           }
         }
+      }).catch(() => {
+        navigate('/');
       });
     } else if (user.error == 'Account Deleted') {
       const today = new Date();
@@ -113,6 +115,7 @@ const CreatingAccountPage: React.FC<CreatingAccountProps> = ({ creating }) => {
     fetchProfile,
     fetchSubscriptionInfo,
     navigate,
+    dispatch,
   ]);
 
   return (

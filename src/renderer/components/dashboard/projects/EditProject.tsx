@@ -59,7 +59,6 @@ const EditProject: React.FC<EditProjectProps> = ({
         completed: project.completed,
         contact_id: project.contact_id,
       };
-      console.log('updated start date', data);
       updateProject(data);
     }
     setEditingProject(false);

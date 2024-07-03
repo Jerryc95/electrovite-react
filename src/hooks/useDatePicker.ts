@@ -21,26 +21,6 @@ export const useDatePicker = (initialValue: Date | null) => {
       }
     }
     onEdit(updatedItem);
-
-    // const data = {
-    //   [field]: editedValue,
-    // };
-
-    // try {
-    //   const response = await fetch(url, {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(data),
-    //   });
-    //   console.log(response);
-    //   if (!response.ok) {
-    //     throw new Error('Failed to update value');
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
     setIsEditing(false);
   };
 

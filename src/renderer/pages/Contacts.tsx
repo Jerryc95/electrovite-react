@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 import { Contact } from 'src/models/contact';
 // import { RootState } from '../../services/store';
@@ -18,6 +18,8 @@ import { selectContact, getContacts } from '../../services/contactSlice';
 import { getSubscription } from '../../services/subscriptionSlice';
 import { parseDate } from '../../helpers/ParseDate';
 import Paywall from '$renderer/components/Paywall';
+import useToggleContact from '../../hooks/useToggleContact';
+import useClosePaywall from '../../hooks/useClosePaywall';
 
 interface UpcomingEvent {
   contact: Contact;
@@ -29,8 +31,11 @@ const Contacts: React.FC = () => {
   const contacts = useSelector(getContacts);
   const subscription = useSelector(getSubscription);
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const toggleContact = useToggleContact()
+  const closePaywall = useClosePaywall()
+
+  // const dispatch = useDispatch();
+  // const navigate = useNavigate();
 
   const [sortingOption, setSortingOption] = useState('firstName');
   const [addingContact, setAddingContact] = useState(false);
@@ -48,23 +53,19 @@ const Contacts: React.FC = () => {
     { value: 'nextContactDate', display: 'Next Contact' },
   ];
 
-  const toggleContact = (contact: Contact) => {
-    dispatch(selectContact(contact));
-    navigate(
-      `/contacts/${contact.first_name.replaceAll(
-        ' ',
-        '-',
-      )}-${contact.last_name.replaceAll(' ', '-')}`,
-    );
-  };
+  // const toggleContact = (contact: Contact) => {
+  //   dispatch(selectContact(contact));
+  //   navigate(
+  //     `/contacts/${contact.first_name.replaceAll(
+  //       ' ',
+  //       '-',
+  //     )}-${contact.last_name.replaceAll(' ', '-')}`,
+  //   );
+  // };
 
-  const closePaywall = () => {
-    dispatch(selectPage('home'));
-    navigate(-1);
-  };
-
-  // const dateParser = (date: Date) => {
-  //   return new Date(date);
+  // const closePaywall = () => {
+  //   dispatch(selectPage(user.previousPage));
+  //   navigate(-1);
   // };
 
   const sortedContacts = [...contacts].sort((a, b) => {
@@ -208,7 +209,7 @@ const Contacts: React.FC = () => {
           subscription={subscription!}
           requiredTier={2}
           requestedFeature='CRM'
-          onClose={closePaywall}
+          onClose={()=> closePaywall(user.previousPage)}
         />
       )}
     </div>

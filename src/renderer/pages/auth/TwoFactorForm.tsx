@@ -10,6 +10,7 @@ import {
 } from '../../../services/accountSlice';
 import { useFetchSubscriptionInfoMutation } from '../../../services/subscriptionAPI';
 import { useVerifyTokenMutation } from '../../../services/authAPI';
+import { SignInStatus } from '../../../statuses/signInStatus';
 
 const TwoFactorForm: React.FC = () => {
   const user = useSelector(getUser);
@@ -24,7 +25,7 @@ const TwoFactorForm: React.FC = () => {
 
   const handleBackClick = () => {
     dispatch(resetAccountState);
-    navigate('/sign-in');
+    navigate('/');
   };
 
   const handleLostCodeClick = () => {
@@ -38,10 +39,10 @@ const TwoFactorForm: React.FC = () => {
     };
     verifyToken(data).then((res) => {
       if ('data' in res) {
-        if (res.data.isValid == true) {
-          fetchSubscriptionInfo(user.account!.id).then(() => {
-            dispatch(setSignIn(true));
-            navigate('/');
+        if (res.data.isValid == true && user.account) {
+          fetchSubscriptionInfo(user.account.id).then(() => {
+            dispatch(setSignIn(SignInStatus.True));
+            navigate('/dashboard');
           });
         } else {
             setIsValid(false)

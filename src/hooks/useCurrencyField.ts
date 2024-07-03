@@ -20,31 +20,11 @@ export const useCurrencyField = (
   };
 
   const handleSaveClick = async (
-    // id: number,
     field: string,
-    // baseURL: string,
     item: any,
     onEdit: (data: any) => Promise<void>,
   ) => {
-    // const url = `${baseURL}${id}`;
-    // const data = {
-    //   [field]: editedValue,
-    // };
-    // try {
-    //   const response = await fetch(url, {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(data),
-    //   });
-    //   console.log(response);
-    //   if (!response.ok) {
-    //     throw new Error('Failed to update value');
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+ 
     const updatedItem = { ...item };
     for (const key in updatedItem) {
       if (key == field) {
@@ -63,9 +43,6 @@ export const useCurrencyField = (
     setIsEditing(false);
   };
 
-  //   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //     setEditedValue(e.target.value);
-  //   };
   const handleInputChange: CurrencyInputProps['onValueChange'] = (
     amount,
     _,

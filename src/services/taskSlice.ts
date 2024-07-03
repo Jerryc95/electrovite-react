@@ -48,13 +48,11 @@ export const taskSlice = createSlice({
 
     builder.addMatcher(taskAPI.endpoints.addTask.matchPending, (state) => {
       state.loading = 'pending';
-      console.log('fetching');
     });
     builder.addMatcher(
       taskAPI.endpoints.addTask.matchFulfilled,
       (state, action: PayloadAction<Task>) => {
         state.loading = 'fulfilled';
-        console.log('fetched');
         const newTask: Task = action.payload;
         newTask.subtasks = [];
         state.tasks.push(newTask);
@@ -81,7 +79,6 @@ export const taskSlice = createSlice({
         if (i !== -1) {
           state.tasks[i] = updatedTask;
           state.selectedTask = updatedTask;
-          console.log(updatedTask)
         }
       },
     );
@@ -95,7 +92,6 @@ export const taskSlice = createSlice({
       (state, action: PayloadAction<number>) => {
         state.loading = 'fulfilled';
         const removedTaskId = action.payload;
-        console.log(removedTaskId);
         state.tasks = state.tasks.filter(
           (task) => task.task_id != removedTaskId,
         );

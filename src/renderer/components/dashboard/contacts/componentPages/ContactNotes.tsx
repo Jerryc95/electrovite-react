@@ -12,11 +12,11 @@ const ContactNotes: React.FC<ContactNotesProp> = ({ contact }) => {
 
   const handleUpdateContact = async (data: any) => {
     updateContact(data);
-    console.log(contact)
   };
 
   return (
     <div>
+      <h3>Note</h3>
       <div>
         <EditField
           label=''

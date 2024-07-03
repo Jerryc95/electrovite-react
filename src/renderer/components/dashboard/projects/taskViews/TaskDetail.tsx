@@ -7,7 +7,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import { Task } from 'src/models/task';
-import { Project } from 'src/models/project';
 
 import '../../../../styles/tasks.scss';
 import ProgressBar from '$renderer/components/ProgressBar';
@@ -30,10 +29,10 @@ import { useUpdateTaskMutation } from '../../../../../services/taskAPI';
 interface TaskDetailProps {
   task: Task;
   id: number | undefined;
-  project: Project;
+  
 }
 
-const TaskDetail: React.FC<TaskDetailProps> = ({ task, id, project }) => {
+const TaskDetail: React.FC<TaskDetailProps> = ({ task, id }) => {
   const subtasks = useSelector(getSubtasks);
   const goBack = useBackClick();
 
@@ -90,9 +89,6 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ task, id, project }) => {
     toggleView('Board');
   }, [toggleView]);
 
-  useEffect(()=> {
-    console.log(task)
-  },[])
 
   return (
     <div className='task-detail-container'>
@@ -203,7 +199,6 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ task, id, project }) => {
           {subtasks.length === 0 ? (
             <p className='info-text'>Subtasks will appear here once added.</p>
           ) : (
-            // <div> {componentView}</div>
             <div>
             {subtaskView == 'Board' ? (
               <>

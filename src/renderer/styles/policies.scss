@@ -35,7 +35,8 @@
         .policy-section-details {
             font-size: 0.9rem;
             padding: 10px;
-             a {
+             span {
+                cursor: pointer;
                 background: linear-gradient(to right, #f72585, #480ca8);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;

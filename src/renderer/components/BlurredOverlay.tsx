@@ -40,7 +40,8 @@ const BlurredOverlay: React.FC<BlurredOverlayProps> = ({
         <div
           style={{
             position: 'absolute',
-            top: '75%',
+            textAlign: 'center',
+            top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
             color: 'black',

@@ -135,7 +135,7 @@ const STKanbanBoard: React.FC<KanbanProps> = ({ subtasks }) => {
     setNotStartedSubtasks(notStarted);
     setInProgSubtasks(inProg);
     setCompletedSubtasks(completed);
-  }, [subtasks]);
+  }, []);
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
