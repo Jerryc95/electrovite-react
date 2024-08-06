@@ -54,6 +54,7 @@ const useConnectEntry = (contact: Contact) => {
   },[])
 
   const handleConnectEntry = async () => {
+    // maybe do a search in the db with the contact id to see if theres a project connected
     if (selectedEntry) {
         const url = `http://localhost:3000/bookkeeping/details/${selectedEntry.id}`;
         try {

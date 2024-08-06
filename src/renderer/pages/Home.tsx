@@ -148,11 +148,13 @@ const Home: React.FC = () => {
 
       pastTargetDate.setDate(pastTargetDate.getDate() + 1);
       historicEntryDate.setDate(historicEntryDate.getDate() + 1);
+
     }
     // loop through the historic array and check if a user entry's date matches a date,
     // if it does, set the amount to the entry amount and increment it and set the previous revenue to it.
     // If it doesn't, set the date's amount to the previous revenue.
     historicEntries.forEach((entry) => {
+      console.log(entry)
       const entryDay = new Date(entry.date);
       for (let i = 0; entries.length > i; i++) {
         if (
