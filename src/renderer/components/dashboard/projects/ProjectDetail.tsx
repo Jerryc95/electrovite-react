@@ -35,9 +35,6 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
   const [showingSidebar, setShowingSidebar] = useState(false);
 
   const viewOptions = ['Board', 'List'];
-  // const [componentView, setComponentView] = useState<JSX.Element>(
-  //   <KanbanBoard tasks={tasks} />,
-  // );
 
   const fetchTasks = useFetchTasksQuery(project.id, {
     refetchOnMountOrArgChange: true,
@@ -45,7 +42,6 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
   const [updateProject] = useUpdateProjectMutation();
 
   const toggleProject = () => {
-    // clearTaskState();
     goBack();
   };
 
@@ -59,14 +55,6 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
 
   const toggleView = useCallback((view: string) => {
     setTaskView(view);
-    // setTaskView(view);
-    // switch (view) {
-    //   case 'Board':
-    //     setComponentView(<KanbanBoard tasks={tasks} />);
-    //     break;
-    //   case 'List':
-    //     setComponentView(<TaskList tasks={tasks} />);
-    // }
   }, []);
 
   const toggleSidebar = () => {
@@ -74,9 +62,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
   };
 
   useEffect(() => {
-    // clearTaskState();
     fetchTasks;
-    // toggleView('Board');
   }, [fetchTasks]);
 
   useEffect(() => {
@@ -174,9 +160,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
           }
         >
           {tasks.length === 0 ? (
-            <p>Tasks will appear here once added.</p>
+            <p className='info-text'>Tasks will appear here once added.</p>
           ) : (
-            // <div>{componentView}</div>
             <div>
               {taskView == 'Board' ? (
                 <>

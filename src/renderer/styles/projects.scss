@@ -740,12 +740,17 @@
       height: 100vh;
       padding-top: 20px;
       // justify-content: space-evenly;
-
-      p {
+      .info-text {
         color: #909090;
         text-align: center;
         font-size: 0.85rem;
       }
+
+      // p {
+      //   color: #909090;
+      //   text-align: center;
+      //   font-size: 0.85rem;
+      // }
     }
 
     .project-detail-list {
@@ -753,6 +758,12 @@
       flex-direction: column;
       justify-content: left;
       width: 100%;
+
+      .info-text {
+        color: #909090;
+        text-align: center;
+        font-size: 0.85rem;
+      }
    
     }
     

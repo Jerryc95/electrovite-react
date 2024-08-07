@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import AuthForm from '$renderer/components/AuthForm';
 import { useSignInAccountMutation } from '../../../services/authAPI';
 import Onboarding from '../onboarding/Onboarding';
-import { getSettings, resetOnboarding } from '../../../services/settingsSlice';
+import { getSettings } from '../../../services/settingsSlice';
 import { setSignIn } from '../../../services/accountSlice';
 import { SignInStatus } from '../../../statuses/signInStatus';
 import { getUser } from '../../../services/accountSlice';
@@ -17,14 +17,7 @@ const SignInPage: React.FC = () => {
   const settings = useSelector(getSettings);
   const [signInUser, { isLoading }] = useSignInAccountMutation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const TEST_MODE_RESET_ONBOARDING = () => {
-    dispatch(resetOnboarding())
-    console.log(user)
-
-  }
-
+  
   const handleSignIn = async (formData: {
     email: string;
     password: string;
@@ -49,7 +42,6 @@ const SignInPage: React.FC = () => {
     <div>
       <AuthForm type='signin' isLoading={isLoading} onSubmit={handleSignIn} />
       {settings.isOnboarded == false && <Onboarding />}
-      <button onClick={TEST_MODE_RESET_ONBOARDING}>TEST MODE ONLY: RESETS ONBOARDING</button>
     </div>
   );
 };
