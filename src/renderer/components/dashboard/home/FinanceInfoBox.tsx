@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { BKEntry } from 'src/models/BKEntry';
 
 interface FinanceInfoBoxProps {
   label: string;

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-// import { Contact } from 'src/models/contact';
 import { useAddContactMutation } from '../../../../services/contactAPI';
 
 interface NewContactProps {

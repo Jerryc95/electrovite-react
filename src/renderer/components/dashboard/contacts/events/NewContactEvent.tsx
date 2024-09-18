@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-// import { Contact } from 'src/models/contact';
-// import { ContactEvent } from 'src/models/contactEvent';
 import { useAddContactEventMutation } from '../../../../../services/contactAPI';
 
 interface NewContactActivityProps {

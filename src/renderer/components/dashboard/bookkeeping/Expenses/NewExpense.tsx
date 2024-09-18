@@ -5,22 +5,19 @@ import {
   CurrencyInputOnChangeValues,
 } from 'react-currency-input-field/dist/components/CurrencyInputProps';
 
-import { BKExpense } from 'src/models/BKExpense';
 import '../../../../styles/newItem.scss';
 import { useAddRecurringExpenseMutation } from '../../../../../services/bookkeepingAPI';
 
 interface NewExpenseProps {
   setAddingExpense: React.Dispatch<React.SetStateAction<boolean>>;
   accountID: number | undefined;
-  // setRecurringExpenses: React.Dispatch<React.SetStateAction<BKExpense[]>>;
 }
 
 const NewExpense: React.FC<NewExpenseProps> = ({
   setAddingExpense,
   accountID,
-  // setRecurringExpenses,
 }) => {
-  const [addRecurringExpense] = useAddRecurringExpenseMutation()
+  const [addRecurringExpense] = useAddRecurringExpenseMutation();
 
   const [reDescription, setReDescription] = useState('');
   const [amount, setAmount] = useState<number | null>(0);
@@ -58,7 +55,7 @@ const NewExpense: React.FC<NewExpenseProps> = ({
       frequency: frequency,
     };
 
-    addRecurringExpense(newExpense)
+    addRecurringExpense(newExpense);
     setAddingExpense(false);
   };
 
@@ -68,7 +65,7 @@ const NewExpense: React.FC<NewExpenseProps> = ({
         <div className='new-item-heading'>
           <h2>New Recurring Expense</h2>
           <button
-          className='button-brand-magenta'
+            className='button-brand-magenta'
             onClick={() => {
               setAddingExpense(false);
             }}

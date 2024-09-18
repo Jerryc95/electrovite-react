@@ -80,7 +80,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   const getContactInfo = useCallback(
     async (id: number) => {
       if (entry.contact_id || selectedContact !== null) {
-        const url = `http://localhost:3000/contacts/details/${id}`;
+        const url = `https://flowplanr-production.up.railway.app/contacts/details/${id}`;
         try {
           const response = await fetch(url);
           const responseData = await response.json();
@@ -94,7 +94,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   );
 
   const getContacts = useCallback(() => {
-    const url = `http://localhost:3000/contacts/names/${user.account?.id}`;
+    const url = `https://flowplanr-production.up.railway.app/contacts/names/${user.account?.id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: BKClient[]) => {
@@ -113,22 +113,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
     if (selectedContact) {
       const updatedEntry: BKEntry = {
         ...entry,
-        // entry_name: entry.entry_name,
-        // bookkeeping_id: entry.bookkeeping_id,
         contact_id: selectedContact.id,
-        // account_id: entry.account_id,
-        // total_amount: entry.total_amount,
-        // paid_amount: entry.paid_amount,
-        // outstanding_amount: entry.outstanding_amount,
-        // category: entry.category,
-        // transaction_type: entry.transaction_type,
-        // description: entry.description,
-        // entry_date: entry.entry_date,
-        // first_name: entry.first_name,
-        // last_name: entry.last_name,
-        // paid: entry.paid,
-        // next_payment_date: entry.next_payment_date,
-        // project_id: entry.project_id,
       };
       updateEntry(updatedEntry);
     }
@@ -137,7 +122,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   const getProjectInfo = useCallback(
     async (id: number) => {
       if (entry.project_id || selectedProject !== null) {
-        const url = `http://localhost:3000/projects/details/${id}`;
+        const url = `https://flowplanr-production.up.railway.app/projects/details/${id}`;
         try {
           const response = await fetch(url);
           const responseData = await response.json();
@@ -151,7 +136,7 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   );
 
   const getProjects = useCallback(() => {
-    const url = `http://localhost:3000/projects/names/${user.account?.id}`;
+    const url = `https://flowplanr-production.up.railway.app/projects/names/${user.account?.id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: BKProject[]) => {
@@ -169,21 +154,6 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
   const handleConnectProject = () => {
     if (selectedProject) {
       const updatedEntry: BKEntry = {
-        // entry_name: entry.entry_name,
-        // bookkeeping_id: entry.bookkeeping_id,
-        // contact_id: entry.contact_id,
-        // account_id: entry.account_id,
-        // total_amount: entry.total_amount,
-        // paid_amount: entry.paid_amount,
-        // outstanding_amount: entry.outstanding_amount,
-        // category: entry.category,
-        // transaction_type: entry.transaction_type,
-        // description: entry.description,
-        // entry_date: entry.entry_date,
-        // first_name: entry.first_name,
-        // last_name: entry.last_name,
-        // paid: entry.paid,
-        // next_payment_date: entry.next_payment_date,
         ...entry,
         project_id: selectedProject.id,
       };
@@ -199,22 +169,6 @@ const BKEntryDetail: React.FC<BKEntryDetailProps> = ({ entry, entries }) => {
     const updatedEntry: BKEntry = {
       ...entry,
       paid_amount: entry.total_amount,
-      // entry_name: entry.entry_name,
-      // bookkeeping_id: entry.bookkeeping_id,
-      // contact_id: entry.contact_id,
-      // account_id: entry.account_id,
-      // total_amount: entry.total_amount,
-      // paid_amount: entry.total_amount,
-      // outstanding_amount: entry.outstanding_amount,
-      // category: entry.category,
-      // transaction_type: entry.transaction_type,
-      // description: entry.description,
-      // entry_date: entry.entry_date,
-      // first_name: entry.first_name,
-      // last_name: entry.last_name,
-      // paid: entry.paid,
-      // next_payment_date: entry.next_payment_date,
-      // project_id: entry.project_id,
     };
     updateEntry(updatedEntry);
   };

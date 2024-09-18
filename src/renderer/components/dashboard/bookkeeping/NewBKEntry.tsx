@@ -75,7 +75,7 @@ const NewBKEntry: React.FC<NewBKEntryProps> = ({ setAddingEntry, id }) => {
   };
 
   const getClients = () => {
-    const url = `http://localhost:3000/contacts/names/${id}`;
+    const url = `https://flowplanr-production.up.railway.app/contacts/names/${id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: BKClient[]) => {
@@ -84,7 +84,7 @@ const NewBKEntry: React.FC<NewBKEntryProps> = ({ setAddingEntry, id }) => {
   };
 
   const getProjects = () => {
-    const url = `http://localhost:3000/projects/names/${id}`;
+    const url = `https://flowplanr-production.up.railway.app/projects/names/${id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: BKProject[]) => {

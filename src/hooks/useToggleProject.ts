@@ -10,7 +10,7 @@ const useToggleProject = () => {
   const dispatch = useDispatch();
 
   const fetchAndSelectProject = useCallback(async (id: number) => {
-    const url = `http://localhost:3000/projects/details/${id}`;
+    const url = `https://flowplanr-production.up.railway.app/projects/details/${id}`;
     try {
       const response = await fetch(url);
       const responseData: Project = await response.json();

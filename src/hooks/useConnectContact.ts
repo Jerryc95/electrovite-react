@@ -36,7 +36,7 @@ const useConnectContact = () => {
   const [selectedContact, setSelectedContact] = useState<BKData | null>(null);
 
   const getContacts = useCallback((id: number | undefined) => {
-    const url = `http://localhost:3000/contacts/names/${id}`;
+    const url = `https://flowplanr-production.up.railway.app/contacts/names/${id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: BKClient[]) => {
@@ -53,7 +53,7 @@ const useConnectContact = () => {
   const getContactInfo = useCallback(
     async (contactID: number) => {
       if (contactID || selectedContact !== null) {
-        const url = `http://localhost:3000/contacts/details/${contactID}`;
+        const url = `https://flowplanr-production.up.railway.app/contacts/details/${contactID}`;
         try {
           const response = await fetch(url);
           const responseData = await response.json();

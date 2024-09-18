@@ -39,7 +39,7 @@ const useConnectEntry = (contact: Contact) => {
   const [selectedEntry, setSelectedEntry] = useState<BKData | null>(null);
 
   const getEntryNames = useCallback(async() => {
-    const url = `http://localhost:3000/bookkeeping/entries/${contact.account_id}`;
+    const url = `https://flowplanr-production.up.railway.app/bookkeeping/entries/${contact.account_id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: IEntry[]) => {
@@ -56,7 +56,7 @@ const useConnectEntry = (contact: Contact) => {
   const handleConnectEntry = async () => {
     // maybe do a search in the db with the contact id to see if theres a project connected
     if (selectedEntry) {
-        const url = `http://localhost:3000/bookkeeping/details/${selectedEntry.id}`;
+        const url = `https://flowplanr-production.up.railway.app/bookkeeping/details/${selectedEntry.id}`;
         try {
           const response = await fetch(url);
           const foundEntry: BKEntry = await response.json();

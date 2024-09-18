@@ -73,7 +73,7 @@ export default function StripePaymentForm({
     }
   };
 
-  const handleSubcribe = async () => {
+  const handleSubscribe = async () => {
     // event.preventDefault();
     if (!stripe || !elements) {
       return;
@@ -133,19 +133,15 @@ export default function StripePaymentForm({
             status: stripeSubscription.status,
             default_payment_method: stripeSubscription.default_payment_method,
           };
-
           if (setStripeSubscription) {
             setStripeSubscription(newSubscription);
           } else {
-     
             updateAccount({
               accountID: user.account?.id,
-              subscriptionID: subscription.id, 
+              subscriptionID: subscription.id,
               stripeSubID: newSubscription.id,
               previousSubID: subscriptionState.subscription!.id,
             });
-
-  
           }
 
           elements.submit();
@@ -183,13 +179,13 @@ export default function StripePaymentForm({
           //     : stripe.confirmPayment;
 
           if (setCreationStep) {
-            setCreationStep(3);
+            setCreationStep(4);
           } else if (
             setIsUpdatingPlan &&
             setSuccessfullySubscribedAlert &&
             setViewingPlans
           ) {
-            dispatch(updateSubscription(subscription))
+            dispatch(updateSubscription(subscription));
             setViewingPlans(false);
             setIsUpdatingPlan(false);
             setSuccessfullySubscribedAlert(true);
@@ -242,7 +238,7 @@ export default function StripePaymentForm({
           <button
             className='button-brand-pink'
             disabled={isLoading || !stripe || !elements}
-            onClick={handleSubcribe}
+            onClick={handleSubscribe}
           >
             Subscribe
           </button>

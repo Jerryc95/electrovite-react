@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-// import useBackClick from '../../../../../hooks/useBackClick';
 import { ContactEvent } from 'src/models/contactEvent';
 import {
   useRemoveContactEventMutation,
@@ -19,7 +18,6 @@ const EditContactEvent: React.FC<EditContactEventProps> = ({
   contactEvent,
   setEditingContactEvent,
 }) => {
-  // const goBack = useBackClick();
   const [updateContactEvent] = useUpdateContactEventMutation();
   const [removeContactEvent] = useRemoveContactEventMutation();
 

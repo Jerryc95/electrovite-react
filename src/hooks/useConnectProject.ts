@@ -44,7 +44,7 @@ const useConnectProject = (contact: Contact) => {
   const [selectedProject, setSelectedProject] = useState<BKData | null>(null);
 
   const getProjects = useCallback(() => {
-    const url = `http://localhost:3000/projects/names/${contact.account_id}`;
+    const url = `https://flowplanr-production.up.railway.app/projects/names/${contact.account_id}`;
     fetch(url)
       .then((response) => response.json())
       .then((data: BKProject[]) => {
@@ -61,7 +61,7 @@ const useConnectProject = (contact: Contact) => {
 
   const handleConnectProject = () => {
     if (selectedProject) {
-      const url = `http://localhost:3000/projects/details/${selectedProject.id}`;
+      const url = `https://flowplanr-production.up.railway.app/projects/details/${selectedProject.id}`;
       fetch(url)
         .then((response) => response.json())
         .then((data: Project) => {
