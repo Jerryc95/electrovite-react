@@ -7,7 +7,7 @@ import type { Subtask } from 'src/models/subtask';
 
 export const subtaskAPI = createApi({
   reducerPath: 'subtaskAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/subtasks' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://flowplanr-production.up.railway.app/subtasks' }),
 
   endpoints: (builder) => ({
     fetchSubtasks: builder.query<Subtask[], number>({

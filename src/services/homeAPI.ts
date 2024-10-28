@@ -7,7 +7,7 @@ import { BKExpense } from 'src/models/BKExpense';
 
 export const homeAPI = createApi({
   reducerPath: 'homeAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/home' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://flowplanr-production.up.railway.app/home' }),
   endpoints: (builder) => ({
     fetchUpcomingTasks: builder.query<UpcomingTask[], number | undefined>({
       query: (accountID) => ({

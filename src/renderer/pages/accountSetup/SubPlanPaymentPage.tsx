@@ -28,7 +28,7 @@ function SubPlanPaymentPage({
   };
 
   useEffect(() => {
-    fetch('http://localhost:3000/payment/config').then(async (res) => {
+    fetch('https://flowplanr-production.up.railway.app/payment/config').then(async (res) => {
       const { publishableKey } = await res.json();
       setStripePromise(loadStripe(publishableKey));
     });

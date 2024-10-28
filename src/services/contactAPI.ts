@@ -7,7 +7,7 @@ import { ContactEvent } from 'src/models/contactEvent';
 
 export const contactAPI = createApi({
   reducerPath: 'contactAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/contacts' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://flowplanr-production.up.railway.app/contacts' }),
 
   endpoints: (builder) => ({
     /////////////////////

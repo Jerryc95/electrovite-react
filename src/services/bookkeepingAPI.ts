@@ -9,7 +9,7 @@ import type { BKExpense } from 'src/models/BKExpense';
 
 export const bookkeepingAPI = createApi({
   reducerPath: 'bookkeepingAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/bookkeeping' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://flowplanr-production.up.railway.app/bookkeeping' }),
 
   endpoints: (builder) => ({
     fetchEntries: builder.query<

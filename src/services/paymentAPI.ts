@@ -4,7 +4,7 @@ import { StripeInvoice } from 'src/models/stripeInvoice';
 
 export const paymentAPI = createApi({
   reducerPath: 'paymentAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/payment' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://flowplanr-production.up.railway.app/payment' }),
   endpoints: (builder) => ({
     // CUSTOMER AND SUBSCRIPTIONS
     // Manage creating customers in the stripe API and their

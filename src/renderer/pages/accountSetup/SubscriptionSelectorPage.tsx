@@ -29,7 +29,7 @@ const SubscriptionSelectorPage: React.FC<SubscriptionSelectorPageProps> = ({
   );
 
   const fetchSubscriptions = async () => {
-    await fetch('http://localhost:3000/subscription')
+    await fetch('https://flowplanr-production.up.railway.app/subscription')
       .then((response) => response.json())
       .then((data) => {
         setSubscriptions(data);

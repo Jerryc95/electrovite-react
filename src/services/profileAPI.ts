@@ -3,7 +3,7 @@ import { AccountProfile } from 'src/models/accountProfile';
 
 export const profileAPI = createApi({
   reducerPath: 'profileAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/account' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://flowplanr-production.up.railway.app/account' }),
 
   endpoints: (builder) => ({
     fetchProfile: builder.mutation<AccountProfile, number>({

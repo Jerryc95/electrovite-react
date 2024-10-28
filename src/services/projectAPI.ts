@@ -6,7 +6,7 @@ import type { Project } from 'src/models/project';
 
 export const projectAPI = createApi({
   reducerPath: 'projectAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/projects' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://flowplanr-production.up.railway.app/projects' }),
 
   endpoints: (builder) => ({
     fetchProjects: builder.query<Project[], number | undefined>({

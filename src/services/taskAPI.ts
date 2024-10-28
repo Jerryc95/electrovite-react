@@ -7,7 +7,7 @@ import { SubtaskSummary } from 'src/models/subtaskSummary';
 
 export const taskAPI = createApi({
   reducerPath: 'taskAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/tasks' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://flowplanr-production.up.railway.app/tasks' }),
   
   endpoints: (builder) => ({
     fetchTasks: builder.query<Task[], number>({

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import useBackClick from '../../../hooks/useBackClick';
 import { getUser, setSignIn, setTwoFactorEnabled } from '../../../services/accountSlice';
 import { useFetchSubscriptionInfoMutation } from '../../../services/subscriptionAPI';
+import { SignInStatus } from '../../../statuses/signInStatus';
 
 const AccountRecovery: React.FC = () => {
   const user = useSelector(getUser);
@@ -18,7 +19,7 @@ const AccountRecovery: React.FC = () => {
 
   const handleSubmitRecoveryCode = async () => {
     console.log(recoveryCode);
-    const url = 'http://localhost:3000/auth/security/recover';
+    const url = 'https://flowplanr-production.up.railway.app/auth/security/recover';
     const data = {
       id: user.account?.id,
       recoveryCode: recoveryCode,
@@ -34,7 +35,7 @@ const AccountRecovery: React.FC = () => {
       const responseData = await response.json();
       if (responseData.isValid == true) {
         fetchSubscriptionInfo(user.account!.id).then(() => {
-          dispatch(setSignIn(true));
+          dispatch(setSignIn(SignInStatus.True));
           dispatch(setTwoFactorEnabled(false))
           navigate('/');
         });

@@ -3,7 +3,7 @@ import type { Account } from 'src/models/account';
 
 export const authAPI = createApi({
   reducerPath: 'authAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/auth' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://flowplanr-production.up.railway.app/auth' }),
 
   endpoints: (builder) => ({
     registerAccount: builder.mutation<Account, object>({

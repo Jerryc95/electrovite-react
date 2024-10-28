@@ -7,7 +7,7 @@ import type { RecurringTask } from 'src/models/recurringTask';
 export const recurringTaskAPI = createApi({
   reducerPath: 'recurringTaskAPI',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3000/recurringTasks',
+    baseUrl: 'https://flowplanr-production.up.railway.app/recurringTasks',
   }),
 
   endpoints: (builder) => ({

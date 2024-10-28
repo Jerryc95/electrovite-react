@@ -11,7 +11,7 @@ interface ICustomerPortalResponse {
 
 export const subscriptionAPI = createApi({
   reducerPath: 'subscriptionAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/subscription' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://flowplanr-production.up.railway.app/subscription' }),
 
   endpoints: (builder) => ({
     fetchSubscriptions: builder.query<Subscription, object>({

@@ -25,7 +25,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, isLoading, onSubmit }) => {
   const handleCheckEmail = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/auth/email-check?email=${email}`,
+        `https://flowplanr-production.up.railway.app/auth/email-check?email=${email}`,
       );
       const data = await response.json();
       setIsEmailAvailable(data.isAvailable);
